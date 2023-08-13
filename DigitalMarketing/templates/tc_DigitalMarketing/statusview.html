@@ -1,0 +1,197 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/UserIndexpage">
+        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+              <i class="bi bi-brightness-high"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+              <i class="bi bi-bell"></i>
+          </a>
+        </li>
+        <!-- <li class="nav-item account-section">
+          <a class="nav-link" href="#">
+              <span>My Account</span>
+              <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="">
+                  <i class="bi bi-chevron-down"></i>
+              </span> 
+          </a>
+        </li> -->
+        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+          <a class="nav-link" href="#">
+            <span>My Account</span>
+            <span class="av-holder">
+              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <i class="bi bi-chevron-down"></i>
+            </span>
+          </a>
+          <div class="dropdown-panel">
+            <ul>
+                <li>Account</li>
+                <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav> 
+<div class="upload-page">
+   
+
+  <div class="aprove-panel-update">
+    <div class="creative-panel-update">
+      
+    
+        <div class="main-creative-box">
+           <div class="video-container">
+            <video width="100%" height="400" controls="">
+              <source src="{{video}}" type="video/mp4">
+          Your browser does not support the video tag.
+          </video>
+           </div>
+
+           {% if video1 != '--' %}
+           <div class="thumbnails">
+             <!-- <video width="100%" height="100%" controls="">
+               <source src="images/dummy.mp4" type="video/mp4">
+             </video> -->
+             {% if Creative == 'image' %}
+             <img src="{{ image }}">
+             {% endif %}
+
+             {% if Creative != 'image' %}
+             <div class="videocircle">
+               <!-- <img src="{% static 'images/avatar.png'%}"> -->
+               <video width="100%" height="100%" controls="">
+                 <source src="{{video1}}" type="video/mp4">
+             Your browser does not support the video tag.
+             </video>
+             </div>
+             <div class="btnview">Watch Video</div>
+             {% endif %}
+
+           </div>
+           {% endif %}
+
+            <div class="videotitle-update">
+              <div class="titlebox1">
+                
+                <div class="titlebox-content1">
+                  <label>uploaded by <b>{{uploadername}}</b></label>
+                  <p>{{vname}}</p>
+                </div>
+              </div>
+              <div class="titlebox1">
+               
+                <div class="icon-box-align">
+                  {% if Platform == 'Facebook' %}
+                  <div class="platform-box" style="background-color: #3b5998">
+                    <img src="{% static './images/facebook.svg'%}">
+                  </div>
+                  {% endif %}
+    
+                  {% if Platform == 'Youtube' %}
+                  <div class="platform-box" style="background-color: #ee3b3b">
+                    <img src="{% static './images/youtube.svg'%}">
+                  </div>
+                  {% endif  %}
+    
+                  {% if Platform == 'GDN' %}
+                  <div class="platform-box" style="background-color: #c9e8f9">
+                    <img src="{% static './images/cdn.png '%}" />
+                  </div>
+                  {% endif %}
+    
+                  {% if Platform == 'TikTok' %}
+                  <div class="platform-box" style="background-color: #d8d5d5">
+                    <img src="{% static './images/tiktok.svg '%}" />
+                  </div>
+                  {% endif %}
+    
+                  {% if Platform == 'Native' %}
+                  <div class="platform-box" style="background-color: #69c0e9">
+                    <img src="{% static './images/native.svg'%}" />
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div> 
+          
+        </div>
+  
+        
+    </div>
+    <div class="aproval-panel-update">
+        <h2>Presets</h2>
+
+          {% for key,value in approverres.items  %}
+          <div class="card">
+          <div class="card-body d-flex justify-content-between align-items-center">
+           <div class="question">
+            {{ key }}
+           </div>
+           <span class="answer">
+            {{ value }}
+           </span>
+          </div>
+           <div>
+            <textarea class="form-control ml-1 shadow-none textarea">{{ approvercmd|get_item:key }}</textarea>
+          </div>
+        </div>
+          {% endfor %}
+
+        <!-- <div class="approval-button">
+            <button class="approval" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Update</button>
+        </div> -->
+    </div>
+  </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLongTitle">Confirm aproval</h5>
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+    <div class="modal-footer">
+      
+      <button type="button" class="btn btn-primary">Confirm changes</button>
+    </div>
+  </div>
+</div>
+</div>
+
+  
+</div>
+{% endblock content %}
+
+
+
+

@@ -1,0 +1,411 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-inline-flex align-items-center" href="#">
+        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+              <i class="bi bi-brightness-high"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+              <i class="bi bi-bell"></i>
+          </a>
+        </li>
+        <!-- <li class="nav-item account-section">
+          <a class="nav-link" href="#">
+              <span>My Account</span>
+              <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="">
+                  <i class="bi bi-chevron-down"></i>
+              </span> 
+          </a>
+        </li> -->
+        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+          <a class="nav-link" href="#">
+            <span>My Account</span>
+            <span class="av-holder">
+              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <i class="bi bi-chevron-down"></i>
+            </span>
+          </a>
+          <div class="dropdown-panel">
+            <ul>
+                <li>Account</li>
+                <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+              </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav> 
+  
+<div class="container-fluid" >
+  <div class="innersearch" style="height: 100px;">
+    <div class="col-md-12">
+        <input type="search" id='search-input' placeholder="search here" onkeyup="filterDivisions()"/>
+        <button class="sortby" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"><img src="{% static 'images/Download.svg'%}"></button>
+        <button id="show"class="sortby"><img src="{% static 'images/list.svg'%}"></button>
+        <button id="hide"class="sortby"><img src="{% static 'images/grid.svg'%}"></button>
+
+
+
+
+        
+    </div>
+</div>
+    </div>
+
+<form action="" method="post" enctype="multipart/form-data" id="upload-form">
+{% csrf_token %}
+<div id="Listview" class="division">
+{% if status %}
+{% for i in status %}
+
+<div class="list-panel">
+  <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
+  <div class="tnail">
+      <!-- <img src="images/grid-thumbnail.png"> -->
+      <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+        <source src="{{i.videoPath}}" type="video/mp4">
+        <source src="{{i.videoPath}}" type="video/ogg">
+    Your browser does not support the video tag.
+    </video>
+  </div>
+  <div class="dname">
+      <span class="minhead">{{i.createddate}}</span>
+      <p>{{i.videoname}}</p>
+  </div>
+  <div class="uploader">
+      <span class="minhead">Platform</span>
+      <p class="listinner"> {{i.platform}}</p>
+  </div>
+  <div class="reviewer">
+      <span class="minhead">Uploaded by</span>
+      <p class="listinner"> {{i.uploadername}}</p>
+  </div>
+  <div class="approver">
+      <span class="minhead">Reviewed by</span>
+      <p class="listinner"> {{i.approver}}</p>
+  </div>
+  {% if i.status == 'Rejected' %}
+  <div class="vstatus"><span>{{i.status}}</span></div>
+  {% endif %}
+  {% if i.status == 'Approved' %}
+  <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
+  {% if i.status == 'Pending' %}
+  <div class="vstatuspending"><span>{{i.status}}</span></div>
+  {% endif %}
+
+
+  {% if i.status == 'Pending' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a></div>
+  {% endif %}
+  {% if i.status == 'Approved' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div>
+  {% endif %}
+  {% if i.status == 'Rejected' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div>
+  {% endif %}
+
+
+  <!-- {% if i.status != 'Rejected' %}
+  <div class="vview"><a style="text-decoration:none" href="">---</a></div>
+  {% endif %}
+  {% if i.status == 'Rejected' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{id}}/{{i.videoid}}">View</a></div>
+  {% endif %} -->
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if user_status %}
+  {% for i in user_status %}
+<div class="list-panel">
+  <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
+  <div class="tnail">
+      <!-- <img src="images/grid-thumbnail.png"> -->
+      <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+        <source src="{{i.videoPath}}" type="video/mp4">
+        <source src="{{i.videoPath}}" type="video/ogg">
+    Your browser does not support the video tag.
+    </video>
+  </div>
+  <div class="dname">
+      <span class="minhead">{{i.createddate}}</span>
+      <p>{{i.videoname}}</p>
+  </div>
+  <div class="uploader">
+      <span class="minhead">Platform</span>
+      <p class="listinner"> {{i.platform}}</p>
+  </div>
+  <div class="reviewer">
+      <span class="minhead">Uploaded by</span>
+      <p class="listinner"> {{i.uploadername}}</p>
+  </div>
+  <div class="approver">
+      <span class="minhead">Reviewed by</span>
+      <p class="listinner"> {{i.approver}}</p>
+  </div>
+
+  {% if i.status == 'Rejected' %}
+  <div class="vstatus"><span>{{i.status}}</span></div>
+  {% endif %}
+  {% if i.status == 'Approved' %}
+  <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
+  {% if i.status == 'Pending' %}
+  <div class="vstatuspending"><span>{{i.status}}</span></div>
+  {% endif %}
+
+
+
+  
+  {% if i.status == 'Approved' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
+  {% endif %}
+  {% if i.status == 'Rejected' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
+  {% endif %}
+  {% if i.status == 'Pending' %}
+  <div class="vview"><a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}">View</a></div>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+</div>
+
+
+<div id="Gridview" style="display:none;" class="division">
+  <div class="grid-panel">
+    {% if status %}
+    {% for i in status %}
+    <div class="col-md-3">
+      
+      <div class="gridbox">
+        <div class="thumbnail-bg">
+            <!-- <img src="{% static './images/grid-thumbnail.png'%}"> -->
+            <video width="100%" height="350"  controls="">
+              <source src="{{i.videoPath}}" type="video/mp4">
+              <source src="{{i.videoPath}}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="grid-top">
+            <div class="col-md-6">
+                <div class="statusbar">{{i.status}}</div>
+            </div>
+            <div class="col-md-6 alincol    ">
+                <div class="downloadIcon">
+                    <!-- {% if i.status != 'Rejected' %}
+                  <a style="text-decoration:none" href="">---</a>
+                    {% endif %}
+                    {% if i.status == 'Rejected' %}
+                    <a style="text-decoration:none" href="/dm/statusview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %} -->
+
+                    {% if i.status == 'Pending' %}
+                    <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %}
+                    {% if i.status == 'Approved' %}
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %}
+                    {% if i.status == 'Rejected' %}
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %}
+                </div>
+            </div>
+           
+        </div>
+        <div class="grid-bottom">
+            <span class="grid-video-date">{{i.createddate}}</span>
+            <h2 class="grid-video-title">{{i.videoname}}</h2>
+            <!-- <p>Platform<b> {{i.platform}}</b></p> -->
+              {% if i.platform == 'Facebook' %}
+                <img src="{% static './images/facebook.svg'%}">
+              {% endif %}
+  
+              {% if i.platform == 'Youtube' %}
+                <img src="{% static './images/youtube.svg'%}">
+              {% endif  %}
+  
+              {% if i.platform == 'GDN' %}
+                <img src="{% static './images/cdn.png '%}" />
+              {% endif %}
+  
+              {% if i.platform == 'TikTok' %}
+                <img src="{% static './images/tiktok.svg '%}" />
+              {% endif %}
+  
+              {% if i.platform == 'Native' %}
+                <img src="{% static './images/native.svg'%}" />
+              {% endif %}
+
+            <div class="approver-section">
+                <div class="col-md-6">
+                    <span>Uploaded by</span>
+                    <p> {{i.uploadername}}</p>
+                </div>
+                <div class="col-md-6">
+
+                    <span>Reviewed by</span>
+                    <p> {{i.approver}}</p>
+                </div>
+            </div>
+        </div>
+   
+</div>
+
+ 
+  </div>
+  {% endfor %}
+  {% endif %}
+  </div>
+
+  <div class="grid-panel">
+    {% if user_status %}
+    {% for i in user_status %}
+    <div class="col-md-3">
+      
+      <div class="gridbox">
+        <div class="thumbnail-bg">
+            <!-- <img src="{% static './images/grid-thumbnail.png'%}"> -->
+            <video width="100%" height="350"   controls="">
+              <source src="{{i.videoPath}}" type="video/mp4">
+              <source src="{{i.videoPath}}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="grid-top">
+            <div class="col-md-6">
+                <div class="statusbar">{{i.status}}</div>
+            </div>
+            <div class="col-md-6 alincol    ">
+                <div class="downloadIcon">
+                  {% if i.status == 'Rejected' %}
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %}
+                    {% if i.status == 'Approved' %}
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                      {% endif %}
+                    {% if i.status == 'Pending' %}
+                    <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    {% endif %}
+                </div>
+            </div>
+           
+        </div>
+        <div class="grid-bottom">
+            <span class="grid-video-date">{{i.createddate}}</span>
+            <h2 class="grid-video-title">{{i.videoname}}</h2>
+
+
+
+            <!-- <p>Platform<b> {{i.platform}}</b></p> -->
+
+            {% if i.platform == 'Facebook' %}
+            <img src="{% static './images/facebook.svg'%}">
+          {% endif %}
+
+          {% if i.platform == 'Youtube' %}
+            <img src="{% static './images/youtube.svg'%}">
+          {% endif  %}
+
+          {% if i.platform == 'GDN' %}
+            <img src="{% static './images/cdn.png '%}" />
+          {% endif %}
+
+          {% if i.platform == 'TikTok' %}
+            <img src="{% static './images/tiktok.svg '%}" />
+          {% endif %}
+
+          {% if i.platform == 'Native' %}
+            <img src="{% static './images/native.svg'%}" />
+          {% endif %}
+
+
+
+
+
+            <div class="approver-section">
+                <div class="col-md-6">
+                    <span>Uploaded by</span>
+                    <p> {{i.uploadername}}</p>
+                </div>
+                <div class="col-md-6">
+
+                    <span>Reviewed by</span>
+                    <p> {{i.approver}}</p>
+                </div>
+            </div>
+        </div>
+   
+</div>
+
+ 
+  </div>
+  {% endfor %}
+  {% endif %}
+  </div>
+</div>
+
+
+</div>
+
+
+<!-- <form action="" method="post" enctype="multipart/form-data" id="upload-form"> -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Select Downloaders</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for i in user %}
+        <input type="checkbox" name="downloader{{i.userid}}" value="{{i.username}}">
+        <label>{{i.username}}</label>
+        <br><br>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+
+        <!-- <button type="button" class="btn btn-primary">Confirm</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}

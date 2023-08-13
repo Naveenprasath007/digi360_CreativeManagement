@@ -1,0 +1,315 @@
+@import 'dash_variables.scss';
+body{
+    background: $bg_color;
+    font-family: $font-primary;
+} 
+.center-items{
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+.box-shadow-common{
+    box-shadow: -7px 12px 24px #BFCEDF47;
+}
+nav{
+    &.navbar{
+        box-shadow: 0px 3px 6px #0000000D;
+    }
+    .navbar-brand{   
+        img{
+            max-width: 36px;
+            margin-right: 1rem;
+            @media(min-width:1920px){
+                max-width: 70px;
+            }
+        }     
+        color: $color-primary;
+        h2{
+            font-weight: 900;
+            margin-bottom: 0;
+            span{
+                color: $color-deafult;
+            }
+        } 
+    }
+    .navbar-nav{
+        .account-section {            
+            a.nav-link {
+                font-weight: 700;
+            }
+        }
+        .nav-link{            
+            &.active{
+                background-color: lighten($color: $color-primary, $amount: 50);
+                @include border-radius(4px);
+                width: 36px;
+                height: 36px; 
+                @extend .center-items;
+                color: $color-primary; 
+                font-weight: bold;
+                font-size: 22px; 
+            }
+        }
+       .av-holder{
+            img{
+                max-width: 40px;
+                @include border-radius(100%);
+                margin-left: 8px;
+            }
+            i{
+                font-size: 10px;
+                margin-left: 5px;
+            }
+       }
+    }
+}
+.inner-areas{
+    .welcome-box{
+        position: relative;
+        &:after{
+            content: "";
+            background: $color-primary; 
+            filter: blur(48px);
+            position: absolute;
+            width: 82px;
+            height: 86px;
+            right: 10px;
+            z-index: -1;
+            top: 32px;
+        }
+        h3{
+            color: $text-color; 
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0; 
+        }
+        h2{
+            color: $color-primary;
+            font-weight: 800;            
+        }
+        img{
+            max-width: 110px;
+        }
+        p{
+            margin-bottom: 0;
+            font-size: 0.875rem;
+        }
+    }
+    .info-box{
+        background: #fff;
+        @extend .box-shadow-common;
+        padding:1rem;
+        display: flex;
+        color: $text-color;
+        @include border-radius(10px);
+        position: relative;       
+        &.approved{
+            &:after{
+                content: "";
+                background: $color-highlight; 
+                filter: blur(48px);
+                position: absolute;
+                width: 82px;
+                height: 86px;
+                left: 10px;
+                z-index: -1;
+                bottom: 0px;
+            }
+            .mini-info{
+                i{
+                    color: $color_green; 
+                }
+            }
+            .right-box{
+                .icon-holder{
+                    background-color: $color_green;
+                } 
+            }
+        }
+        &.rejected{
+            .mini-info{
+                i{
+                    color: $color-highlight; 
+                }
+            }
+            .right-box{
+                .icon-holder{
+                    background-color: $color_highlight;
+                } 
+            }
+        }
+        &.pending{
+            .right-box{
+                .icon-holder{
+                    background-color: lighten($color: $color-primary, $amount: 30);
+                } 
+            }
+            .mini-info{
+                i{
+                    color: lighten($color: $color-highlight, $amount: 30); 
+                }
+            }
+        }
+        
+        h4{
+            font-size: 1rem;   
+            color: lighten($color: $text-color, $amount:8);         
+        }
+        h2{
+            font-weight: 800;
+        }
+        .mini-info{
+            i{
+                margin-right: 0.5rem;
+            }
+            span{
+                color: $color-primary;
+            }
+            color: lighten($color: $text-color, $amount:8);  
+        }
+        .right-box{
+           .icon-holder{
+                background-color: #ccc;
+                width:50px;
+                height: 50px;
+                padding:0.7rem;
+                @include border-radius(100px);
+                @extend .center-items;
+                img{
+                    max-width: 26px;
+                }
+           }
+        }        
+    }
+    .upload-section{
+        background: transparent linear-gradient(118deg, #1A95DC 0%, #E6125E 100%) 0% 0% no-repeat padding-box;
+        box-shadow: 0px 1px 26px #0000001A;
+        color: #fff;
+        @include border-radius(10px);
+        border: 0;
+        outline: 0 none;
+        @extend .center-items; 
+        height: 100%;
+        width: 100%;
+        position: relative;
+        .upload-inner{
+            i{
+                font-size: 2rem;
+            }
+            font-size: 1.2rem;
+        }
+        &:after{
+            content: "";
+            background: $color-highlight; 
+            filter: blur(48px);
+            position: absolute;
+            width: 82px;
+            height: 86px;
+            left: 10px;
+            z-index: -1;
+            bottom: 0px;
+        }
+    }
+    .white-box{
+        background: #fff;
+        padding: 1rem;
+        @extend .box-shadow-common;
+        @include border-radius(10px);
+        margin-bottom: 1rem;
+        position: relative;
+        h4{
+            font-size: 1rem;
+        }
+        .playerimg{
+            z-index: 99;
+            position: relative;
+            top: 15px;
+            width: 155px;
+            left: 18%;
+        }
+        .shapes {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            img{
+                position: absolute;
+                bottom: 0;
+                left: 18%;
+                right: auto;
+            }
+            img:first-child{
+                position: absolute;
+                bottom: 0;
+                left: 6%;
+                right: auto;
+            }
+        }
+        .av-list{
+            img{
+                max-width: 50px;
+            }
+        }
+        .img-show{
+            .img-right-block{
+                margin-left: 10px;
+                h2{
+                    font-weight: 800;
+                    margin-bottom: 0;
+                    color: $color-primary;
+                }
+                .mini-info{
+                    i{
+                        color:$color-highlight;
+                    }
+                    span{
+                        color: $color-primary;
+                        margin-left: 5px;
+                    }
+                }
+            }            
+        }               
+    }
+    .tasks-holder{
+        h4{
+            font-size: 1rem;
+        }
+        .info-list {
+            padding: 10px;
+            position: relative;
+            display: flex;
+            padding-left: 40px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 14px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            i{
+                position: absolute;
+                left: 9px;
+                top: 3px;
+                font-size: 20px;
+            }
+            &.error{
+                background:rgb(230 18 94 / 18%);
+                color: $color-highlight;
+
+            }
+            &.warning{
+                background:rgb(251 92 0 / 19%);
+                color:#914214;
+            }
+            &.success{
+                background:rgb(65 207 131 / 19%);
+                color:darken($color: $color_green, $amount: 10);
+            }
+        }
+    } 
+    
+}
+span.upload-info img {
+    max-width: 30px;
+    margin-right: 10px;
+}
+.table-container h2{
+    font-size: 1rem;
+}

@@ -1,0 +1,86 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/UserIndexpage">
+        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+              <i class="bi bi-brightness-high"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+              <i class="bi bi-bell"></i>
+          </a>
+        </li>
+        <!-- <li class="nav-item account-section">
+          <a class="nav-link" href="#">
+              <span>My Account</span>
+              <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="">
+                  <i class="bi bi-chevron-down"></i>
+              </span> 
+          </a>
+        </li> -->
+        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+          <a class="nav-link" href="#">
+            <span>My Account</span>
+            <span class="av-holder">
+              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <i class="bi bi-chevron-down"></i>
+            </span>
+          </a>
+          <div class="dropdown-panel">
+            <ul>
+                <li>Account</li>
+                <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav> 
+
+
+<div class="container-fluid my-videos mt-3">
+    <div class="my-videos-panel mbottom">
+      <div class="row">
+        <div class="col-12">
+          <h2>My Videos</h2>      
+        </div>
+        <div class="col-12">
+          <div class="row">
+             {% for i in videodetails %}
+              <div class="col-md-3 col-12 mb-2">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <video width="100%" height="100%" controls>
+                      <source src="{{ i.VideoPath }}" type="video/mp4">
+                      <source src="{{ i.VideoPath }}" type="video/ogg">
+                    Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <p class="video-title">Edits_Tutorial.mp4</p>
+                </div>               
+              </div>
+              {% endfor %}
+          </div>
+        </div>
+      </div>      
+    </div>
+    </div>
+    {% endblock content %}

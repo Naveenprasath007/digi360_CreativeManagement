@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  django_gunicorn:
+    volumes:
+      - static_vol:/static
+      - media_vol:/media
+    env_file:
+      - .env
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_vol:/static
+      - media_vol:/media
+    ports:
+      - "8000:80"
+    depends_on:
+      - django_gunicorn
+
+volumes:
+  static_vol:
+  media_vol:

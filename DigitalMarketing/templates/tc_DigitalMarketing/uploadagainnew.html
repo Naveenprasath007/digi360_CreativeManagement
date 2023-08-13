@@ -1,0 +1,261 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+        <!-- <h2>Insight<span>Motion</span></h2> -->
+        <h2>true<span>coverage</span></h2>
+
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+              <i class="bi bi-brightness-high"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+              <i class="bi bi-bell"></i>
+          </a>
+        </li>
+
+        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+          <a class="nav-link" href="#">
+            <span>My Account</span>
+            <span class="av-holder">
+              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <i class="bi bi-chevron-down"></i>
+            </span>
+          </a>
+          <div class="dropdown-panel">
+            <ul>
+                <li>Account</li>
+                <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav> 
+<form action="" method="post" enctype="multipart/form-data" id="upload-form">
+  {% csrf_token %}
+  
+<div class="upload-page">
+  <div class="upload-panel mbottom">
+    <div class="upwrap">
+      {%if video %}
+      <div class="upload-box">
+      <video class="vid" controls>
+        <source src="{{ video }}" type="video/mp4">
+        <source src="{{ video }}" type="video/ogg">
+      Your browser does not support the video tag.
+      </video>
+      </div>
+      {% endif %}
+
+
+      {%if imgurl %}
+      <div class="upload-box">
+        <img width="100%" height="100%" src="{{ imgurl }}" alt="">
+      </div>
+      {% endif %}
+
+      {%if gifurl %}
+      <div class="upload-box">
+        <img width="100%" height="100%" src="{{ gifurl }}" alt="">
+      </div>
+      {% endif %}
+
+      
+
+      {%if videodetails %}
+      <div class="upload-box">
+        <div class="messege-info">
+          {% include 'tc_DigitalMarketing/messages.html' %}
+          <!-- <span class="sucess-message"><img src="{% static 'images/success.png' %}" alt=""> Video has been Submitted Successfully <span> -->
+        </div>
+        <img class="collection" src="{% static 'images/fileupload.svg'%}" />
+        <h5>
+          Drop your videos, images, gif, <span>browse</span> or import from
+        </h5>
+        <div class="file-icon-box">
+          <div class="icon-box">
+            <div class="image-upload">
+              <label for="file-upload">
+                  <img src="{% static 'images/folder.svg'%}"/>
+              </label>
+              <input id="file-upload" type="file" name="myfile" onchange="GetFileSizeNameAndType()" accept="video/*,image/*" required/>
+          </div>
+          </div>
+          <div class="icon-box">
+            <img src="{% static 'images/drive.svg'%}" />
+          </div>
+        </div>
+        <p>You will free to upload any file format upto 500 mb</p>
+        <div id="fp"></div>
+        <p>
+          <div id="divTotalSize"></div>
+        </p>
+
+      </div>
+
+
+      <!-- <div class="progress-bar">
+        <div id="progress"></div>
+      </div> -->
+      {% endif %}
+      <div class="videotitle">
+        <div class="titlebox">
+          <div class="titlebox-img">
+            <img src="{% static 'images/upload-icon.png' %}">
+          </div>
+          <div class="titlebox-content">
+            <label>Status</label>
+            <p>{{ status }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%if video or imgurl or gifurl %}
+    <div class="presets-box">
+      <h2>Questions</h2>
+
+      <form action="" method="post"enctype="multipart/form-data">
+        {% csrf_token %}   
+
+              {% if qT.q0 %}
+              <label><h6>{{qT.q0}}</h6></label>
+              {% endif %}
+              
+              {% if qR.k0 %}
+              <select required aria-label="Select usage" class="form-select"
+                  name="q0" onchange="set_sub_usage_list()" >
+                  <option selected>--Select Your Choice--</option>
+                    {% for usage in qR.k0 %}
+                        <option value="{{ usage }}">{{ usage }}</option>
+                    {% endfor %}
+
+              </select>
+              <br>
+              {% endif %}
+              <button class="submit">Submit</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if videodetails %}
+    <div class="presets-box">
+      <h2>Presets</h2>
+      <div class="preset-icon-box">
+        <div class="icon-box-align">
+          <!-- <input type="checkbox" value="image" name="Creative" /> -->
+          <input type="radio" name="Creative" value="image">
+          <div class="creative-box">
+            <img src=" {% static './images/picture.svg'%}" />
+          </div>
+          <input type="radio" name="Creative" value="Video">
+          <div class="creative-box">
+            <img src=" {% static './images/video_ico.svg'%}" />
+          </div>
+          <input type="radio" name="Creative" value="GIF">
+          <div class="creative-box">
+            <img src=" {% static './images/Gif.svg'%}" />
+          </div>
+        </div>
+      </div>
+
+      <button class="submit" name='Upload' value="Upload">Upload</button>
+    </div>
+    {% endif %}
+  </div>
+</form>
+
+{% if video or imgurl or gifurl %}
+<div class="transcription-panel mbottom">
+  <h2>Transcription</h2>
+  <div class="transcription-box">
+    <p>{{ text }}</p>
+  </div>
+</div>
+{% endif %}
+
+{% if videodetails %}
+  <div class="transcription-panel mbottom">
+    <h2>Transcription</h2>
+    <div class="transcription-box">
+      <p>Transcription will be generated once video uploaded.</p>
+    </div>
+  </div>
+{% endif %}
+
+</div>
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="container">
+    {% include 'tc_DigitalMarketing/messages.html' %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="overflow-auto" style="max-width:100%; max-height:100vh"> 
+          {% if video %}
+          <button class="btn btn-success btn-sm float-end" onclick="window.location.href='/dm/uploaderdashboard/{{ id }}';" >Go to Dashboard</button>
+          {% endif %}
+          <form action="" method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            {% csrf_token %}
+                <input class="form-control" type="file" id="myFile" name="myfile"><br>
+                <input class="btn btn-primary" type="submit" value="Upload">
+           </div>
+        </form>  
+
+
+        {% if uploaded_file_url %}
+        <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+        {% endif %}  
+        <hr>    
+        <video width="100%" height="240" controls>
+            <source src="{{ video }}" type="video/mp4">
+            <source src="{{ video }}" type="video/ogg">
+        Your browser does not support the video tag.
+        </video>
+          <textarea class="form-control"  rows="3">{{ text }}</textarea>
+      </div>
+      </div>
+</div>
+</div> -->
+
+
+

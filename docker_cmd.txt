@@ -1,0 +1,47 @@
+docker 
+
+#####build container
+
+(For build) docker-compose build --no-cache
+(this work) docker-compose up  -d
+
+#####remove docker container
+
+docker rm -vf $(docker ps -aq)
+docker rmi -f $(docker images -aq)
+
+
+#####view container
+
+docker container ps
+
+docker logs <container_id>
+
+#####stop container
+
+docker stop <container_id>
+
+
+
+http://3.94.203.15/dm/login/
+
+
+
+
+######docker pure 
+
+docker system prune
+docker system prune --volumes
+
+
+
+
+
+ ###bash access
+
+docker exec -i -t <container_id> bash
+
+rm -r -f <file Name>
+
+nano <file Name>
+

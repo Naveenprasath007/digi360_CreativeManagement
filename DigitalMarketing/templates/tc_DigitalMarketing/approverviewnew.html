@@ -1,0 +1,370 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+              <i class="bi bi-brightness-high"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+              <i class="bi bi-bell"></i>
+          </a>
+        </li>
+        <!-- <li class="nav-item account-section">
+          <a class="nav-link" href="#">
+              <span>My Account</span>
+              <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="">
+                  <i class="bi bi-chevron-down"></i>
+              </span> 
+          </a>
+        </li> -->
+        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+          <a class="nav-link" href="#">
+            <span>My Account</span>
+            <span class="av-holder">
+              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <i class="bi bi-chevron-down"></i>
+            </span>
+          </a>
+          <div class="dropdown-panel">
+            <ul>
+                <li>Account</li>
+                <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav> 
+<div class="upload-page">
+
+    <div class="aprove-panel">
+
+      <div class="creative-panel">
+        <div class="overflow-auto" style="max-width:100%; max-height:80vh"> 
+
+        <div class="main-creative-box">
+            <video width="100%" height="300" controls="">
+                <source src="{{video}}" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            {% if video1 != '--' %}
+            <div class="thumbnails">
+              <!-- <video width="100%" height="100%" controls="">
+                <source src="images/dummy.mp4" type="video/mp4">
+              </video> -->
+              {% if Creative == 'image' %}
+              <img src="{{ image }}">
+              {% endif %}
+
+              {% if Creative == 'image' %}
+              <div class="videocircle">
+                <!-- <img src="{% static 'images/avatar.png'%}"> -->
+                <video width="100%" height="100%" controls="">
+                  <source src="{{video}}" type="video/mp4">
+              Your browser does not support the video tag.
+              </video>
+              </div>
+              <div class="btnview">Watch Video</div>
+              {% endif %}
+
+            </div>
+            {% endif %}
+              
+          
+        <!-- </div> -->
+        
+
+        <div class="videotitle">
+          <div class="titlebox">
+            
+            <div class="titlebox-content">
+              <label>uploaded by <b>{{uploaderName}}</b></label>
+              <p>{{vname}}</p>
+            </div>
+          </div>
+          <div class="titlebox">
+           
+            <div class="icon-box-align">
+
+
+              {% if Platform == 'Facebook' %}
+              <div class="platform-box" style="background-color: #3b5998">
+                <img src="{% static './images/facebook.svg'%}">
+              </div>
+              {% endif %}
+
+              {% if Platform == 'Youtube' %}
+              <div class="platform-box" style="background-color: #ee3b3b">
+                <img src="{% static './images/youtube.svg'%}">
+              </div>
+              {% endif  %}
+
+              {% if Platform == 'GDN' %}
+              <div class="platform-box" style="background-color: #c9e8f9">
+                <img src="{% static './images/cdn.png '%}" />
+              </div>
+              {% endif %}
+
+              {% if Platform == 'TikTok' %}
+              <div class="platform-box" style="background-color: #d8d5d5">
+                <img src="{% static './images/tiktok.svg '%}" />
+              </div>
+              {% endif %}
+
+              {% if Platform == 'Native' %}
+              <div class="platform-box" style="background-color: #69c0e9">
+                <img src="{% static './images/native.svg'%}" />
+              </div>
+              {% endif %}
+
+
+              
+              {% if  Creative == 'image' %}
+              <div class="creative-box">
+                <img src=" {% static './images/picture.svg'%}" />
+              </div>
+              {% endif %}
+
+              {% if Creative == 'Video' %}
+              <div class="creative-box">
+                <img src=" {% static './images/video_ico.svg'%}" />
+              </div>
+              {% endif %}
+
+              {% if Creative == 'GIF' %}
+              <div class="creative-box">
+                <img src=" {% static './images/Gif.svg'%}" />
+              </div>
+              {% endif %}
+
+
+
+
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="transcription-panel mbottom">
+          <h5>Transcription</h5>
+          <div class="transcription-box1">
+            <p>{{ Transcribe }}</p>
+          </div>
+        </div>
+        <!-- This can be help for sperate div -->
+      </div>
+    </div>
+
+    <form action="" method="post">
+      {% csrf_token %}  
+      <div class="overflow-auto" style="max-width:100%; max-height:10vh"> 
+      {%if Transcribe != '--'%}
+      <div class="mb-3">
+        <textarea class="form-control"  name="cmdtranscript" rows="3">{{Transcribe}}</textarea>
+      </div>
+      {% endif %}
+      {%if Transcribe1 != '--'%}
+      <div class="mb-3">
+      <textarea class="form-control"  name="cmdtranscript1" rows="3">{{Transcribe1}}</textarea>
+      </div>
+      {% endif %}
+      </div>
+    </div>
+
+
+      
+      <div class="aproval-panel">
+        <div class="overflow-auto" style="max-width:100%; max-height:80vh"> 
+          <h2>Presets</h2>
+          <!-- <form action="" method="post"enctype="multipart/form-data"> -->
+          {% csrf_token %}  
+          {% if qT.q0 %}
+          <section>
+              <p>{{qT.q0}}</p>
+          </section>
+          {% endif %}
+          {% if qR.k0 %}
+          <div class="ap-box">
+          <input text="" placeholder="Youtubr" value="{{R.0.1}}" readonly>
+          </div>
+          {% endif %}
+
+          {% for i in Questions %}
+          <div>
+            <section>
+              <p>{{ i.questiontext }}</p>
+            </section>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions{{ i.questionid }}" id="inlineRadio1" value='Yes' checked>
+              <label class="form-check-label" for="inlineRadio1">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions{{ i.questionid }}" id="inlineRadio2" value='No'>
+              <label class="form-check-label" for="inlineRadio2">No</label>
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" id="exampleFormControlTextarea1" name="command{{ i.questionid }}" rows="1"></textarea>
+            </div>
+          </div>
+          {% endfor %}
+
+
+        <br>
+        <div>
+          <div class="form-group">
+            <textarea class="form-control" name="Reason" id="Reason" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="approval-button">
+        <!-- <button class="approval" data-bs-toggle="modal" data-bs-target="">Submit</button> -->
+        <!-- <button type="submit" name="btn" value=""class="approval">Submit</button>  -->
+        <button type="submit"  name="btn" id="btncolor" value=""class="approval">Submit</button> 
+        <button type="submit" style="display:none;" name="btn" id="btncolor1" value=""class="reject">Submit</button>
+
+        </div>
+      </form>
+
+
+
+
+
+
+          
+
+
+          <!-- <div class="approval-button">
+              <button class="approval" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Approve</button>
+              <button class="reject" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1">Reject</button>
+          </div> -->
+      </div>
+    </div>
+    </div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirm approval</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post"enctype="multipart/form-data">
+          {% csrf_token %}  
+          
+          <div>
+            <select name="ReasonTextbox" class="form-control form-control-sm">
+              <option value="" selected="selected">Select...</option>
+              <option value="Dimensions">Dimensions</option>
+              <option value="Quality">Quality</option>
+              <option value="Content">Content</option>
+            </select>
+        </div>
+        <div class="Dimensions box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Dimensions Reason" name="DimensionsTextbox"/>
+        </div>
+        <div class="Quality box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Quality Reason" name="QualityTextbox"/>
+         </div>
+        <div class="Content box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Content Reason" name="ContentTextbox"/>
+        </div>
+        <br>
+        <div>
+        <input type="textarea"  class="form-control form-control-sm" placeholder="Any Others Reason..." name="OthersTextbox"/>
+      </div>
+      </div>
+      <div class="modal-footer">
+        
+        <button type="submit" name="btn" value="Approve"class="btn btn-primary">Confirm changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Reject approval</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post"enctype="multipart/form-data">
+          {% csrf_token %}  
+          
+          <div>
+            <select name="ReasonTextbox" class="form-control form-control-sm">
+              <option value="" selected="selected">Select...</option>
+              <option value="Dimensions">Dimensions</option>
+              <option value="Quality">Quality</option>
+              <option value="Content">Content</option>
+            </select>
+        </div>
+        <div class="Dimensions box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Dimensions Suggestion" name="DimensionsTextbox"/>
+        </div>
+        <div class="Quality box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Quality Suggestion" name="QualityTextbox"/>
+         </div>
+        <div class="Content box">
+          <input type="textbox" class="form-control form-control-sm" placeholder="Enter Content Suggestion" name="ContentTextbox"/>
+        </div>
+        <br>
+        <div>
+        <input type="textarea"  class="form-control form-control-sm" placeholder="Any Others Suggestion..." name="OthersTextbox"/>
+      </div>
+    </div>
+      <div class="modal-footer">
+        
+        <button type="submit" name="btn" value="Reject"class="btn btn-primary">Confirm changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- <div class="transcription-panel mbottom">
+  <h2>Transcription</h2>
+  <div class="transcription-box1">
+  {% if Transcribe != '--' %}
+    <p>{{ Transcribe }}</p>
+  {% endif %}
+  {% if Transcribe1 != '--' %}
+  <h2>Other Creative's Transcription</h2>
+    <p>{{ Transcribe1 }}</p>
+  {% endif %}
+  </div>
+</div> -->
+
+  </div>
+
+{% endblock content %}

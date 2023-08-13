@@ -1,0 +1,24 @@
+body
+{
+   margin-left: 5%;
+   max-width: 100%;
+   overflow-x: hidden;
+}
+.navbar-brand
+{
+   margin-left: 5%;
+   margin-bottom: 20px;
+}
+.navbar-nav
+{
+   margin-right: 5%;
+   margin-bottom: 20px;
+}
+.bodytop
+{
+   position:absolute; 
+   margin-top: 10px;
+   text-align: left;
+   font-weight:bold;
+   left: 5%;      
+}

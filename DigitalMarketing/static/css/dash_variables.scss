@@ -1,0 +1,12 @@
+$color-primary:#0278bd;
+$color-highlight:#ce094f;
+$color-deafult:#58595b;
+$font-primary: 'Lato', sans-serif;
+$bg_color:#F5F6FA; 
+$color_green:#41CF83;
+$text-color:#353535;
+
+
+@mixin border-radius($radius){
+    border-radius: $radius;
+}

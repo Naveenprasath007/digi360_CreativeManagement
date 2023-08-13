@@ -1,0 +1,413 @@
+{% extends 'tc_DigitalMarketing/dashboardbase.html' %}
+{% load static %}
+
+{% block content %}
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
+                <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid"> -->
+              <h2>true<span>coverage</span></h2>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-brightness-high"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-bell"></i>
+                </a>
+              </li>
+              <!-- <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+                <a class="nav-link" href="#">
+                  <span>My Account</span>
+                  <span class="av-holder">
+                    <img src="{% static 'images/avatar.png'%}" alt="">
+                    <i class="bi bi-chevron-down"></i>
+                  </span>
+                </a>
+              </li> -->
+
+              <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+                <a class="nav-link" href="#">
+                  <span>My Account</span>
+                  <span class="av-holder">
+                    <img src="{% static 'images/avatar.png'%}" alt="" />
+                    <i class="bi bi-chevron-down"></i>
+                  </span>
+                </a>
+                <div class="dropdown-panel">
+                  <ul>
+                      <li>Account</li>
+                      <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+                  </ul>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </nav> 
+      {% include 'tc_DigitalMarketing/messages.html' %}
+      <!-- <div class="messege">
+      </div> -->
+      <div class="inner-areas container-fluid">
+            <div class="row mt-3 mb-3">
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12">
+                            <div class="welcome-box d-flex">
+                                <div class="left-contents">
+                                    <h3>Congratulations {{UserName}}!</h3>
+                                <p>Approved Assets level go up</p>
+                                <h2>{{ Approved }}</h2>
+                                <a style="text-decoration: none;color: inherit;"href='/dm/detailedview/{{ id }}' rel="noopener noreferrer"><button class="view-btn btn btn-primary">View Detailed Report</button></a>
+                                </div>
+                                <div class="image-man">
+                                    <img src="{% static 'images/user_welcome.png'%}" alt=""> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="info-box approved justify-content-between align-items-center">
+                                <a style="text-decoration: none;color: inherit;" href='/dm/filterpage/{{ id }}/Approved/User' rel="noopener noreferrer">
+                                <div class="left-box">
+                                    <h4>Approved Assets</h4>
+                                    <h2>{{ Approved }}</h2>
+                                    <div class="mini-info">
+                                        <i class="bi bi-arrow-up"></i><span>0%</span> This month
+                                    </div>
+                                </div>
+                                </a>
+                                <div class="right-box">
+                                    <div class="icon-holder">
+                                        <img src="{% static 'images/video_icon.svg'%}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="info-box rejected justify-content-between  align-items-center">
+                                <a style="text-decoration: none;color: inherit;" href='/dm/filterpage/{{ id }}/Rejected/User' rel="noopener noreferrer">
+                                <div class="left-box">
+                                    <h4>Rejected Assets</h4>
+                                    <h2>{{ Rejected }}</h2>
+                                    <div class="mini-info">
+                                        <i class="bi bi-arrow-down"></i><span>0%</span> This month
+                                    </div>
+                                </div>
+                                </a>
+                                <div class="right-box">
+                                    <div class="icon-holder">
+                                        <img src="{% static 'images/video_icon.svg'%}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="info-box pending justify-content-between  align-items-center">
+                                <a style="text-decoration: none;color: inherit;" href='/dm/filterpage/{{ id }}/Pending/User' rel="noopener noreferrer">
+                                <div class="left-box">
+                                    <h4>Pending Assets</h4>
+                                    <h2>{{ Pending }}</h2>
+                                    <div class="mini-info">
+                                        <i class="bi bi-arrow-down"></i><span>0%</span> This month
+                                    </div>
+                                </div>
+                                </a>
+                                <div class="right-box">
+                                    <div class="icon-holder">
+                                        <img src="{% static 'images/video_icon.svg'%}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <a style="text-decoration: none" href='/dm/createrupload/{{ id }}' rel="noopener noreferrer">
+                            <button class="upload-section" >
+                                <div class="upload-inner d-flex flex-column">
+                                    <i class="bi bi-upload"></i>
+                                <span>Video / Images / Gif</span>
+                                </div>
+                            </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5 col-12">
+                     <div class="row">
+                        <div class="col-12 col-md-6">
+                            <a style="text-decoration: none;color: inherit;" href='/dm/myvideos/{{ id }}' rel="noopener noreferrer">
+                            <div class="white-box">
+                                 <div class="my-heads">
+                                    <h4>My Assets</h4>
+                                 </div>
+                                 <img src="{% static 'images/player.png'%}" alt="" class="img-fluid playerimg">
+                                 <div class="shapes">
+                                    <img src="{% static 'images/shape.svg'%}" alt="" class="img-fluid">
+                                    <img src="{% static 'images/shape_2.svg'%}" alt="" class="img-fluid">
+                                 </div>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="white-box">
+                                <div class="my-heads">
+                                    <h4>Uploaded File types</h4>
+                                 </div>
+                                 <div id="barChart"></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="white-box">
+                                <div class="my-heads">
+                                    <h4>Reviewers <a class="show" href="#">Show All</a></h4>
+                                 </div>
+                                 <div class="av-list d-flex justify-content-between">
+                                        <a href="#">
+                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
+                                        </a>
+                                        <a href="#">
+                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
+                                        </a>
+                                 </div>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                <div class="col-md-7 col-12">
+                    <div class="row">
+                        <div class="col-md-5">
+                           <div class="white-box mb-3">
+                                <h4>Uploaded Images</h4>
+                                <div class="d-flex img-show align-items-center">
+                                    <div class="img-block-left">
+                                        <img src="{% static 'images/img.svg'%}" alt="">
+                                    </div>
+                                    <div class="img-right-block">
+                                        <h2>{{upload_img_gif_count}}</h2>
+                                        <div class="mini-info">
+                                            <i class="bi bi-arrow-up"></i><span>0%</span> This month
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+                           <div class="white-box tasks-holder">
+                                <h4>Recent</h4>
+                                <table class="table table-stripped">
+                                    <tbody>
+                                    {% for i in recent %}
+                                    <tr>
+                                    <div class="alert-lists mt-2">
+                                            <td>
+                                                <div class="info-list success">
+                                                <i class="bi bi-play-circle"></i>
+                                                {{i.videoname}}
+                                                </div>
+                                            </td>
+        
+                                            <td>
+                                                <div class="info-list success">
+                                                    {% if i.status != 'Rejected' %}
+                                                    ---
+                                                    {% endif %}
+                                                    {% if i.status == 'Rejected' %}
+                                                    <a style="text-decoration:none" href="/dm/statusview/{{id}}/{{i.videoid}}"> View  </a>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+        
+                                        </div>
+                                    </div>                     
+                                </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                           </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="white-box">
+                                <h4>Upload History</h4>
+                                <div id="uploadHistory">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-12">
+                    <div class="white-box table-container">
+                        <h2>Uploaded  Videos</h2>
+                         <table class="table table-stripped">
+                            <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>Video Title</th>
+                                    <th>Upload Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                    <th>Reviewer Name</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>10 Awesome Ways to Catch a Fish Without a Rod</td>
+                                    <td>June 1, 2023, 10:23pm</td>
+                                    <td>
+                                        <span class="tag pending">
+                                            Pending
+                                        </span>
+                                    </td>
+                                    <td>
+                                        Upload quality is not good
+                                    </td>
+                                    <td>
+                                        <span class="upload-info">
+                                            <img src="images/av_5.png" alt="">
+                                            Chandra 
+                                        </span>
+                                    </td>
+                                  
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>10 Awesome Ways to Catch a Fish Without a Rod</td>
+                                    <td>June 1, 2023, 10:23pm</td>
+                                    <td>
+                                        <span class="tag pending">
+                                            Pending
+                                        </span>
+                                    </td>
+                                    <td>
+                                        Upload quality is not good
+                                    </td>
+                                    <td>
+                                        <span class="upload-info">
+                                            <img src="images/av_5.png" alt="">
+                                            Chandra 
+                                        </span>
+                                    </td>
+                                  
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>10 Awesome Ways to Catch a Fish Without a Rod</td>
+                                    <td>June 1, 2023, 10:23pm</td>
+                                    <td>
+                                        <span class="tag pending">
+                                            Pending
+                                        </span>
+                                    </td>
+                                    <td>
+                                        Upload quality is not good
+                                    </td>
+                                    <td>
+                                        <span class="upload-info">
+                                            <img src="images/av_5.png" alt="">
+                                            Chandra 
+                                        </span>
+                                    </td>
+                                  
+                                </tr>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="white-box table-container">
+                        <h2>Uploaded  Videos</h2>
+                        <div class="overflow-auto" style="max-width:100%; max-height:30vh"> 
+                         <table class="table table-stripped">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Sl No.</th> -->
+                                    <th>Video Title</th>
+                                    <th>Date & Time</th>
+                                    <th>Uploaded By</th>
+                                    <th>Status</th>
+                                    <th>Video Details</th>
+                                    <th>Reviewer Name</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in status %}
+                                <tr>
+                                    <!-- <td>#</td> -->
+                                    <td>{{i.videoname}}</td>
+                                    <td>{{i.createddate}}</td>
+                                    <td>{{i.uploadername}}</td>
+                                    <td>
+                                        <span class="tag pending">
+                                            {{i.status}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if i.status == 'Pending' %}
+                                        <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a>
+                                        {% endif %}
+                                        {% if i.status == 'Approved' %}
+                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a>
+                                        {% endif %}
+                                        {% if i.status == 'Rejected' %}
+                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="upload-info">
+                                            {% if i.approver == '---' %}
+                                            Waiting for Review
+                                            {% endif %}
+                                            {% if i.approver != '---' %}
+                                            <img src="{% static 'images/av_5.png'%}" alt="">
+                                            {{i.approver}} 
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                  
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                         </table>
+                    </div>
+                    </div>
+                </div>
+            </div> 
+      </div>
+      {% endblock content %}
+
