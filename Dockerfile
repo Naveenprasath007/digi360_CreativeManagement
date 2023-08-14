@@ -4,7 +4,8 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND noninteractive
 
 
-# RUN apt-get update && apt-get install -y curl apt-transport-https python3 python3-pip python-dev locales
+RUN apt-get update && apt-get install -y curl apt-transport-https python3 python3-pip python-dev locales
+RUN apt-get install -y libpq-dev
 # RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 # RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
 # RUN apt-get update
@@ -16,7 +17,6 @@ RUN apt-get -y upgrade
 RUN apt-get install -y ffmpeg
 
 RUN pip install --upgrade pip
-RUN pip install psycopg2
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 

@@ -11,6 +11,8 @@ services:
       context: .
     ports:
       - "5000:5000"
+    depends_on:
+      - db
   nginx:
     build: ./nginx
     volumes:
@@ -20,7 +22,20 @@ services:
       - "8000:80"
     depends_on:
       - django_gunicorn
+  
+  db:
+    image: postgres:11.7
+    init: true
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 55432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=Creativemanagement
 
 volumes:
+  postgres_data:
   static_vol:
   media_vol:
