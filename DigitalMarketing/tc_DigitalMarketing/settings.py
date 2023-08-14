@@ -87,42 +87,6 @@ WSGI_APPLICATION = 'tc_DigitalMarketing.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 #___________MY DATABASE_____________
-
-
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mssql',
-#         'HOST': 'localhost',
-#         'PORT': '5533',
-#         'NAME': 'db_CreatorManagement',
-#         'USER': 'sa',
-#         'PASSWORD': 'admin@1234',
-
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 17 for SQL Server',
-#         },
-#     },
-# }
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mssql',
-#         'HOST': 'dm-truecoverage.crjk5x4tyyvi.us-east-1.rds.amazonaws.com',
-#         'PORT': '',
-#         'NAME': 'db_CreatorManagement',
-#         'USER': 'admin',
-#         'PASSWORD': 'admin1234',
-
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 17 for SQL Server',
-#         },
-#     },
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -135,6 +99,19 @@ DATABASES = {
     }
 }
 
+# server db config
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'Creativemanagement', 
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'HOST': 'db', 
+#         'PORT': '5432',
+#         'DISABLE_SERVER_SIDE_CURSORS': True,
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
