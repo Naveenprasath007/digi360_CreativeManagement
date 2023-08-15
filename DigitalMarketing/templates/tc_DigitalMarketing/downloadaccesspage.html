@@ -60,17 +60,17 @@
     <div class="col-md-12">
         <input type="search" id='search-input' placeholder="search here" onkeyup="filterDivisions()"/>
         <button class="sortby" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"><img src="{% static 'images/Download.svg'%}"></button>
+        {% if accessed_video %}
+        <button class="sortby"><a style="text-decoration:none" href="/dm/superadmindetail_downloader_view/{{id}}"> <img src="{% static 'images/enterview.svg'%}"> </a></button>
+        {% endif %}
         <button id="show"class="sortby"><img src="{% static 'images/list.svg'%}"></button>
         <button id="hide"class="sortby"><img src="{% static 'images/grid.svg'%}"></button>
-
-
-
-
-        
     </div>
 </div>
     </div>
-
+<div class="messege-info">
+  {% include 'tc_DigitalMarketing/messages.html' %}
+</div>
 <form action="" method="post" enctype="multipart/form-data" id="upload-form">
 {% csrf_token %}
 <div id="Listview" class="division">

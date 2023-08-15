@@ -4,10 +4,18 @@
 {% block content %}
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
+        {% if userrolename == 'Uploader' %}
         <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ k }}">
           <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
           <h2>true<span>coverage</span></h2>
         </a>
+        {% endif %}
+        {% if userrolename == 'Reviewer' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
         <button
           class="navbar-toggler"
           type="button"
@@ -280,7 +288,7 @@
               Your browser does not support the video tag.
               </video>
             </div>
-            <p class="video-title">Edits_Tutorial.mp4</p>
+            <p class="video-title"></p>
             
           </div>
           {% endfor %}

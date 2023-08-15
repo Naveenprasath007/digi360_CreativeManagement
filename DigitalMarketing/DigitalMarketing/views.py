@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.core.files.storage import FileSystemStorage
 from .forms import *
-from .models import TbVideo,Campaignvideo,TbCampaignquestion,Campaignquestionresponse,TbQuestion,TbUserrole,cVideoId,TbStatus,TbUser,TbApprove,video_Details,TbapproverQuestion
+from .models import TbVideo,Campaignvideo,TbCampaignquestion,Campaignquestionresponse,TbQuestion,TbUserrole,cVideoId,TbStatus,TbUser,TbApprove,video_Details,TbapproverQuestion,Profile
 import pandas as pd
+import json
+
 # 
 import whisper
 
@@ -18,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def uploaderdashboard(request,id):
         if request.method == "POST":
             return render(request,'tc_DigitalMarketing/dash_index.html',{})
@@ -64,7 +66,7 @@ def uploaderdashboard(request,id):
                                                                      'DateValue':DateValue,"videoC":videoC,'upload_img_gif_count':upload_img_gif_count,'File_Type':File_Type,
                                                                      'File_TypeC':File_TypeC,'recent':recent,
                                                                      })
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def filterpage(request,id,id1,id2):
         if request.method == "POST":
              return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,})
@@ -86,14 +88,14 @@ def filterpage(request,id,id1,id2):
             user_status=TbStatus.objects.filter(status=id1).order_by('-createddate').values()
         return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,'user_status':user_status})
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def myvideos(request,id):
         if request.method == "POST":
              return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id})
         videodetails=video_Details.objects.filter(userid=id)
         return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id,'videodetails':videodetails})
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def creater_upload(request,id):
         if request.method == "POST":
             q0 = request.POST.get('q0')
@@ -257,12 +259,21 @@ def creater_upload(request,id):
                         QuestionResponse["k"+str(i)] = lQR
                     status='Uploaded'
 
+                    username=Profile.objects.get(userid = id)
+                    userroleid = username.userroleid
+                    print(userroleid)
+                    userrolename=TbUserrole.objects.get(userroleid = userroleid)
+                    userrolename=userrolename.userrolename
+
+
                     return render(request,'tc_DigitalMarketing/upload-page.html',{"k":id,"video":url,"text":text,
                                                                                     'qT':questionsText,
                                                                                     'qR':QuestionResponse,
                                                                                     "data":data,'dataQ':dataQ,
                                                                                     'status':status,'Title':Title1,
-                                                                                    'imgurl':image_url,'gifurl':Gif_url})
+                                                                                    'imgurl':image_url,'gifurl':Gif_url,
+                                                                                    'userrolename':userrolename,
+                                                                                    })
             
 
             CVID = cVideoId.objects.all().order_by('-id').first()
@@ -300,21 +311,40 @@ def creater_upload(request,id):
             
             videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP)
             videoDetails.save()
+           
             
             if q0=='No':
                 messages.success(request, 'Upload other Placements Creative')
                 a=CVID
                 return redirect('/dm/uploadagain/'+str(a)+str('/')+id)
             
-            messages.success(request, 'submitted succesfully')
-            return redirect('/dm/uploaderdashboard/'+id)
+            username=Profile.objects.get(userid = id)
+            userroleid = username.userroleid
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename 
+
+            if userrolename=='Uploader':
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/uploaderdashboard/'+id)
+            else:
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/approver/'+id)
         else:
             a=id
             status='Waiting'
             videodetails1=video_Details.objects.filter(userid=id)
             videodetails="video_Details.objects.filter(userid=id)"
+            username=Profile.objects.get(userid = id)
+            userroleid = username.userroleid
+            print(userroleid)
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename
 
-            return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,'videodetails':videodetails,'videodetails1':videodetails1})
+
+            return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,
+                                                                          'videodetails':videodetails,
+                                                                          'videodetails1':videodetails1,
+                                                                          'userrolename':userrolename})
 
 
 def transcribe_video_audio(video_path):
@@ -373,7 +403,7 @@ def user_indexpage(request):
         else:
             return render(request, 'tc_DigitalMarketing/UserindexPage.html')
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def approver(request,id):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/createrupload.html')
@@ -462,11 +492,12 @@ def approver(request,id):
         # return render(request,'tc_DigitalMarketing/approver.html',{'status':status,'id':id})
         return render(request,'tc_DigitalMarketing/approver_index.html',{'status':status,'id':id,'Approved':Approved,'Rejected':Rejected,
                                                                          'Pending':Pending,'UserName':UN,'DateValue':DateValue,"videoC":videoC,
-                                                                          'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,'upload_img_gif_count':upload_img_gif_count})
+                                                                          'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,
+                                                                          'upload_img_gif_count':upload_img_gif_count})
 
 
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def admin(request,id):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/admin_index.html')
@@ -568,7 +599,7 @@ def admin(request,id):
 #         # return render(request,'tc_DigitalMarketing/approver.html',{'status':status,'id':id})
 #         return render(request,'tc_DigitalMarketing/approver_index.html',{'status':status,'id':id})
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def approver_view(request,id,uid):
     # try:
         if request.method == "POST":
@@ -610,12 +641,7 @@ def approver_view(request,id,uid):
 
                 
                 if Total == len(qResList):  
-                    # cursor1=connection.cursor()
-                    # cursor1.execute("select VideoPath,VideoTranscription,VideoName,Platform from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id))
-                    # VideoDeatails=cursor1.fetchall()
-                    # vP='/'+VideoDeatails[0][0]
-                    # vN=VideoDeatails[0][2]
-                    # pN=VideoDeatails[0][3]
+
 
                     video=TbVideo.objects.get(videoid =id)
                     vP='/'+video.videopath
@@ -627,22 +653,6 @@ def approver_view(request,id,uid):
                     getApproverName=user.username
                     print(getApproverName)
                     
-                    # getApproverName=connection.cursor()
-                    # getApproverName.execute("select UserName from tb_User  WHERE UserID='{value}';".format(value=uid) )
-                    # getApproverName=getApproverName.fetchall() 
-                    # print(getApproverName[0][0])
-
-
-
-                    # getuid=connection.cursor()
-                    # getuid.execute("select UserName from tb_User u inner join CampaignQuestionResponse cqr on cqr.userID=u.userID inner join tb_CampaignQuestion cq on cq.CampaignQuestionID=cqr.CampaignQuestionID AND cq.CampaignVideoID ='{value}';".format(value=id))  
-                    # getuid=getuid.fetchall() 
-                    # print(getuid)
-                    # getuserid=connection.cursor()
-                    # getuserid.execute("select UserID from tb_User WHERE UserName='{value}';".format(value=getuid[0][0]))  
-                    # getuserid=getuserid.fetchall()  
-                    # print(getuserid[0][0])
-
                     userName=connection.cursor()
                     userName.execute("select UserName from tb_User where UserID='{val}'".format(val=uid))
                     userName=userName.fetchall()
@@ -651,22 +661,6 @@ def approver_view(request,id,uid):
                     approve = TbApprove(userid=TbUser.objects.get(userid=uid),
                                         videoid=id,videotitle=vN,videopath=vP,uploadername=UN)
                     approve.save()
-                    # deletestatus=connection.cursor()
-                    # deletestatus.execute("DELETE FROM tb_Status WHERE videoID='{value}';".format(value=id))
-
-                    # video = TbStatus(userid=TbUser.objects.get(userid=getuserid[0][0]),videoid=id,status='Approved',reason='Video is Correct',videoname=vN,approver=getApproverName[0][0],uploadername=UN,platform=pN)   
-                    # video.save() 
-
-                    
-                    # approve = TbApprove.objects.get(videoid=id)
-                    # approve.videoid=id
-                    # approve.videotitle=vN
-                    # approve.videopath=vP
-                    # approve.uploadername=UN
-                    # approve.save()
-
-
-
 
                     Question = TbapproverQuestion.objects.all()
                     l=[]
@@ -693,6 +687,7 @@ def approver_view(request,id,uid):
                     video.reason=l
                     video.approver=getApproverName
                     video.MainReason=tb
+                    video.downloadaccess='Notyet'
                     video.save()
 
                     videodetails=TbVideo.objects.get(videoid=id)
@@ -703,20 +698,40 @@ def approver_view(request,id,uid):
                     videodetails.save()
 
 
-                    # deleteQuestionsres=connection.cursor()
-                    # deleteQuestionsres.execute("DELETE campaignquestionresponse FROM campaignquestionresponse INNER JOIN tb_campaignquestion ON campaignquestionresponse.campaignquestionid = tb_campaignquestion.campaignquestionid WHERE tb_campaignquestion.campaignvideoid='{value}';".format(value=id))
                     Campaignquestionresponse.objects.filter(campaignquestionid=id).delete()
-                    # cqr.delete()
                     TbCampaignquestion.objects.filter(campaignquestionid=id).delete()
-                    # cq.delete()
 
                     messages.success(request, 'Approved succesfully')
                     return redirect('/dm/approver/'+str(uid))
+
+                    # deleteQuestionsres=connection.cursor()
+                    # deleteQuestionsres.execute("DELETE campaignquestionresponse FROM campaignquestionresponse INNER JOIN tb_campaignquestion ON campaignquestionresponse.campaignquestionid = tb_campaignquestion.campaignquestionid WHERE tb_campaignquestion.campaignvideoid='{value}';".format(value=id))
+                    # cqr.delete()
+                    # cq.delete()
+
+
                 else:
                     # NO NEED THIS CODE /25/6/23
                     # deletestatus=connection.cursor()
                     # deletestatus.execute("DELETE FROM tb_Status WHERE videoID='{value}';".format(value=id))
                     
+                    video=TbVideo.objects.get(videoid =id)
+                    vP='/'+video.videopath
+                    vN=video.videoname
+                    vP1='/'+video.videopath1
+                    pN=video.platform
+
+                    user=TbUser.objects.get(userid=uid)
+                    getApproverName=user.username
+                    print(getApproverName)
+                    
+                    userName=connection.cursor()
+                    userName.execute("select UserName from tb_User where UserID='{val}'".format(val=uid))
+                    userName=userName.fetchall()
+                    UN=userName[0][0]
+                    
+
+
                     Question = TbapproverQuestion.objects.all()
                     l=[]
                     res = {}
@@ -737,57 +752,6 @@ def approver_view(request,id,uid):
                     l.append(tb)
                     print(l)
 
-                    # ___This for get question and responces__
-                    # cursor=connection.cursor()
-                    # cursor.execute("select QuestionText,Response from CampaignQuestionResponse cqr inner join tb_CampaignQuestion cquestion on cqr.CampaignQuestionID = cquestion.CampaignQuestionID AND cquestion.CampaignVideoID ='{value}' inner join tb_Question question on cquestion.QuestionID = question.QuestionID;".format(value=id))
-                    # result=cursor.fetchall()
-                    # print(result)
-
-
-                    # l=[]
-                    # res = {}
-                    # for key in result:
-                    #     for value in Qlist:
-                    #         res[key[0]] = value
-                    #         Qlist.remove(value)
-                    #         break       
-                    # l.append(res)
-                    # l.append(tb)
-                    # l.append(DimensionsTextbox)
-                    # l.append(QualityTextbox)
-                    # l.append(ContentTextbox)
-                    # l.append(OthersTextbox)
-                    # print(l)
-
-                    cursor1=connection.cursor()
-                    cursor1.execute("select VideoPath,VideoTranscription,VideoName,Platform from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id))
-                    VideoDeatails=cursor1.fetchall()
-                    vP='/'+VideoDeatails[0][0]
-                    vN=VideoDeatails[0][2]
-                    pN=VideoDeatails[0][3]
-
-                    getuid=connection.cursor()
-                    getuid.execute("select UserName from tb_User u inner join CampaignQuestionResponse cqr on cqr.userID=u.userID inner join tb_CampaignQuestion cq on cq.CampaignQuestionID=cqr.CampaignQuestionID AND cq.CampaignVideoID ='{value}';".format(value=id))  
-                    getuid=getuid.fetchall() 
-                    getuserid=connection.cursor()
-                    getuserid.execute("select UserID from tb_User WHERE UserName='{value}';".format(value=getuid[0][0]))  
-                    getuserid=getuserid.fetchall() 
-
-                    getApproverName=connection.cursor()
-                    getApproverName.execute("select UserName from tb_User  WHERE UserID='{value}';".format(value=uid) )
-                    getApproverName=getApproverName.fetchall() 
-                    print(getApproverName)
-
-
-                    userName=connection.cursor()
-                    userName.execute("select UserName from tb_User where UserID='{val}'".format(val=getuserid[0][0]))
-                    userName=userName.fetchall()
-                    UN=userName[0][0]
-
-                    # HERE INCLUDE UPDATE
-                    # NO NEED THIS CODE /25/6/23
-                    # video = TbStatus(userid=TbUser.objects.get(userid=getuserid[0][0]),videoid=id,status='Rejected',reason=l,videoname=vN,approver=getApproverName[0][0],uploadername=UN,platform=pN)   
-                    # video.save() 
 
                     video = TbStatus.objects.get(videoid=id)
                     video.status='Rejected'
@@ -806,17 +770,12 @@ def approver_view(request,id,uid):
 
 
                     # ____new Delete lines added here__
-                    deleteQuestionsres=connection.cursor()
-                    deleteQuestionsres.execute("DELETE CampaignQuestionResponse FROM CampaignQuestionResponse inner join tb_CampaignQuestion on CampaignQuestionResponse.CampaignQuestionID = tb_CampaignQuestion.CampaignQuestionID WHERE tb_CampaignQuestion.CampaignVideoID='{value}';".format(value=id))
-                    # deleteQuestions.execute("DELETE FROM CampaignQuestionResponse CQR inner join tb_CampaignQuestion CQ on CQ.CampaignQuestionID = CQR.CampaignQuestionID WHERE CQ.CampaignVideoID='{value}';".format(value=id))
+                    # deleteQuestionsres=connection.cursor()
+                    # deleteQuestionsres.execute("DELETE CampaignQuestionResponse FROM CampaignQuestionResponse inner join tb_CampaignQuestion on CampaignQuestionResponse.CampaignQuestionID = tb_CampaignQuestion.CampaignQuestionID WHERE tb_CampaignQuestion.CampaignVideoID='{value}';".format(value=id))
+                    Campaignquestionresponse.objects.filter(campaignquestionid=id).delete()
+                    TbCampaignquestion.objects.filter(campaignquestionid=id).delete()
                     
                     
-                    # This for deleting videoID
-                    # deleteQuestions=connection.cursor()
-                    # deleteQuestions.execute("DELETE tb_CampaignQuestion WHERE CampaignVideoID='{value}';".format(value=id))
-
-                    # deleteCampVideo=connection.cursor()
-                    # deleteCampVideo.execute("DELETE tb_CampaignVideo WHERE CampaignVideoID='{value}';".format(value=id))
                     messages.error(request, 'rejected succesfully')
                     return redirect('/dm/approver/'+str(uid))
             # return render(request,'tc_DigitalMarketing/approverview.html',{})
@@ -875,28 +834,32 @@ def approver_view(request,id,uid):
             vP1='/'+video.videopath1
             vT1=video.videotranscription1
             LOB='/'+video.lob
-            imgUrl='/'+video.Imageurl
+            imgUrl=video.Imageurl
             gifUrl=video.Gifurl
             Creative=video.creative
             Vendor=video.vendor
-            
 
-
-            # cursor1=connection.cursor()
-            # cursor1.execute("select VideoPath,VideoTranscription,VideoName,VideoPath1,VideoTranscribeOne,Vendor,LOB,Creative,Platform,imageurl,gifurl from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=CVID))
-            # VideoDeatails=cursor1.fetchall()
-            # vP='/'+VideoDeatails[0][0]
-            # vT=VideoDeatails[0][1]
-            # vN=VideoDeatails[0][2]
-            # vP1=VideoDeatails[0][3]
-            # vT1=VideoDeatails[0][4]
-            # Vendor=VideoDeatails[0][5]
-            # LOB=VideoDeatails[0][6]
-            # Creative=VideoDeatails[0][7]
-            # Platform=VideoDeatails[0][8]
-            # imgUrl=VideoDeatails[0][9]
-            # gifUrl=VideoDeatails[0][10]
-            return render(request,'tc_DigitalMarketing/approverviewnew.html',{'qT':questionsText,'qR':QuestionResponse,'uploaderName':uploaderName,'R':result,'video':vP,'Transcribe':vT,'vname':vN,'id':uid,'video1':vP1,'Transcribe1':vT1,'Vendor':Vendor,'LOB':LOB,'Creative':Creative,'Platform':Platform,'Questions':Question,'imgUrl':imgUrl,'gifUrl':gifUrl})
+            print(gifUrl)
+            print(imgUrl)
+            print(Creative)
+            print(vP)
+            return render(request,'tc_DigitalMarketing/approverviewnew.html',{'qT':questionsText,
+                                                                              'qR':QuestionResponse,
+                                                                              'uploaderName':uploaderName,
+                                                                              'R':result,
+                                                                              'video':vP,
+                                                                              'Transcribe':vT,
+                                                                              'vname':vN,
+                                                                              'id':uid,
+                                                                              'video1':vP1,
+                                                                              'Transcribe1':vT1,
+                                                                              'Vendor':Vendor,
+                                                                              'LOB':LOB,
+                                                                              'Creative':Creative,
+                                                                              'Platform':Platform,
+                                                                              'Questions':Question,
+                                                                              'imgUrl':imgUrl,
+                                                                              'gifUrl':gifUrl})
     # except Exception as e:
     #     error={'error':e}
     #     return render(request,'tc_DigitalMarketing/error.html',context=error)  
@@ -1107,7 +1070,7 @@ def status(request,id):
         status=TbStatus.objects.filter(userid=id)
         return render(request,'tc_DigitalMarketing/status.html',{'status':status,'id':id})
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def status_view(request,id1):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/createrupload.html')
@@ -1143,7 +1106,7 @@ def status_view(request,id1):
         print(res)
         return render(request,'tc_DigitalMarketing/statusview.html',{'approverres':res[0],'approvercmd':res[1],'reason':res[2],'id':id,'video':vP,'vid':id1,'Transcribe':vT,'vname':vN,'video1':vP1,'Transcribe1':vT1,'Vendor':Vendor,'LOB':LOB,'Creative':Creative,'Platform':Platform,'uploadername':response[0][1]})
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def download_view(request,id,id1):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/downloadview.html')
@@ -1177,17 +1140,19 @@ def download_view(request,id,id1):
 
         print(res)
         return render(request,'tc_DigitalMarketing/downloadview.html',{'approverres':res[0],'approvercmd':res[1],'reason':res[2],'id':id,'video':vP,'vname':vName,'vid':id1,})
-import json
-def download(request):
+
+@login_required(login_url='/')
+def download(request,id):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/Download.html',{'approvedvid':approvedvid,})
     else:
         # status=TbStatus.objects.filter(userid=id).order_by('-createddate').values()
-        approvedvid=TbApprove.objects.filter(downloadaccess='download')
+        approvedvid=TbApprove.objects.filter(downloadaccess = 'download')
         q = approvedvid.values()
         df = pd.DataFrame.from_records(q)
         df=df.fillna("0")
-        filter1 = df.downloader.apply(lambda x: 'Naveen' in x)
+        print(df)
+        filter1 = df.downloader.apply(lambda x: id in x)
         df = df[filter1]
         print(df)  
 
@@ -1270,7 +1235,7 @@ def delete_video(request,id,id1):
 #         return render(request,'tc_DigitalMarketing/uploadagainnew.html',{'videodetails':videodetails,'status':status})
     
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def upload_again(request,id,id1):
     Creative=request.POST.get('Creative')
     upload=request.POST.get('Upload')
@@ -1359,7 +1324,11 @@ def login_view(request):
                        
              if user.profile.userroleid == "S1":
 
-                    return redirect('/dm/superadmin/'+str(user.profile.userid))   
+                    return redirect('/dm/superadmin/'+str(user.profile.userid))  
+             
+             if user.profile.userroleid == "D1": 
+             
+                    return redirect('/dm/superadmin/'+str(user.profile.userid)) 
         if user.profile.userroleid == "U1":
             
             return redirect('/dm/uploaderdashboard/'+str(user.profile.userid)) 
@@ -1370,6 +1339,10 @@ def login_view(request):
         if user.profile.userroleid == "S1":
 
             return redirect('/dm/superadmin/'+str(user.profile.userid))   
+
+        if user.profile.userroleid == "D1":
+             
+             return redirect('/dm/Download/'+str(user.profile.username))   
 
 
     context = {
@@ -1390,7 +1363,7 @@ def register_view(request):
         login(request, new_user)
         if next:
             return redirect(next)
-        return redirect('/dm/login')
+        return redirect('/')
 
     context = {
         'form': form,
@@ -1400,7 +1373,7 @@ def register_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('/dm/login')
+    return redirect('/')
 
     
 
@@ -1409,7 +1382,7 @@ def logout_view(request):
 
 
 
-@login_required(login_url='/dm/login/')
+@login_required(login_url='/')
 def creater_update_video(request,id,id1):
         if request.method == "POST":
             q0 = request.POST.get('q0')
@@ -1585,34 +1558,26 @@ def creater_update_video(request,id,id1):
                                                                                     'status':status,'Title':Title1,
                                                                                     'imgurl':image_url,'gifurl':Gif_url})
             
-            cursor=connection.cursor()
-            cursor.execute("SELECT TOP 1 VideoID FROM DigitalMarketing_cvideoid ORDER BY id DESC;")
-            result=cursor.fetchall()
-            print(result)
-            CVID=result[0][0]
-            
+            CVID = cVideoId.objects.all().order_by('-id').first()
+            CVID=str(CVID)
 
-            cursor1=connection.cursor()
-            cursor1.execute("select VideoPath,VideoTranscription,VideoName,Platform,VideoPath1,imageurl,gifurl,Creative from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=CVID))
-            VideoDeatails=cursor1.fetchall()
-            vP='/'+VideoDeatails[0][0]
-            vN=VideoDeatails[0][2]
-            pN=VideoDeatails[0][3]
-            vP1='/'+VideoDeatails[0][4]
-            img='/'+VideoDeatails[0][5]
-            gifurl='/'+VideoDeatails[0][6]
-            Cre=VideoDeatails[0][7]    
+            video=TbVideo.objects.get(videoid = CVID)
+            vP='/'+video.videopath
+            vN=video.videoname
+            pN=video.platform
+            vP1='/'+video.videopath1
+            img='/'+video.Imageurl
+            gifurl=video.Gifurl
+            Cre=video.creative
 
+            user=TbUser.objects.get(userid=id)
+            UN=user.username
 
-
-            userName=connection.cursor()
-            userName.execute("select UserName from tb_User where UserID='{val}'".format(val=id))
-            userName=userName.fetchall()
-            UN=userName[0][0]
             status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=CVID,status='Pending',videoname=vN,approver='---',uploadername=UN,platform=pN,videoPath=vP,videoPath1=vP1,Imageurl=img,Gifurl=gifurl,creative=Cre)
             status.save()
   
             cQresponse=TbCampaignquestion.objects.filter(campaignvideoid=CVID)
+            print(cQresponse)
             lenOfList=len(cQresponse)
             listOfcQresponse=[]
             for i in cQresponse:
@@ -1645,7 +1610,6 @@ def creater_update_video(request,id,id1):
             return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,'videodetails':videodetails,'videodetails1':videodetails1})
 
 
-
 def update_view(request,id,id1):
     if request.method == "POST":
         return render(request,'tc_DigitalMarketing/createrupload.html')
@@ -1672,6 +1636,7 @@ def approverdetail_view(request,id):
      user_status=TbStatus.objects.all().order_by('-createddate').values()
      return render(request,'tc_DigitalMarketing/filterpage.html',{'user_status':user_status,'id':id})
 
+@login_required(login_url='/')
 def superadmindetail_view(request,id):
     if request.method == "POST":
         getvalue=TbStatus.objects.filter(status='Approved')
@@ -1699,17 +1664,63 @@ def superadmindetail_view(request,id):
             approver.downloadaccess='download'
             approver.downloader=listofdownloader
             approver.save()
-
-
-        user_status=TbStatus.objects.filter(status='Approved').order_by('-createddate').values()
+            
+            status= TbStatus.objects.get(videoid=i)
+            status.downloadaccess='download'
+            status.downloader=listofdownloader
+            status.save()
+        user_status=TbStatus.objects.filter(status='Approved',downloadaccess='Notyet').order_by('-createddate').values()
         # return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,})
+        messages.success(request, 'Access given succesfully')
         return redirect('/dm/superadmindetail_view/'+id)
     else:
         user=TbUser.objects.filter(userroleid='D1')
-        user_status=TbStatus.objects.filter(status='Approved').order_by('-createddate').values()
+        user_status=TbStatus.objects.filter(status='Approved',downloadaccess='Notyet').order_by('-createddate').values()
+        accessed_video='yes'
+        return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,'user':user,'accessed_video':accessed_video})
+
+
+@login_required(login_url='/')
+def superadmindetail_downloader_view(request,id):
+    if request.method == "POST":
+        getvalue=TbStatus.objects.filter(status='Approved')
+        listofvideoid=[]
+        for value in getvalue:
+            print("selectoption"+value.videoid)
+            a=request.POST.get('selectoption'+value.videoid)
+            listofvideoid.append(a)
+        print(listofvideoid)
+        listofvideoid=list(filter(None,listofvideoid))
+        print(listofvideoid)
+
+        listofdownloader=[]
+        user=TbUser.objects.filter(userroleid='D1')
+        for value in user:
+            b=request.POST.get('downloader'+str(value.userid))
+            listofdownloader.append(b)
+        print(listofdownloader)
+        listofdownloader=list(filter(None,listofdownloader))
+        print(listofdownloader)
+
+        for i in listofvideoid:
+            print(i)
+            approver = TbApprove.objects.get(videoid=i)
+            approver.downloadaccess='download'
+            approver.downloader=listofdownloader
+            approver.save()
+            
+            status= TbStatus.objects.get(videoid=i)
+            status.downloadaccess='download'
+            status.downloader=listofdownloader
+            status.save()
+        user_status=TbStatus.objects.filter(status='Approved',downloadaccess='download').order_by('-createddate').values()
+        # return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,})
+        messages.success(request, 'Access given succesfully')
+        return redirect('/dm/superadmindetail_downloader_view/'+id)
+    else:
+        user=TbUser.objects.filter(userroleid='D1')
+        user_status=TbStatus.objects.filter(status='Approved',downloadaccess='download').order_by('-createddate').values()
         return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,'user':user,})
-
-
 
 
 from django.template.defaulttags import register

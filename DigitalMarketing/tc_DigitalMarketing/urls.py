@@ -19,11 +19,13 @@ from django.conf.urls import include
 
 from django.conf import settings
 from django.conf.urls.static import static
+from DigitalMarketing import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dm/',include('DigitalMarketing.urls')),
+    path('', views.login_view, name="login"),
+    path('dm/',include('DigitalMarketing.urls')),    
 ]
 
 if settings.DEBUG:

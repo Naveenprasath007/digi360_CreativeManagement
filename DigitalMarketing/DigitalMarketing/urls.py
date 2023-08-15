@@ -29,7 +29,7 @@ urlpatterns = [
     path("approverview/<str:id>/<str:uid>", views.approver_view),
     path("status/<str:id1>", views.status),
     path("statusview/<str:id1>", views.status_view),
-    path("Download", views.download),
+    path("Download/<str:id>", views.download),
     path("Downloadvideo/<str:id>", views.download_video),
     path("DeleteVideo/<str:id>/<str:id1>", views.delete_video),
     path("uploadagain/<str:id>/<str:id1>", views.upload_again), 
@@ -39,6 +39,7 @@ urlpatterns = [
     path("approverdetail_view/<str:id>", views.approverdetail_view), 
     path("superadmin/<str:id>", views.admin), 
     path("superadmindetail_view/<str:id>", views.superadmindetail_view), 
+    path("superadmindetail_downloader_view/<str:id>", views.superadmindetail_downloader_view), 
     
 
      
