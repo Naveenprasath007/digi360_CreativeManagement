@@ -458,11 +458,12 @@ def approver(request,id):
 
 
                 df['createddate']=df['createddate'].astype(str)
-                df['createddate']=df['createddate'].str.slice(0, -22)
+                df['createddate']=df['createddate'].str.slice(0, -10)
                 video_count = df.groupby('createddate')['videoname'].count().reset_index()
                 DateValue=video_count['createddate'].values.tolist()
                 videoC=video_count['videoname'].values.tolist()
                 print(videoC)
+                print(DateValue)
 
                 file_type_counts = df['creative'].value_counts().reset_index()
                 file_type_counts.columns = ['File_Type', 'Count']
@@ -496,11 +497,12 @@ def approver(request,id):
 
 
             df['createddate']=df['createddate'].astype(str)
-            df['createddate']=df['createddate'].str.slice(0, -22)
+            df['createddate']=df['createddate'].str.slice(0, -10)
             video_count = df.groupby('createddate')['videoname'].count().reset_index()
             DateValue=video_count['createddate'].values.tolist()
             videoC=video_count['videoname'].values.tolist()
             print(videoC)
+            print(DateValue)
 
             file_type_counts = df['creative'].value_counts().reset_index()
             file_type_counts.columns = ['File_Type', 'Count']
@@ -554,7 +556,7 @@ def admin(request,id):
 
 
                 df['createddate']=df['createddate'].astype(str)
-                df['createddate']=df['createddate'].str.slice(0, -22)
+                df['createddate']=df['createddate'].str.slice(0, -10)
                 video_count = df.groupby('createddate')['videoname'].count().reset_index()
                 DateValue=video_count['createddate'].values.tolist()
                 videoC=video_count['videoname'].values.tolist()
@@ -590,10 +592,12 @@ def admin(request,id):
 
 
             df['createddate']=df['createddate'].astype(str)
-            df['createddate']=df['createddate'].str.slice(0, -22)
+            df['createddate']=df['createddate'].str.slice(0, -10)
+            print(df['createddate'])
             video_count = df.groupby('createddate')['videoname'].count().reset_index()
             DateValue=video_count['createddate'].values.tolist()
             videoC=video_count['videoname'].values.tolist()
+            print(DateValue)
 
             file_type_counts = df['creative'].value_counts().reset_index()
             file_type_counts.columns = ['File_Type', 'Count']
@@ -711,13 +715,28 @@ def approver_view(request,id,uid):
                     Campaignquestionresponse.objects.filter(campaignquestionid=id).delete()
                     TbCampaignquestion.objects.filter(campaignquestionid=id).delete()
 
-                    messages.success(request, 'Approved succesfully')
-                    return redirect('/dm/approver/'+str(uid))
+                    username=Profile.objects.get(userid = uid)
+                    userroleid = username.userroleid
+                    print(userroleid)
+                    userrolename=TbUserrole.objects.get(userroleid = userroleid)
+                    userrolename=userrolename.userrolename
+                    print(userrolename)
+
+                    # messages.success(request, 'Approved succesfully')
+                    # return redirect('/dm/approver/'+str(uid))
 
                     # deleteQuestionsres=connection.cursor()
                     # deleteQuestionsres.execute("DELETE campaignquestionresponse FROM campaignquestionresponse INNER JOIN tb_campaignquestion ON campaignquestionresponse.campaignquestionid = tb_campaignquestion.campaignquestionid WHERE tb_campaignquestion.campaignvideoid='{value}';".format(value=id))
                     # cqr.delete()
                     # cq.delete()
+
+                    if userrolename=='Reviewer':
+                        messages.success(request, 'Approved succesfully')
+                        return redirect('/dm/approver/'+str(uid))
+
+                    else:
+                        messages.success(request, 'Approved succesfully')
+                        return redirect('/dm/superadmin/'+str(uid))
 
 
                 else:
@@ -785,10 +804,24 @@ def approver_view(request,id,uid):
                     Campaignquestionresponse.objects.filter(campaignquestionid=id).delete()
                     TbCampaignquestion.objects.filter(campaignquestionid=id).delete()
                     
+                    username=Profile.objects.get(userid = uid)
+                    userroleid = username.userroleid
+                    print(userroleid)
+                    userrolename=TbUserrole.objects.get(userroleid = userroleid)
+                    userrolename=userrolename.userrolename
+                    print(userrolename)
                     
-                    messages.error(request, 'rejected succesfully')
-                    return redirect('/dm/approver/'+str(uid))
+                    # messages.error(request, 'rejected succesfully')
+                    # return redirect('/dm/approver/'+str(uid))
             # return render(request,'tc_DigitalMarketing/approverview.html',{})
+                    if userrolename=='Reviewer':
+                        messages.success(request, 'rejected succesfully')
+                        return redirect('/dm/approver/'+str(uid))
+
+                    else:
+                        messages.success(request, 'rejected succesfully')
+                        return redirect('/dm/superadmin/'+str(uid))
+
         else:
             CVID=id
             dataQ = TbCampaignquestion.objects.filter(campaignvideoid=CVID)
@@ -854,6 +887,14 @@ def approver_view(request,id,uid):
             print(Creative)
             print(vP)
             print(vP1)
+
+            username=Profile.objects.get(userid = uid)
+            userroleid = username.userroleid
+            print(userroleid)
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename
+            print(userrolename)
+
             return render(request,'tc_DigitalMarketing/approverviewnew.html',{'qT':questionsText,
                                                                               'qR':QuestionResponse,
                                                                               'uploaderName':uploaderName,
@@ -870,7 +911,8 @@ def approver_view(request,id,uid):
                                                                               'Platform':Platform,
                                                                               'Questions':Question,
                                                                               'imgUrl':imgUrl,
-                                                                              'gifUrl':gifUrl})
+                                                                              'gifUrl':gifUrl,
+                                                                              'userrolename':userrolename})
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
