@@ -59,31 +59,31 @@
 
      <div class="aprove-panel">
      <div class="creative-panel">
-        <div class="overflow-auto" style="max-width:100%; max-height:80vh"> 
+        <div class="overflow-auto" style="max-width:100%; max-height:45vh"> 
 
         <div class="main-creative-box">
-            {% if Creative == Video %}
+            {% if Creative == 'Video' %}
             <video width="50%" height="200" controls="">
                 <source src="{{video}}" type="video/mp4">
             Your browser does not support the video tag.
             </video>
             {% endif %}
             {% if Creative == 'GIF' %}
-            <img src="{{ gifUrl }}">
+            <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl }}">
             {% endif %}
             {% if Creative == 'image'  %}
-            <img src="{{ imgUrl }}">
+            <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl }}">
             {% endif %}
 
 
 
-            {% if video1 != '--' %}
+            {% if video1 != '/--' %}
             <div class="thumbnails">
             
               {% if Creative == Video %}
               <div class="videocircle">
               <video width="50%" height="200" controls="">
-                  <source src="{{video}}" type="video/mp4">
+                  <source src="{{video1}}" type="video/mp4">
               Your browser does not support the video tag.
               </video>
               </div>
@@ -92,13 +92,13 @@
 
               {% if Creative == 'GIF' %}
               <div class="videocircle">
-                <img src="{{ gifUrl }}">
+                <img src="{{ gifUrl1 }}">
               </div>
               <div class="btnview">Watch Video</div>
               {% endif %}
 
               {% if Creative == 'image'  %}
-              <img src="{{ imgUrl }}">
+              <img src="{{ imgUrl1 }}">
               {% endif %}
 
             </div>
@@ -176,20 +176,20 @@
             </div>
           </div>
         </div> 
-        <br>
+        <!-- <br>
         <div class="transcription-panel mbottom">
           <h5>Transcription</h5>
           <div class="transcription-box1">
             <p>{{ Transcribe }}</p>
           </div>
-        </div>
+        </div> -->
         <!-- This can be help for sperate div -->
       </div>
     </div>
 
     <form action="" method="post">
       {% csrf_token %}  
-      <div class="overflow-auto" style="max-width:100%; max-height:30vh"> 
+      <div class="overflow-auto" style="max-width:100%; max-height:50vh"> 
       {%if Transcribe != '--'%}
       <div class="mb-3">
         <textarea class="form-control" id="default" name="cmdtranscript" rows="5">{{Transcribe}}</textarea>
@@ -206,7 +206,7 @@
 
       
       <div class="aproval-panel">
-        <div class="overflow-auto" style="max-width:100%; max-height:80vh"> 
+        <div class="overflow-auto" style="max-width:100%; max-height:100vh"> 
           <h2>Presets</h2>
           <!-- <form action="" method="post"enctype="multipart/form-data"> -->
           {% csrf_token %}  

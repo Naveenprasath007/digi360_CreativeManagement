@@ -137,6 +137,8 @@ class TbVideo(models.Model):
     creater = models.CharField(db_column='creater', max_length=255, blank=True, null=True)
     Imageurl = models.CharField(db_column='imgurl', max_length=255, blank=True, null=True)
     Gifurl = models.CharField(db_column='gifurl', max_length=255, blank=True, null=True)
+    Imageurl1 = models.CharField(db_column='imgurl1', max_length=255, blank=True, null=True)
+    Gifurl1 = models.CharField(db_column='gifurl1', max_length=255, blank=True, null=True)
 
 
 
@@ -147,7 +149,7 @@ class TbVideo(models.Model):
 class video_Details(models.Model):
     userid = models.ForeignKey('TbUser', models.DO_NOTHING, db_column='userid')  # Field name made lowercase.
     VideoPath = models.CharField(db_column='videopath',primary_key=True, max_length=2000)  # Field name made lowercase.
-
+    VideoName = models.CharField(db_column='videoname', blank=True,max_length=255)
     class Meta:
         managed = False
         db_table = 'videodetails'

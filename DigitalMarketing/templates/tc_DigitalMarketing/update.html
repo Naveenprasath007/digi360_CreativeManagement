@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/UserIndexpage">
+    <a class="navbar-brand d-inline-flex align-items-center" href="#">
         <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
         <h2>true<span>coverage</span></h2>
       </a>
@@ -89,10 +89,10 @@
            {% if i.videoPath1 != '/--' %}
            <div class="thumbnails">
              {% if i.creative == 'image' %}
-             <img src="{{ i.imgurl }}">
+             <img src="{{ i.imgurl1 }}">
              {% endif %}
 
-             {% if creative != 'video' %}
+             {% if creative != 'Video' %}
              <div class="videocircle">
                <video width="100%" height="100%" controls="">
                  <source src="{{i.videoPath1}}" type="video/mp4">
@@ -103,13 +103,8 @@
              {% endif %}
 
              {% if creative == 'GIF' %}
-             <div class="videocircle">
-               <video width="100%" height="100%" controls="">
-                 <source src="{{i.videoPath1}}" type="video/mp4">
-             Your browser does not support the video tag.
-             </video>
+             <img src="{{ gifUrl1 }}">
              </div>
-             <div class="btnview">Watch Video</div>
              {% endif %}
            </div>
            {% endif %}

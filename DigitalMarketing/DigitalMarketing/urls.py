@@ -27,7 +27,7 @@ urlpatterns = [
     path("UserIndexpage", views.user_indexpage),
     path("approver/<str:id>", views.approver),
     path("approverview/<str:id>/<str:uid>", views.approver_view),
-    path("status/<str:id1>", views.status),
+    # path("status/<str:id1>", views.status),
     path("statusview/<str:id1>", views.status_view),
     path("Download/<str:id>", views.download),
     path("Downloadvideo/<str:id>", views.download_video),

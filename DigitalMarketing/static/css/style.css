@@ -1211,7 +1211,7 @@ p.listinner img {
 }
 .creative-panel .main-creative-box {
   position: relative;
-  height: 400px;
+  /* height: 400px; */
 }
 .creative-panel .main-creative-box .thumbnails {
   position: absolute;

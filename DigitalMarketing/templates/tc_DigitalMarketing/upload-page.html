@@ -16,6 +16,14 @@
           <h2>true<span>coverage</span></h2>
         </a>
         {% endif %}
+
+        {% if userrolename == 'SuperAdmin' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+
         <button
           class="navbar-toggler"
           type="button"
@@ -277,7 +285,7 @@
     {%if videodetails %}
       <div class="my-videos-panel mbottom">
         <h2>My Videos</h2>
-        <div class="scroll-panel">
+        <div class="scroll-panel" style="overflow-x:auto;">
           {% for i in videodetails1 %}
           <div class="videos-box">
             
@@ -288,13 +296,12 @@
               Your browser does not support the video tag.
               </video>
             </div>
-            <p class="video-title"></p>
+            <p class="video-title">{{ i.VideoName }}</p>
             
           </div>
           {% endfor %}
         </div>
       </div>
       {% endif %}
-    </div>
 {% endblock content %}
 

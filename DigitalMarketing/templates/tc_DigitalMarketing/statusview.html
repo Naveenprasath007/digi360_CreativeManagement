@@ -6,7 +6,7 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/UserIndexpage">
+    <a class="navbar-brand d-inline-flex align-items-center" href="#">
         <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
         <h2>true<span>coverage</span></h2>
       </a>
@@ -63,32 +63,49 @@
       
     
         <div class="main-creative-box">
+           
+           {% if Creative == 'Video' %}
            <div class="video-container">
-            <video width="100%" height="500" controls="">
-              <source src="{{video}}" type="video/mp4">
-          Your browser does not support the video tag.
-          </video>
-           </div>
+           <video width="100%" height="500" controls="">
+               <source src="{{video}}" type="video/mp4">
+           Your browser does not support the video tag.
+           </video>
+          </div>
+           {% endif %}
+           {% if Creative == 'GIF' %}
+           <img src="{{ gifUrl }}">
+           {% endif %}
+           {% if Creative == 'image'  %}
+           <img src="{{ imgUrl }}">
+           {% endif %}
+          
 
-           {% if video1 != '--' %}
+
+
+           {% if video1 != '/--' %}
            <div class="thumbnails">
-             <!-- <video width="100%" height="100%" controls="">
-               <source src="images/dummy.mp4" type="video/mp4">
-             </video> -->
-             {% if Creative == 'image' %}
-             <img src="{{ image }}">
-             {% endif %}
 
-             {% if Creative != 'image' %}
-             <div class="videocircle">
-               <!-- <img src="{% static 'images/avatar.png'%}"> -->
-               <video width="100%" height="100%" controls="">
-                 <source src="{{video1}}" type="video/mp4">
-             Your browser does not support the video tag.
-             </video>
-             </div>
-             <div class="btnview">Watch Video</div>
-             {% endif %}
+            {% if Creative == 'Video' %}
+            <div class="videocircle">
+            <video width="50%" height="200" controls="">
+                <source src="{{video1}}" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            </div>
+            <div class="btnview">Watch Video</div>
+            {% endif %}
+
+            {% if Creative == 'GIF' %}
+            <div class="videocircle">
+              <img src="{{ gifUrl1 }}">
+            </div>
+            <div class="btnview">Watch Video</div>
+            {% endif %}
+
+            {% if Creative == 'image'  %}
+            <img src="{{ imgUrl1 }}">
+            {% endif %}
+
 
            </div>
            {% endif %}
