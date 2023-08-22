@@ -23,9 +23,16 @@ class UserLoginForm(forms.Form):
 user=get_user_model()
 
 class UserRegisterForm(forms.ModelForm):
+    ROLE_CHOICES= [
+    ('Creator', 'Creator'),
+    ('Approver', 'Approver'),
+    ('Downloader', 'Downloader'),
+    ]
+
     email=forms.EmailField(label='Email Address')
     email2=forms.EmailField(label='Confirm Email Address')
-
+    # Role=forms.CharField(label='Role')
+    Role=forms.CharField(label='Select Role', widget=forms.Select(choices=ROLE_CHOICES))
     password=forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
@@ -34,6 +41,7 @@ class UserRegisterForm(forms.ModelForm):
             'username',
             'email',
             'email2',
+            'Role',
             'password',
         ]
 

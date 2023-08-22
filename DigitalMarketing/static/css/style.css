@@ -1621,3 +1621,18 @@ img
   padding: 10px;
   border-radius: 12px;
 }
+
+
+/* admin hover page */
+.showme {
+  display: none;
+}
+
+.showhim:hover .showme {
+  display: block;
+}
+
+.select-all
+{
+  margin: 10px;
+}

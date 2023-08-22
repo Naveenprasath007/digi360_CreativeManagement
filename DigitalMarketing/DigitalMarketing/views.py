@@ -19,6 +19,9 @@ from django.contrib.auth import authenticate,get_user_model,login,logout
 from django.contrib.auth.decorators import login_required
 
 
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 @login_required(login_url='/')
 def uploaderdashboard(request,id):
@@ -91,7 +94,17 @@ def filterpage(request,id,id1,id2):
         
         elif id1 == 'Pending': 
             user_status=TbStatus.objects.filter(status=id1).order_by('-createddate').values()
-        return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,'user_status':user_status})
+
+        username=Profile.objects.get(userid = id)
+        userroleid = username.userroleid
+        print(userroleid)
+        userrolename=TbUserrole.objects.get(userroleid = userroleid)
+        userrolename=userrolename.userrolename
+        print(userrolename)
+
+        return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,
+                                                                     'user_status':user_status
+                                                                     ,'userrolename':userrolename})
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
@@ -338,9 +351,13 @@ def creater_upload(request,id):
             if userrolename=='Uploader':
                 messages.success(request, 'submitted succesfully')
                 return redirect('/dm/uploaderdashboard/'+id)
-            else:
+            elif userrolename=='Reviewer':
                 messages.success(request, 'submitted succesfully')
                 return redirect('/dm/approver/'+id)
+            else:
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/superadmin/'+id)
+
         else:
             a=id
             status='Waiting'
@@ -1249,11 +1266,22 @@ def register_view(request):
             user = form.save(commit=False)
             password = form.cleaned_data.get('password')
             user.set_password(password)
+            Role = form.cleaned_data.get('Role')
             user.save()
-            new_user = authenticate(username=user.username, password=password)
+
+            subject = 'Welcome creative management'
+            message = f'Hi Username: {user.username}, Email: {user.email}, Role: { Role }. Thank you for registering in digi360. we review after will activate your Account.'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [user.email,'naveen.kumaran@speridian.com', ]
+            send_mail( subject, message, email_from, recipient_list )
+
+
+            new_user = authenticate(username=user.username, password=password,)
             login(request, new_user)
             if next:
+                messages.success(request, 'Account created successfully, awaiting activation')
                 return redirect(next)
+            messages.success(request, 'Account created successfully, awaiting activation')
             return redirect('/')
 
         context = {
@@ -1488,16 +1516,38 @@ def creater_update_video(request,id,id1):
                 messages.success(request, 'Upload other Placements Creative')
                 a=CVID
                 return redirect('/dm/uploadagain/'+str(a)+str('/')+id)
+
+            username=Profile.objects.get(userid = id)
+            userroleid = username.userroleid
+            print(userroleid)
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename
+            print(userrolename)
             
-            messages.success(request, 'submitted succesfully')
-            return redirect('/dm/uploaderdashboard/'+id)
+            if userrolename=='Uploader':
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/uploaderdashboard/'+id)
+            elif userrolename=='Reviewer':
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/approver/'+id)
+            else:
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/superadmin/'+id)
+
         else:
             a=id
             status='Waiting'
             videodetails1=video_Details.objects.filter(userid=id)
             videodetails="video_Details.objects.filter(userid=id)"
+            username=Profile.objects.get(userid = id)
+            userroleid = username.userroleid
+            print(userroleid)
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename
+            print(userrolename)
 
-            return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,'videodetails':videodetails,'videodetails1':videodetails1})
+
+            return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,'videodetails':videodetails,'videodetails1':videodetails1,'userrolename':userrolename})
     
     except Exception as e:
         error={'error':e}
@@ -1510,14 +1560,41 @@ def update_view(request,id,id1):
         else:
             status=TbStatus.objects.filter(videoid=id1)
 
-            cursor1=connection.cursor()
-            cursor1.execute("select VideoPath,VideoName from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id1))
-            VideoDeatails=cursor1.fetchall()
-            vP='/'+VideoDeatails[0][0]
-            vName=VideoDeatails[0][1]
+            # cursor1=connection.cursor()
+            # cursor1.execute("select VideoPath,VideoName from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id1))
+            # VideoDeatails=cursor1.fetchall()
+            # vP='/'+VideoDeatails[0][0]
+            # vName=VideoDeatails[0][1]
+            video=TbVideo.objects.get(videoid = id1)
+            vP='/'+video.videopath
+            vT=video.videotranscription
+            vN=video.videoname
+            Platform=video.platform
+            vP1='/'+video.videopath1
+            vT1=video.videotranscription1
+            LOB='/'+video.lob
+            imgUrl=video.Imageurl
+            gifUrl=video.Gifurl
+            Creative=video.creative
+            Vendor=video.vendor
 
 
-            return render(request,'tc_DigitalMarketing/update.html',{'id':id,'video':vP,'vname':vName,'vid':id1,'status':status})
+            return render(request,'tc_DigitalMarketing/update.html',{
+                                                                        'id':id,
+                                                                        'video':vP,
+                                                                        'vid':id1,
+                                                                        'Transcribe':vT,
+                                                                        'vname':vN,
+                                                                        'video1':vP1,
+                                                                        'Transcribe1':vT1,
+                                                                        'Vendor':Vendor,
+                                                                        'LOB':LOB,
+                                                                        'Creative':Creative,
+                                                                        'Platform':Platform,
+                                                                        'imgUrl':imgUrl,
+                                                                        "gifUrl":gifUrl,
+                                                                     
+                                                                     })
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
@@ -1591,6 +1668,7 @@ def superadmindetail_view(request,id):
 @login_required(login_url='/')
 def superadmindetail_downloader_view(request,id):
     try:
+        uid=id
         if request.method == "POST":
             getvalue=TbStatus.objects.filter(status='Approved')
             listofvideoid=[]
@@ -1629,7 +1707,7 @@ def superadmindetail_downloader_view(request,id):
         else:
             user=TbUser.objects.filter(userroleid='D1')
             user_status=TbStatus.objects.filter(status='Approved',downloadaccess='download').order_by('-createddate').values()
-            return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,'user':user,})
+            return render(request,'tc_DigitalMarketing/downloadaccesspage.html',{'user_status':user_status,'id':id,'user':user})
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  

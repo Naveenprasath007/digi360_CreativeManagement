@@ -4,8 +4,7 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="#">
-        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
         <h2>true<span>coverage</span></h2>
       </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +70,7 @@
 <div class="messege-info">
   {% include 'tc_DigitalMarketing/messages.html' %}
 </div>
+<input type="checkbox" name="select-all" id="select-all" class="select-all"/><label>Select all</label>
 <form action="" method="post" enctype="multipart/form-data" id="upload-form">
 {% csrf_token %}
 <div id="Listview" class="division">
@@ -103,11 +103,20 @@
       <span class="minhead">Reviewed by</span>
       <p class="listinner"> {{i.approver}}</p>
   </div>
+
   {% if i.status == 'Rejected' %}
   <div class="vstatus"><span>{{i.status}}</span></div>
   {% endif %}
   {% if i.status == 'Approved' %}
+  {% if downloadaccess == 'Notyet' %}
+    <div class="showhim">
+    <div class="vstatusapprove"><span>{{i.status}}</span></div>
+    <div class="showme">{{i.downloader}}</div>
+    </div>
+  {% endif %}
+  {% if downloadaccess == 'Notyet' %}
   <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vstatuspending"><span>{{i.status}}</span></div>
@@ -138,6 +147,7 @@
 
 {% if user_status %}
   {% for i in user_status %}
+
 <div class="list-panel">
   <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
   <div class="tnail">
@@ -169,7 +179,15 @@
   <div class="vstatus"><span>{{i.status}}</span></div>
   {% endif %}
   {% if i.status == 'Approved' %}
+  {% if i.downloadaccess != 'Notyet' %}
+    <div class="showhim">
+    <div class="vstatusapprove"><span>{{i.status}}</span></div>
+    <div class="showme">{{i.downloader}}</div>
+    </div>
+  {% endif %}
+  {% if i.downloadaccess == 'Notyet' %}
   <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vstatuspending"><span>{{i.status}}</span></div>
@@ -382,7 +400,7 @@
       </div>
       <div class="modal-body">
         {% for i in user %}
-        <input type="checkbox" name="downloader{{i.userid}}" value="{{i.username}}">
+        <input type="checkbox" name="downloader{{i.userid}}" value="{{i.username}}" checked>
         <label>{{i.username}}</label>
         <br><br>
         {% endfor %}
@@ -400,6 +418,23 @@
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+
+$('#select-all').click(function(event) {   
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;                        
+        });
+    } else {
+        $(':checkbox').each(function() {
+            this.checked = false;                       
+        });
+    }
+}); 
+</script>
 
 
 

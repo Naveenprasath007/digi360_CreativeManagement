@@ -4,10 +4,28 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="#">
-        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+    <!-- <a class="navbar-brand d-inline-flex align-items-center" href="#">
+        <h2>true<span>coverage</span></h2>
+      </a> -->
+      {% if userrolename == 'Uploader' %}
+      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
         <h2>true<span>coverage</span></h2>
       </a>
+      {% endif %}
+      {% if userrolename == 'Reviewer' %}
+      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+      {% endif %}
+
+      {% if userrolename == 'SuperAdmin' %}
+      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+        <h2>true<span>coverage</span></h2>
+      </a>
+      {% endif %}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -84,7 +102,7 @@
   </div>
   <div class="dname">
       <span class="minhead">{{i.createddate}}</span>
-      <p>{{i.videoname}}</p>
+      <p class="listinner">{{i.videoname}}</p>
   </div>
   <div class="uploader">
       <span class="minhead">Platform</span>
@@ -144,7 +162,7 @@
   </div>
   <div class="dname">
       <span class="minhead">{{i.createddate}}</span>
-      <p>{{i.videoname}}</p>
+      <p class="listinner">{{i.videoname}}</p>
   </div>
   <div class="uploader">
       <span class="minhead">Platform</span>

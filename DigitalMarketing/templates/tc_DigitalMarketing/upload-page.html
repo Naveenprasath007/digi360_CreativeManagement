@@ -85,8 +85,8 @@
     </nav>
 
 
-    <form action="" method="post" enctype="multipart/form-data" id="upload-form">
-      {% csrf_token %}
+    <!-- <form action="" method="post" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %} -->
       
     <div class="upload-page">
       <div id="loading">
@@ -126,7 +126,6 @@
           <div class="upload-box">
             <div class="messege-info">
               {% include 'tc_DigitalMarketing/messages.html' %}
-              <!-- <span class="sucess-message"><img src="{% static 'images/success.png' %}" alt=""> Video has been Submitted Successfully <span> -->
             </div>
             <img class="collection" src="{% static 'images/fileupload.svg'%}" />
             <h5>
@@ -136,13 +135,18 @@
               <div class="icon-box">
                 <div class="image-upload">
                   <label for="file-upload">
-                      <img src="{% static 'images/folder.svg'%}"/>
+                    <!-- <img src="{% static 'images/folder.svg'%}"/> -->
                   </label>
-                  <input id="file-upload" type="file" name="myfile" onchange="GetFileSizeNameAndType()" accept="video/*,image/*" required/>
-              </div>
+                  <form action="" method="post" enctype="multipart/form-data" id="upload-form">
+                    {% csrf_token %}
+                  <input id="file-upload" type="file" name="myfile"class="form-control" style="border-radius:50%; opacity: 0;"  onchange="GetFileSizeNameAndType()"accept="video/*,image/*" required/>
+                  <img src="{% static 'images/folder.svg'%}"style="margin-top: -170%; margin-left: 25%;">
+                </div>
               </div>
               <div class="icon-box">
-                <img src="{% static 'images/drive.svg'%}" />
+                
+            <a style="text-decoration: none;color: inherit;" href="https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fdrive.google.com%2Fdrive%2Fu%2F0%2Fmy-drive&followup=https%3A%2F%2Fdrive.google.com%2Fdrive%2Fu%2F0%2Fmy-drive&ifkv=AXo7B7UXbsmaAAg7vdByVW6trOONF42i93IFCWouQYkevPA9nRDKq_CkZtwIknP-PA5rU4TdqdzNcw&osid=1&passive=1209600&service=wise&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S587442387%3A1692263597579516" rel="noopener noreferrer"><img src="{% static 'images/drive.svg'%}" /></a>
+
               </div>
             </div>
             <p>You will free to upload any file format upto 500 mb</p>
