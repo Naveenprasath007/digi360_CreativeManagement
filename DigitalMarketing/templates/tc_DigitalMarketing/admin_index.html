@@ -4,7 +4,7 @@
 {% block content %}
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/dm/approver/{{ id }}">
+          <a class="navbar-brand" href="/dm/superadmin/{{ id }}">
               <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid"> -->
               <h2>true<span>coverage</span></h2>
           </a>
@@ -298,10 +298,10 @@
                             <td>
                                 <span class="upload-info">
                                 {% if i.status == 'Rejected' %}
-                                <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a>
+                                <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
                                 {% endif %}
                                 {% if i.status == 'Approved' %}
-                                <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">view</a>
+                                <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}">view</a>
                                 {% endif %}
                                 {% if i.status == 'Pending' %}
                                 <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}">view</a>

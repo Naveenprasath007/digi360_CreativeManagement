@@ -71,106 +71,49 @@
 
         <div class="main-creative-box">
             {% if Creative == 'Video' %}
-            {% if video1 == '--' %}
             <video width="50%" height="200" controls="">
                 <source src="{{video}}" type="video/mp4">
             Your browser does not support the video tag.
             </video>
             {% endif %}
-
-            {% if video1 != '--' %}
-            <div class="container">
-              <div class="row">
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <video width="500" height="150" controls>
-                        <source src="{{ video }}" type="video/mp4">
-                        <source src="{{ video }}" type="video/ogg">
-                      Your browser does not support the video tag.
-                      </video>
-                    </div>
-                    <p class="video-title"></p>
-                  </div> 
-                </div>
-
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <video width="500" height="150" controls>
-                        <source src="{{ video1 }}" type="video/mp4">
-                        <source src="{{ video1 }}" type="video/ogg">
-                      Your browser does not support the video tag.
-                      </video>
-                    </div>
-                    <p class="video-title"></p>
-                  </div> 
-                </div>
-
-              </div>
-            </div>
-            {% endif %}
-            {% endif %}
-
             {% if Creative == 'GIF' %}
-            {% if gifUrl1 == '--' %}
             <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl }}">
             {% endif %}
-
-            {% if gifUrl1 != '--' %}
-            <div class="container">
-              <div class="row">
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl }}">
-                    </div>
-                  </div> 
-                </div>
-
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl1 }}">
-                    </div>
-                  </div> 
-                </div>
-
-              </div>
-            </div>
-            {% endif %}
-            {% endif %}
-
-
-
-            {% if Creative == 'image' %}
-            {% if imgUrl1 == '--' %}
+            {% if Creative == 'image'  %}
             <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl }}">
             {% endif %}
 
-            {% if imgUrl1 != '--' %}
-            <div class="container">
-              <div class="row">
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl }}">
-                    </div>
-                  </div> 
-                </div>
 
-                <div class="col-sm">
-                  <div class="videos-box">          
-                    <div class="thumbnail">
-                      <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl1 }}">
-                    </div>
-                  </div> 
-                </div>
 
+            {% if video1 != '/--' %}
+            <div class="thumbnails">
+            
+              {% if Creative == Video %}
+              <div class="videocircle">
+              <video width="50%" height="200" controls="">
+                  <source src="{{video1}}" type="video/mp4">
+              Your browser does not support the video tag.
+              </video>
               </div>
+              <div class="btnview">Watch Video</div>
+              {% endif %}
+
+              {% if Creative == 'GIF' %}
+              <div class="videocircle">
+                <img src="{{ gifUrl1 }}">
+              </div>
+              <div class="btnview">Watch Video</div>
+              {% endif %}
+
+              {% if Creative == 'image'  %}
+              <img src="{{ imgUrl1 }}">
+              {% endif %}
+
             </div>
             {% endif %}
-            {% endif %}
+              
+          
+        
 
         <div class="videotitle">
           <div class="titlebox">

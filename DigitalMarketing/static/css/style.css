@@ -1526,7 +1526,7 @@ img
 
 .creative-panel-update {
   width: 70%;
-  background-color: #000000;
+  /* background-color: #000000; */
 }
 .creative-panel-update .main-creative-box {
   position: relative;
@@ -1635,4 +1635,19 @@ img
 .select-all
 {
   margin: 10px;
+}
+
+
+
+.progress-container {
+  width: 50%;
+  height: 20px;
+  background-color: #EBEEFC;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: #269e2a;
 }

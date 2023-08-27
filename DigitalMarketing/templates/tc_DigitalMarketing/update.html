@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="#">
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
         <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
         <h2>true<span>coverage</span></h2>
       </a>
@@ -49,12 +49,114 @@
 <div class="upload-page">
    
   <div class="aprove-panel-update">
+
     <div class="creative-panel-update">
-      
-    
         <div class="main-creative-box">
+
+          {% if Creative == 'Video' %}
+          {% if video1 == '--' %}
+          <video width="50%" height="200" controls="">
+              <source src="{{video}}" type="video/mp4">
+          Your browser does not support the video tag.
+          </video>
+          {% endif %}
+
+          {% if video1 != '--' %}
+          <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <video width="500" height="300" controls>
+                      <source src="{{ video }}" type="video/mp4">
+                      <source src="{{ video }}" type="video/ogg">
+                    Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <p class="video-title"></p>
+                </div> 
+              </div>
+
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <video width="500" height="300" controls>
+                      <source src="{{ video1 }}" type="video/mp4">
+                      <source src="{{ video1 }}" type="video/ogg">
+                    Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <p class="video-title"></p>
+                </div> 
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+
+          {% if Creative == 'GIF' %}
+          {% if gifUrl1 == '--' %}
+          <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl }}">
+          {% endif %}
+
+          {% if gifUrl1 != '--' %}
+          <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl }}">
+                  </div>
+                </div> 
+              </div>
+
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <img style='height: 100%; width: 100%; object-fit: contain' src="{{ gifUrl1 }}">
+                  </div>
+                </div> 
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+
+
+
+          {% if Creative == 'image' %}
+          {% if imgUrl1 == '--' %}
+          <!-- <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl }}"> -->
+          <img src="{{ imgUrl }}" width="100%" height="500" >
+          {% endif %}
+
+          {% if imgUrl1 != '--' %}
+          <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl }}">
+                  </div>
+                </div> 
+              </div>
+
+              <div class="col-sm">
+                <div class="videos-box">          
+                  <div class="thumbnail">
+                    <img style='height: 100%; width: 100%; object-fit: contain' src="{{ imgUrl1 }}">
+                  </div>
+                </div> 
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
            
-           {% if Creative == 'Video' %}
+           <!-- {% if Creative == 'Video' %}
            <div class="video-container">
            <video width="100%" height="500" controls="">
                <source src="{{video}}" type="video/mp4">
@@ -98,7 +200,7 @@
 
 
            </div>
-           {% endif %}
+           {% endif %} -->
 
             <div class="videotitle-update">
               <div class="titlebox1">
@@ -145,8 +247,6 @@
             </div> 
           
         </div>
-  
-        
     </div>
 
     <div class="aproval-panel-update">

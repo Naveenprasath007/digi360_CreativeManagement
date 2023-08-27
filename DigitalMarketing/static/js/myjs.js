@@ -17,10 +17,12 @@ function GetFileSizeNameAndType()
         var fsize = fi.files.item(0).size;
         totalFileSize = totalFileSize + fsize;
     }
-    document.getElementById('divTotalSize').innerHTML ='<br /> ' + 'File Name is <b>' + fi.files.item(0).name + "</b> Total File(s) Size is <b>" + Math.round(totalFileSize / 1024) + "</b> KB" +'</b> and File Type is <b>' + fi.files.item(0).type + "</b>.";
+    document.getElementById('divTotalSize').innerHTML ='<br /> ' + 'File Name is <b>' + fi.files.item(0).name + "</b> Total File(s) Size is <b>" + Math.round(totalFileSize / 1024*0.0009765625) + "</b> MB" +'</b> and File Type is <b>' + fi.files.item(0).type + "</b>.";
 }
 
-
+function requiredchecklist() {
+  var x = document.getElementById("myCheck").required;
+}
 
 
 
@@ -141,6 +143,12 @@ function myFunction() {
     $('#loading').hide();
   }) 
 
+
+  function loaded() {
+    $("#loading-message").show();
+  }
+
+
 function selectImage(element, imageId) {
     const selectedImageInput = document.getElementById('selectedImage');
     const selectedImages = document.getElementsByClassName('selected');
@@ -178,3 +186,5 @@ function selectImage1(element, imageId) {
     menubar: 'favs file edit view insert format tools table',
     content_style: 'body{font-family:Helvetica,Arial,sans-serif; font-size:16px}'
 });
+
+

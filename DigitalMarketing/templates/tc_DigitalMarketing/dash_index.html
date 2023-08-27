@@ -248,7 +248,7 @@
                                                     ---
                                                     {% endif %}
                                                     {% if i.status == 'Rejected' %}
-                                                    <a style="text-decoration:none" href="/dm/statusview/{{id}}/{{i.videoid}}"> View  </a>
+                                                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View  </a>
                                                     {% endif %}
                                                 </div>
                                             </td>
@@ -388,10 +388,10 @@
                                         <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a>
                                         {% endif %}
                                         {% if i.status == 'Approved' %}
-                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a>
+                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View </a>
                                         {% endif %}
                                         {% if i.status == 'Rejected' %}
-                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a>
+                                        <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View </a>
                                         {% endif %}
                                     </td>
                                     <td>

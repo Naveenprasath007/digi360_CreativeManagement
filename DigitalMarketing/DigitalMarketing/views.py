@@ -22,6 +22,13 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from django.template.loader import render_to_string
+
+
 
 @login_required(login_url='/')
 def uploaderdashboard(request,id):
@@ -147,7 +154,7 @@ def creater_upload(request,id):
                     Title1=request.POST.get('Videotitle').capitalize()
                     myfile = request.FILES['myfile']
                     fs = FileSystemStorage()
-                    filename = fs.save(myfile.name, myfile)
+                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
                     uploaded_file_url = fs.url(filename)
                     print(uploaded_file_url)
 
@@ -318,7 +325,7 @@ def creater_upload(request,id):
 
             status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=CVID,status='Pending',videoname=vN,approver='---',uploadername=UN,platform=pN,videoPath=vP,videoPath1=vP1,Imageurl=img,Gifurl=gifurl,creative=Cre)
             status.save()
-  
+
             cQresponse=TbCampaignquestion.objects.filter(campaignvideoid=CVID)
             print(cQresponse)
             lenOfList=len(cQresponse)
@@ -336,7 +343,7 @@ def creater_upload(request,id):
             
             videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=vN)
             videoDetails.save()
-           
+        
             
             if q0=='No':
                 messages.success(request, 'Upload other Placements Creative')
@@ -372,33 +379,36 @@ def creater_upload(request,id):
 
 
             return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'status':status,
-                                                                          'videodetails':videodetails,
-                                                                          'videodetails1':videodetails1,
-                                                                          'userrolename':userrolename})
+                                                                        'videodetails':videodetails,
+                                                                        'videodetails1':videodetails1,
+                                                                        'userrolename':userrolename})
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
     
-def transcribe_video_audio(video_path):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    file_path = BASE_DIR+video_path
-    model = whisper.load_model("tiny")
-    audio_dir = os.path.dirname(file_path)
-    print(audio_dir)
-    audio_path = os.path.join(audio_dir, "audio.wav")
-    command = f'ffmpeg -i "{file_path}" -vn -acodec pcm_s16le -ar 16000 -ac 1 "{audio_path}"'
-    os.system(command)
-    result = model.transcribe(audio_path)
-    os.remove(audio_path)
-    return result["text"]
 
+    
+def transcribe_video_audio(video_path):
     # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # # file_path = BASE_DIR+video_path
-    # file_path="app\media\ACA_4_dSkaCEo.mp4"
-    # print(file_path)
+    # file_path = BASE_DIR+video_path
     # model = whisper.load_model("tiny")
-    # result = model.transcribe(file_path)
+    # audio_dir = os.path.dirname(file_path)
+    # print(audio_dir)
+    # audio_path = os.path.join(audio_dir, "audio.wav")
+    # command = f'ffmpeg -i "{file_path}" -vn -acodec pcm_s16le -ar 16000 -ac 1 "{audio_path}"'
+    # os.system(command)
+    # result = model.transcribe(audio_path)
+    # os.remove(audio_path)
     # return result["text"]
+    try:
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        file_path = BASE_DIR+video_path
+        print(file_path)
+        model = whisper.load_model("tiny")
+        result = model.transcribe(file_path)
+        return result["text"]
+    except Exception as e:
+        return "The transcription of this video is not supported."
 
 
 def unique_numbers(numbers):
@@ -802,7 +812,7 @@ def approver_view(request,id,uid):
                     video = TbStatus.objects.get(videoid=id)
                     video.status='Rejected'
                     video.reason=l
-                    video.approver=getApproverName[0][0]
+                    video.approver=getApproverName
                     video.MainReason=tb
                     video.save()
 
@@ -891,19 +901,23 @@ def approver_view(request,id,uid):
             vT=video.videotranscription
             vN=video.videoname
             Platform=video.platform
-            vP1='/'+video.videopath1
+            vP1=video.videopath1
             vT1=video.videotranscription1
             LOB='/'+video.lob
             imgUrl=video.Imageurl
             gifUrl=video.Gifurl
             Creative=video.creative
             Vendor=video.vendor
+            imgUrl1=video.Imageurl1
+            gifUrl1=video.Gifurl1
 
             print(gifUrl)
             print(imgUrl)
             print(Creative)
             print(vP)
             print(vP1)
+            print(imgUrl1)
+            print(gifUrl1)
 
             username=Profile.objects.get(userid = uid)
             userroleid = username.userroleid
@@ -929,6 +943,8 @@ def approver_view(request,id,uid):
                                                                               'Questions':Question,
                                                                               'imgUrl':imgUrl,
                                                                               'gifUrl':gifUrl,
+                                                                              'gifUrl1':gifUrl1,
+                                                                              'imgUrl1':imgUrl1,
                                                                               'userrolename':userrolename})
     except Exception as e:
         error={'error':e}
@@ -937,7 +953,7 @@ def approver_view(request,id,uid):
 
 
 @login_required(login_url='/')
-def status_view(request,id1):
+def status_view(request,id1,uid):
     try:
         if request.method == "POST":
             return render(request,'tc_DigitalMarketing/createrupload.html')
@@ -966,15 +982,23 @@ def status_view(request,id1):
             gifUrl=video.Gifurl
             Creative=video.creative
             Vendor=video.vendor
+            imgUrl1=video.Imageurl1
+            gifUrl1=video.Gifurl1
 
             import ast
             res = ast.literal_eval(response[0][0])
 
             print(res)
+
+            username=Profile.objects.get(userid = uid)
+            userroleid = username.userroleid
+            print(userroleid)
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename
             return render(request,'tc_DigitalMarketing/statusview.html',{'approverres':res[0],
                                                                         'approvercmd':res[1],
                                                                         'reason':res[2],
-                                                                        'id':id,
+                                                                        'id':uid,
                                                                         'video':vP,
                                                                         'vid':id1,
                                                                         'Transcribe':vT,
@@ -987,7 +1011,10 @@ def status_view(request,id1):
                                                                         'Platform':Platform,
                                                                         'uploadername':response[0][1],
                                                                         'imgUrl':imgUrl,
-                                                                        "gifUrl":gifUrl
+                                                                        "gifUrl":gifUrl,
+                                                                        'gifUrl1':gifUrl1,
+                                                                        'imgUrl1':imgUrl1,
+                                                                        'userrolename':userrolename,
                                                                         })
     except Exception as e:
         error={'error':e}
@@ -1145,7 +1172,7 @@ def upload_again(request,id,id1):
                 url1=''
                 myfile = request.FILES['myfile']
                 fs = FileSystemStorage()
-                filename = fs.save(myfile.name, myfile)
+                filename = fs.save(myfile.name.replace(" ", ""), myfile)
                 uploaded_file_url = fs.url(filename)
                 print(uploaded_file_url)
                 # url=uploaded_file_url
@@ -1164,8 +1191,8 @@ def upload_again(request,id,id1):
                     url=uploaded_file_url
                     # url=url.replace("/",'\\')
                     # url=url.replace('%20',' ')
-                    # text=transcribe_video_audio(url)
-                    text=' Are you an American over 25 and earning less than $50,000? Well you might have already qualified for this $5,200 healthcare assistance program available in the US. Just CLICK the link below and see how much you might get back.'
+                    text=transcribe_video_audio(url)
+                    # text=' Are you an American over 25 and earning less than $50,000? Well you might have already qualified for this $5,200 healthcare assistance program available in the US. Just CLICK the link below and see how much you might get back.'
                     # text='--'
                 
                 if Creative == 'GIF':
@@ -1193,7 +1220,22 @@ def upload_again(request,id,id1):
                                                                                 'imgurl':image_url,'gifurl':Gif_url})
 
             messages.success(request, 'submitted succesfully')
-            return redirect('/dm/uploaderdashboard/'+id1)
+
+            username=Profile.objects.get(userid = id1)
+            userroleid = username.userroleid
+            userrolename=TbUserrole.objects.get(userroleid = userroleid)
+            userrolename=userrolename.userrolename 
+
+            if userrolename=='Uploader':
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/uploaderdashboard/'+id1)
+            elif userrolename=='Reviewer':
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/approver/'+id1)
+            else:
+                messages.success(request, 'submitted succesfully')
+                return redirect('/dm/superadmin/'+id1)
+            # return redirect('/dm/uploaderdashboard/'+id1)
 
         
         else:
@@ -1268,13 +1310,80 @@ def register_view(request):
             user.set_password(password)
             Role = form.cleaned_data.get('Role')
             user.save()
+    
+            if Role == 'Creator':
+                subject = "Welcome Creative Management!"
+                message = ""
+                from_email = "team.digi360@truecoverage.com"
+                to_email = user.email
+                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
+                smtp_port = 587  # Typically 587 for TLS
+                smtp_username = "AKIAYWUJHWUQRKLDGQKC"
+                smtp_password = "BM0eqFhv1BlczdFWfoJG2GmqUUG0R1lF1SHrDdWessXi"
+                user_name = user.username
+                send_email_creator(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
+                
+                subject = "New to our plateform!"
+                to_email = 'naveen.kumaran@speridian.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
 
-            subject = 'Welcome creative management'
-            message = f'Hi Username: {user.username}, Email: {user.email}, Role: { Role }. Thank you for registering in digi360. we review after will activate your Account.'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [user.email,'naveen.kumaran@speridian.com', ]
-            send_mail( subject, message, email_from, recipient_list )
+                subject = "New to our plateform!"
+                to_email = 'pranav.vijay@Truecoverage.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
 
+
+            if Role == 'Approver':
+                subject = "Welcome Creative Management!"
+                message = ""
+                from_email = "team.digi360@truecoverage.com"
+                to_email = user.email
+                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
+                smtp_port = 587  # Typically 587 for TLS
+                smtp_username = "AKIAYWUJHWUQRKLDGQKC"
+                smtp_password = "BM0eqFhv1BlczdFWfoJG2GmqUUG0R1lF1SHrDdWessXi"
+                user_name = user.username
+                send_email_approver(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
+
+                subject = "New to our plateform!"
+                to_email = 'naveen.kumaran@speridian.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+
+                subject = "New to our plateform!"
+                to_email = 'pranav.vijay@Truecoverage.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+            
+            if Role == 'Downloader':
+                subject = "Welcome Creative Management!"
+                message = ""
+                from_email = "team.digi360@truecoverage.com"
+                to_email = user.email
+                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
+                smtp_port = 587  # Typically 587 for TLS
+                smtp_username = "AKIAYWUJHWUQRKLDGQKC"
+                smtp_password = "BM0eqFhv1BlczdFWfoJG2GmqUUG0R1lF1SHrDdWessXi"
+                user_name = user.username
+                send_email_downloader(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
+
+                subject = "New to our plateform!"
+                to_email = 'naveen.kumaran@speridian.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+
+                subject = "New to our plateform!"
+                to_email = 'pranav.vijay@Truecoverage.com'
+                user_Role = Role
+                user_email= user.email
+                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+            
 
             new_user = authenticate(username=user.username, password=password,)
             login(request, new_user)
@@ -1292,6 +1401,120 @@ def register_view(request):
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
+
+
+
+def send_email_creator(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
+   
+    html_message = render_to_string('email/creator.html', {'user_name': user_name})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
+
+def send_email_approver(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
+   
+    html_message = render_to_string('email/approver.html', {'user_name': user_name})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
+
+def send_email_downloader(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
+   
+    html_message = render_to_string('email/downloader.html', {'user_name': user_name})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
+
+def send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
+
+    html_message = render_to_string('email/default.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
+
+def send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
+
+    html_message = render_to_string('email/default.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email,})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
+
 
 
 def logout_view(request):
@@ -1328,7 +1551,7 @@ def creater_update_video(request,id,id1):
                     Title1=request.POST.get('Videotitle').capitalize()
                     myfile = request.FILES['myfile']
                     fs = FileSystemStorage()
-                    filename = fs.save(myfile.name, myfile)
+                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
                     uploaded_file_url = fs.url(filename)
                     print(uploaded_file_url)
 
@@ -1577,6 +1800,8 @@ def update_view(request,id,id1):
             gifUrl=video.Gifurl
             Creative=video.creative
             Vendor=video.vendor
+            imgUrl1=video.Imageurl1
+            gifUrl1=video.Gifurl1
 
 
             return render(request,'tc_DigitalMarketing/update.html',{
@@ -1593,6 +1818,8 @@ def update_view(request,id,id1):
                                                                         'Platform':Platform,
                                                                         'imgUrl':imgUrl,
                                                                         "gifUrl":gifUrl,
+                                                                        'imgUrl1':imgUrl1,
+                                                                        'gifUrl1':gifUrl1,
                                                                      
                                                                      })
     except Exception as e:

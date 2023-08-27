@@ -196,17 +196,11 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
+# AUTO_LOGOUT = {'IDLE_TIME': 6}
+from datetime import timedelta
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'naveen436219@gmail.com'
-# EMAIL_HOST_PASSWORD = 'rinoodwfkzqotujl'
+AUTO_LOGOUT = {
+    'IDLE_TIME': timedelta(minutes=0.2),
+    'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
+}
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'digi360official@gmail.com'
-EMAIL_HOST_PASSWORD = 'ylfktddjkugcfdgd'
