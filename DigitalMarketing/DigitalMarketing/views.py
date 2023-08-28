@@ -975,7 +975,7 @@ def status_view(request,id1,uid):
             vT=video.videotranscription
             vN=video.videoname
             Platform=video.platform
-            vP1='/'+video.videopath1
+            vP1=video.videopath1
             vT1=video.videotranscription1
             LOB='/'+video.lob
             imgUrl=video.Imageurl
@@ -1793,7 +1793,7 @@ def update_view(request,id,id1):
             vT=video.videotranscription
             vN=video.videoname
             Platform=video.platform
-            vP1='/'+video.videopath1
+            vP1=video.videopath1
             vT1=video.videotranscription1
             LOB='/'+video.lob
             imgUrl=video.Imageurl
