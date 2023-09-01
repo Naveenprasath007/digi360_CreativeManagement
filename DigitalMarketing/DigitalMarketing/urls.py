@@ -40,6 +40,7 @@ urlpatterns = [
     path("superadmin/<str:id>", views.admin), 
     path("superadmindetail_view/<str:id>", views.superadmindetail_view), 
     path("superadmindetail_downloader_view/<str:id>", views.superadmindetail_downloader_view), 
+    path('Activation',views.activate),
     
 
      

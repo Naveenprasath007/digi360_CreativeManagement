@@ -150,6 +150,7 @@ class video_Details(models.Model):
     userid = models.ForeignKey('TbUser', models.DO_NOTHING, db_column='userid')  # Field name made lowercase.
     VideoPath = models.CharField(db_column='videopath',primary_key=True, max_length=2000)  # Field name made lowercase.
     VideoName = models.CharField(db_column='videoname', blank=True,max_length=255)
+    creative = models.CharField(db_column='creative', max_length=2000) 
     class Meta:
         managed = False
         db_table = 'videodetails'
@@ -172,6 +173,8 @@ class Profile(models.Model):
     username = models.CharField(db_column='UserName', blank=True,max_length=255)  # Field name made lowercase.
     userroleid = models.CharField(db_column='UserRoleId', blank=True,max_length=255)  # Field name made lowercase.
     vendor=models.CharField(db_column='Vendor', max_length=255, blank=True, null=True)
+    email = models.CharField(db_column='email', blank=True,max_length=255)
+
 
     
 

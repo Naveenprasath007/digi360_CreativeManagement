@@ -341,7 +341,7 @@ def creater_upload(request,id):
                                             userid=TbUser.objects.get(userid = str(id)),response= b)
                     video_details5.save()  
             
-            videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=vN)
+            videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=vN,creative=Cre)
             videoDetails.save()
         
             
@@ -368,7 +368,7 @@ def creater_upload(request,id):
         else:
             a=id
             status='Waiting'
-            videodetails1=video_Details.objects.filter(userid=id)
+            videodetails1=video_Details.objects.filter(userid=id,creative='Video')
             videodetails="video_Details.objects.filter(userid=id)"
             username=Profile.objects.get(userid = id)
             userroleid = username.userroleid
@@ -1307,9 +1307,33 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data.get('password')
+            email = form.cleaned_data.get('email')
             user.set_password(password)
             Role = form.cleaned_data.get('Role')
+            Name = form.cleaned_data.get('Name')
             user.save()
+
+            if Role == 'Creator':
+                rid='U1'
+            elif Role == 'Approver':
+                rid='R1'
+            elif Role == 'Downloader':
+                rid='D1'     
+
+            new_id = uuid.uuid4()
+            str(new_id)
+
+            profile=Profile.objects.get(user=user)
+            profile.userid=new_id
+            profile.username=Name
+            profile.userroleid=''
+            profile.vendor='adsparks'
+            profile.email=email
+            profile.save()
+            # print(Role)
+            
+            tbuser=TbUser(userid=new_id,username=Name,userroleid=TbUserrole.objects.get(userroleid=rid),password='test',vendor='adsparks')
+            tbuser.save()
     
             if Role == 'Creator':
                 subject = "Welcome Creative Management!"
@@ -1401,6 +1425,53 @@ def register_view(request):
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
+
+def activate(request):
+    try:
+        if request.method == "POST":
+            form = ActivationForm(request.POST or None)
+            if form.is_valid():
+                email= form.cleaned_data.get('email')
+                Role = form.cleaned_data.get('Role')
+                print(email)
+                print(Role)                
+                profile=Profile.objects.get(email=email)
+                profile.userroleid=Role
+                profile.save()
+
+                subject = "Digi360 account is activated!"
+                message = ""
+                from_email = "team.digi360@truecoverage.com"
+                to_email = email
+                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
+                smtp_port = 587  # Typically 587 for TLS
+                smtp_username = "AKIAYWUJHWUQRKLDGQKC"
+                smtp_password = "BM0eqFhv1BlczdFWfoJG2GmqUUG0R1lF1SHrDdWessXi"
+                user_name = ''
+                user_Role = Role
+                user_email= email
+
+                send_email_activation(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+
+            context = {
+                    'form': form,
+                }
+            messages.success(request, 'Account Activated Successfully')
+            return render(request, "tc_DigitalMarketing/activation.html",context)
+        else:
+            form = ActivationForm(request.POST or None)
+            context = {
+                    'form': form,
+                }
+            return render(request, "tc_DigitalMarketing/activation.html",context)
+
+    except Exception as e:
+        form = ActivationForm(request.POST or None)
+        context = {
+                'form': form,
+            }
+        messages.success(request, 'Your Details is not found')
+        return render(request, "tc_DigitalMarketing/activation.html",context)
 
 
 
@@ -1515,6 +1586,27 @@ def send_email_default1(subject, message, from_email, to_email, smtp_server, smt
     except Exception as e:
         print("Error sending email:", e)
 
+def send_email_activation(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
+
+    html_message = render_to_string('email/activation.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email})
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    part1 = MIMEText(html_message, 'html')
+    msg.attach(part1)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(smtp_username, smtp_password)
+        server.sendmail(from_email, to_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error sending email:", e)
 
 
 def logout_view(request):

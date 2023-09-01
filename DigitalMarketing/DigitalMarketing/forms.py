@@ -31,13 +31,14 @@ class UserRegisterForm(forms.ModelForm):
 
     email=forms.EmailField(label='Email Address')
     email2=forms.EmailField(label='Confirm Email Address')
-    # Role=forms.CharField(label='Role')
+    Name=forms.CharField(label='Nick Name')
     Role=forms.CharField(label='Select Role', widget=forms.Select(choices=ROLE_CHOICES))
     password=forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
         model=user
         fields=[
+            'Name',
             'username',
             'email',
             'email2',
@@ -59,5 +60,12 @@ class UserRegisterForm(forms.ModelForm):
         return super(UserRegisterForm, self).clean(*args,**kwargs)
         
 
-
-        
+  
+class ActivationForm(forms.Form):
+    ROLE_CHOICES= [
+    ('U1', 'Creator'),
+    ('R1', 'Approver'),
+    ('D1', 'Downloader'),
+    ]
+    email = forms.CharField()
+    Role=forms.CharField(label='Select Role', widget=forms.Select(choices=ROLE_CHOICES)) 
