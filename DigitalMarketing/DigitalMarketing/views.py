@@ -1307,7 +1307,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data.get('password')
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('email').lower()
             user.set_password(password)
             Role = form.cleaned_data.get('Role')
             Name = form.cleaned_data.get('Name')
@@ -1351,13 +1351,13 @@ def register_view(request):
                 to_email = 'naveen.kumaran@speridian.com'
                 user_Role = Role
                 user_email= user.email
-                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+                # send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
 
                 subject = "New to our plateform!"
                 to_email = 'pranav.vijay@Truecoverage.com'
                 user_Role = Role
                 user_email= user.email
-                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+                # send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
 
 
             if Role == 'Approver':

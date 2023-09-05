@@ -29,29 +29,31 @@ class UserRegisterForm(forms.ModelForm):
     ('Downloader', 'Downloader'),
     ]
 
-    email=forms.EmailField(label='Email Address')
-    email2=forms.EmailField(label='Confirm Email Address')
-    Name=forms.CharField(label='Nick Name')
-    Role=forms.CharField(label='Select Role', widget=forms.Select(choices=ROLE_CHOICES))
-    password=forms.CharField(widget=forms.PasswordInput)
+    # email=forms.EmailField(label='Email Address')
+    # email2=forms.EmailField(label='Confirm Email Address')
+    username=forms.CharField(label=False,widget=forms.TextInput(attrs={'placeholder': 'Username'}))
+    email=forms.EmailField(label=False,widget=forms.TextInput(attrs={'placeholder': 'Email Address'}))
+    Name=forms.CharField(label=False,widget=forms.TextInput(attrs={'placeholder': 'Enter Your Name'}))
+    Role=forms.CharField(label=False, widget=forms.Select(choices=ROLE_CHOICES))
+    password=forms.CharField(label=False,widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
 
     class Meta:
         model=user
         fields=[
             'Name',
-            'username',
             'email',
-            'email2',
-            'Role',
+            'username',
+            # 'email2',
             'password',
+            'Role',
         ]
 
     def clean(self,*args,**kwargs):
-        email=self.cleaned_data.get('email')
-        email2=self.cleaned_data.get('email2')
+        email=self.cleaned_data.get('email').lower()
+        # email2=self.cleaned_data.get('email2')
 
-        if email!=email2:
-            raise forms.ValidationError("Emails Don't Match")
+        # if email!=email2:
+        #     raise forms.ValidationError("Emails Don't Match")
 
         email_qs=user.objects.filter(email=email)
         if email_qs.exists():
