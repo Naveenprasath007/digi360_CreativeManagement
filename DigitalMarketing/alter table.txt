@@ -1,0 +1,18 @@
+ALTER TABLE tb_video
+RENAME COLUMN imgurl1 TO videopath2;
+
+ALTER TABLE tb_video 
+DROP COLUMN gifurl1;
+
+ALTER TABLE tb_video 
+DROP COLUMN videotranscribeone;
+
+
+alter table tb_Status
+add videopath2 varchar(255);
+
+alter table tb_Status
+add aspect_ratio varchar(255);
+
+ALTER TABLE tb_video 
+add aspect_ratio varchar(255);

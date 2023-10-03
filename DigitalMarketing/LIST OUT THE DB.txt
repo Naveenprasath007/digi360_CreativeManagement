@@ -1,0 +1,50 @@
+Open postgre sql
+sudo -u postgres psql
+
+
+LIST OUT THE DB
+
+\l
+
+CONNECT DB
+
+\c creative_management
+
+
+list table
+
+\dt
+
+
+
+
+
+server inside 
+
+*list
+
+psql -l
+
+*super user
+
+createuser --superuser Creativemanagement
+
+*enter into db
+
+psql -U Creativemanagement
+
+
+
+
+
+
+SERVER DB PASSWORD
+
+id- aitesting
+
+password -Speridian_123 
+
+
+
+naveen
+naveen

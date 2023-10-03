@@ -1,0 +1,587 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        {% if userrolename == 'Uploader' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+        {% if userrolename == 'Reviewer' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+
+        {% if userrolename == 'SuperAdmin' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#"
+                ><i class="bi bi-moon"></i
+              ></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="bi bi-brightness-high"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="bi bi-bell"></i>
+              </a>
+            </li>
+            <!-- <li class="nav-item account-section">
+              <a class="nav-link" href="#">
+                <span>My Account</span>
+                <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="" />
+                  <i class="bi bi-chevron-down"></i>
+                </span>
+              </a>
+            </li> -->
+            <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+              <a class="nav-link" href="#">
+                <span>My Account</span>
+                <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="" />
+                  <i class="bi bi-chevron-down"></i>
+                </span>
+              </a>
+              <div class="dropdown-panel">
+                <ul>
+                    <li>Account</li>
+                    <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+                </ul>
+              </div>
+            </li>
+
+
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <style>
+      body
+    {
+      scroll-behavior: smooth;
+      
+    }
+    .Imageupload { display:none }
+    .Gifupload {display: none;}
+    #name{
+      width: 15em;
+    }
+    #field2
+    {
+      width: 20em;
+    }
+    select{
+      width: 20em;
+    }
+    </style>
+  <form method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+    <div class="upload-page">
+        <div class="upload-panel mbottom">
+          <div class="upwrap">
+            {% if creative == 'Video' %}
+            {% if url != '--' and url1 == '--' and url2 == '--' %}
+            <video width="50%" height="200" controls="">
+                <source src="{{url}}" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            {% endif %}
+
+            {% if url != '--' and url1 != '--' and url2 == '--' %}
+            <div class="container">
+              <div class="row">
+                <div class="col-sm">
+                  <div class="videos-box">          
+                    <div class="thumbnail">
+                      <video width="500" height="150" controls>
+                        <source src="{{ url }}" type="video/mp4">
+                        <source src="{{ url }}" type="video/ogg">
+                      Your browser does not support the video tag.
+                      </video>
+                    </div>
+                    <p class="video-title"></p>
+                  </div> 
+                </div>
+
+                <div class="col-sm">
+                  <div class="videos-box">          
+                    <div class="thumbnail">
+                      <video width="500" height="150" controls>
+                        <source src="{{ url1 }}" type="video/mp4">
+                        <source src="{{ url1 }}" type="video/ogg">
+                      Your browser does not support the video tag.
+                      </video>
+                    </div>
+                    <p class="video-title"></p>
+                  </div> 
+                </div>
+
+              </div>
+            </div>
+            {% endif %}
+
+            {% if url != '--' and url1 != '--' and url2 != '--' %}
+            <div class="container">
+              <div class="row">
+                <div class="col-sm">
+                  <div class="videos-box">          
+                    <div class="thumbnail">
+                      <video width="500" height="150" controls>
+                        <source src="{{ url }}" type="video/mp4">
+                        <source src="{{ url }}" type="video/ogg">
+                      Your browser does not support the video tag.
+                      </video>
+                    </div>
+                    <p class="video-title"></p>
+                  </div> 
+                </div>
+
+                <div class="col-sm">
+                  <div class="videos-box">          
+                    <div class="thumbnail">
+                      <video width="500" height="150" controls>
+                        <source src="{{ url1 }}" type="video/mp4">
+                        <source src="{{ url1 }}" type="video/ogg">
+                      Your browser does not support the video tag.
+                      </video>
+                    </div>
+                    <p class="video-title"></p>
+                  </div> 
+                </div>
+
+                <div class="col-sm">
+                  <div class="videos-box">          
+                    <div class="thumbnail">
+                      <video width="500" height="150" controls>
+                        <source src="{{ url2 }}" type="video/mp4">
+                        <source src="{{ url2 }}" type="video/ogg">
+                      Your browser does not support the video tag.
+                      </video>
+                    </div>
+                    <p class="video-title"></p>
+                  </div> 
+                </div>
+
+
+              </div>
+            </div>
+            {% endif %}
+            {% endif %}
+  
+            {%if creative == 'Image' %}
+            <div class="upload-box">
+              <img width="100%" height="100%" src="{{ imgurl }}" alt="">
+            </div>
+            {% endif %}
+  
+            {%if creative == 'Gif' %}
+            <div class="upload-box">
+              <img width="100%" height="100%" src="{{ gifurl }}" alt="">
+            </div>
+            {% endif %}
+
+            
+            {%if getdetails %}
+            <div class="upload-box">
+              <div class="messege-info">
+                {% include 'tc_DigitalMarketing/messages.html' %}
+              </div>
+              <!-- <img class="collection" src="{% static 'images/fileupload.svg'%}" /> -->
+              <h5>
+                Browse or import <span>Video,Image,Gif</span>
+              </h5>
+              <br>
+              <div class="platform-box">
+              <label>
+              <input class='Videoupload' type="radio" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"  name="creative" value="Video" onchange="chooseupload1()" required>
+              <!-- <input class='Videoupload' type="radio" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"  name="creative" value="Video"  required> -->
+              <img src="{% static './images/video_ico.svg'%} ">
+              </label>&nbsp;&nbsp;&nbsp;
+              <label>
+              <input class="imageupload" type="radio"  name="creative" value="Image" onchange="chooseupload()" >
+              <img src="{% static './images/picture.svg'%}">
+              </label>&nbsp;&nbsp;&nbsp;
+              <label>
+              <input class="gifupload" type="radio"  name="creative" value="Gif" onchange="chooseuploadgif()">
+              <img src="{% static './images/Gif.svg'%}">
+              </label>
+            </div>
+            <br>
+            <div class="platform-box">
+            <h5>
+                <fieldset class="Imageupload" style="align-items: center;">
+                <input type="file" name="file_image" placeholder="" id="file" >
+              </fieldset>
+            </h5>
+            <h5>
+            <fieldset class="Gifupload">
+              <input type="file" name="file_gif" placeholder="" id="file" >
+            </fieldset>
+            </h5>
+            </div>
+            <p>You will free to upload any file format upto 300 mb</p>
+          </div>
+          {% endif %}
+          </div>
+          
+          {%if getdetails %}
+
+          <div class="presets-box">
+            <h2>Presets</h2>
+            <div class="preset-icon-box">
+              <label>Add your Creative Title</label>
+            <input type="text" id="name" name="title" class="form-control"  required style="width:100%">
+            </div>
+            <div class="preset-icon-box">
+              <label>Creator</label>
+              <input type="text" id="name" name='Creator' class="form-control"  required style="width:100%;">
+            </div>
+            <div class="preset-icon-box">
+              <label>Which LOB is this Creative for?</label>
+              <select class="form-control" id="field2" name='LOB' required style="width:100%; text-align: center;">
+                <option value="">--Select--</option>
+                <option value="ACA">ACA</option>
+                <option value="MEDICARE">MEDICARE</option>
+                <option value="MEDICAID">MEDICAID</option>
+            
+              </select>
+            </div>
+  
+            <div class="preset-icon-box">
+              <label>Which Platform is this Creative for?</label>
+              <div class="icon-box-align">
+                <div class="platform-box" style="background-color: #f7e8bc">
+                  <input class="platform" type="checkbox" id="select" onclick="toggle1(this)"/>
+                  <label for="select"> 
+                  <img src="{% static './images/Select-all.svg'%}" /></label>
+                </div>
+                <div class="platform-box" style="background-color: #3b5998">
+                  <input type="checkbox" name="Platform" id="facebook" value="Facebook" />
+                  <label for="facebook">
+                  <img src="{% static './images/facebook.svg'%}" /></label>
+                </div>
+                <div class="platform-box" style="background-color: #ee3b3b">
+                  <input type="checkbox" name="Platform" id="youtube" value="Youtube"/>
+                  <label for="youtube">
+                  <img src="{% static './images/youtube.svg'%}" /></label>
+                </div>
+                <div class="platform-box" style="background-color: #c9e8f9">
+                  <input type="checkbox" name="Platform" id="cdn" value="GDN"/>
+                  <label for="cdn" >
+                    <img src="{% static './images/cdn.png'%}" />
+                 </label> 
+                </div>
+                <div class="platform-box" style="background-color: #d8d5d5">
+                  <input type="checkbox" name="Platform" id="tiktok" value="tiktok"/>
+                  <label for="tiktok">
+                    <img src="{% static './images/tiktok.svg'%}" />
+                 </label> 
+                </div>
+                <div class="platform-box" style="background-color: #2fab7c">
+                  <input type="checkbox" name="Platform" id="settings" value="Native"/>
+                  <label for="settings">
+                  <img src="{% static './images/native.svg'%}" /></label>
+                </div>
+              </div>
+            </div>
+  
+            <button class="submit" name='Upload' value="Upload" onclick="validateForm()">Submit</button>
+          </div>
+          {% endif %}
+
+          {%if finalsubmit %}
+
+          <div class="presets-box">
+            <h2>Questions</h2>
+  
+            <form action="" method="post"enctype="multipart/form-data">
+              {% csrf_token %}   
+      
+                    {% if qT.q0 %}
+                    <label><h6>{{qT.q0}}</h6></label>
+                    {% endif %}
+                    
+                    {% if qR.k0 %}
+                    <select required aria-label="Select usage" class="form-select"
+                        name="question" onchange="set_sub_usage_list()" required>
+                        <option selected>--Select Your Choice--</option>
+                          {% for usage in qR.k0 %}
+                              <option value="{{ usage }}">{{ usage }}</option>
+                          {% endfor %}
+      
+                    </select>
+                    <br>
+                    {% endif %}
+                    <button class="submit">Submit</button>
+              </form>
+          </div>
+          {% endif %}
+
+
+        </div>
+        </form>
+        {%if getdetails %}
+        <div class="transcription-panel mbottom">
+          <h2>Transcription</h2>
+          <div class="transcription-box">
+            <p>Transcription will be generated once video uploaded.</p>
+          </div>
+        </div>
+        {% endif %}
+        {%if text %}
+        <div class="transcription-panel mbottom">
+          <h2>Transcription</h2>
+          <div class="transcription-box">
+            <p>{{ text }}</p>
+          </div>
+        </div>
+        {% endif %}
+        
+  
+        <!-- <div class="transcription-panel mbottom">
+          <h2>Transcription</h2>
+          <div class="transcription-box">
+            <p>Transcription will be generated once video uploaded.</p>
+          </div>
+        </div> -->
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Upload videos</h5>
+            <!-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button> -->
+          </div>
+          <div class="modal-body">
+    
+    
+            <style>
+              /* .answer1 { display:none } */
+              .answer2 { display:none }
+              .answer3 { display:none }
+              </style>
+    
+    
+              
+              <input class="coupon_question1" type="checkbox" name="coupon_question1" value="1" onchange="valueChanged()" checked/> 
+              <label>16:9</label>
+              <input class="coupon_question2" type="checkbox" name="coupon_question2" value="1" onchange="valueChanged1()"/> 
+              <label>9:16</label>
+              <input class="coupon_question3" type="checkbox" name="coupon_question3" value="1" onchange="valueChanged2()"/> 
+              <label>1:1</label>
+    
+              <script type="text/javascript">
+                  function valueChanged()
+                  {
+                      if($('.coupon_question1').is(":checked"))   
+                          $(".answer1").show();
+                      else
+                          $(".answer1").hide();
+                  }
+              
+                  function valueChanged1()
+                {
+                    if($('.coupon_question2').is(":checked"))   
+                        $(".answer2").show();
+                    else
+                        $(".answer2").hide();
+                }
+              
+                  function valueChanged2()
+                {
+                    if($('.coupon_question3').is(":checked"))   
+                        $(".answer3").show();
+                    else
+                        $(".answer3").hide();
+                }
+              </script>
+    
+    
+    
+    
+              <fieldset class="answer1">
+                <label>Select 16:9 File: </label>
+                <input type="file" name="file1" placeholder="" id="file1" >
+              </fieldset>
+    
+              <fieldset class="answer2">
+                <label>Select 9:16 File: </label>
+                <input type="file" name="file2" placeholder="" id="file2" >
+              </fieldset>
+    
+              <fieldset class="answer3">
+                <label>Select 1:1 File: &nbsp;&nbsp; </label>
+                <input type="file" name="file3" placeholder="" id="file3" >
+              </fieldset>
+    
+              <div class="form-group" style="display:none;" id="progress_div">
+                <div class="progress">
+                        <div class="progress-bar" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <p id="progress_text"></p>
+            </div>
+    
+            <button type="submit" class="btn btn-success"onclick="onFormSubmit(event)">upload</button>
+    
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">close</span>
+            </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Confirm aproval</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            
+          </div>
+          <div class="modal-footer">
+            
+            <button type="button" class="btn btn-primary">Confirm changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    
+    
+    
+    <script>
+      function onFormSubmit(event) {
+        
+          event.preventDefault();
+    
+          var formData=new FormData();
+          formData.append("name",document.getElementById("name").value);
+          formData.append("file1",document.getElementById("file1").files[0]);
+          formData.append("file2",document.getElementById("file2").files[0]);
+          formData.append("file3",document.getElementById("file3").files[0]);
+    
+    
+          console.log(formData);
+    
+          var xhr=new XMLHttpRequest();
+          xhr.open("POST","/dm/ajax_file_upload_save/{{ id }}",true);
+          xhr.upload.addEventListener("progress",function (ev) {
+             if(ev.lengthComputable){
+                   var percentage=(ev.loaded/ev.total*100|0);
+                 document.getElementById("progress_div").style["display"]="block";
+                 document.getElementById("progress_bar").style["width"]=""+percentage+"%";
+                 document.getElementById("progress_bar").innerHTML=""+percentage+"%";
+                 document.getElementById("progress_text").innerHTML="Uploaded : "+parseInt(ev.loaded/1000000)+"/"+parseInt(ev.total/1000000)+" MB";
+                 console.log("Uploaded : "+ev.loaded);
+                 console.log("TOTAL : "+ev.total);
+    
+                 console.log(percentage)
+             }
+          });
+          xhr.send(formData);
+    
+      }
+    
+    
+      function chooseupload()
+                  {
+                      if($('.imageupload').is(':checked'))   
+                          $(".Imageupload").show() && $(".Gifupload").hide();
+                      else
+                          $(".Imageupload").hide();
+                  }
+      function chooseupload1()
+                  {
+                      if($('.Videoupload').is(':checked'))   
+                          $(".Imageupload").hide() && $(".Gifupload").hide();
+                      else
+                          $(".Imageupload").show();
+
+                  }
+      function chooseuploadgif()
+                  {
+                    if($('.Gifupload').is(':checked'))   
+                          $(".Imageupload").hide();
+                      else
+                          $(".Gifupload").show() && $(".Imageupload").hide();
+                  }
+    
+    
+    </script>
+    </div>
+    
+    
+<script>
+  function toggle1(source) {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source)
+            checkboxes[i].checked = source.checked;
+    }
+}
+</script>
+
+<script>
+      function validateForm(){
+        var platformCheckboxes = document.getElementsByName("Platform");
+        var isChecked = false
+
+        if (platformCheckboxes.length >= 0) {
+            for (var i = 0; i < platformCheckboxes.length; i++)
+                if (platformCheckboxes[i].checked) {
+                isChecked = true;
+                break;
+                }
+                if (!isChecked) {
+                    alert("Please select at least one platform.")
+                    return false
+                }
+           
+            
+        }
+    }
+</script>
+    
+
+{% endblock content %}
+

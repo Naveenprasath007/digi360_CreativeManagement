@@ -4,28 +4,9 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <!-- <a class="navbar-brand d-inline-flex align-items-center" href="#">
-        <h2>true<span>coverage</span></h2>
-      </a> -->
-      {% if userrolename == 'Uploader' %}
-      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
-        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
         <h2>true<span>coverage</span></h2>
       </a>
-      {% endif %}
-      {% if userrolename == 'Reviewer' %}
-      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ id }}">
-        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
-        <h2>true<span>coverage</span></h2>
-      </a>
-      {% endif %}
-
-      {% if userrolename == 'SuperAdmin' %}
-      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
-        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
-        <h2>true<span>coverage</span></h2>
-      </a>
-      {% endif %}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -72,22 +53,27 @@
     </div>
   </div>
 </nav> 
-
+  
 <div class="container-fluid" >
   <div class="innersearch" style="height: 100px;">
     <div class="col-md-12">
         <input type="search" id='search-input' placeholder="search here" onkeyup="filterDivisions()"/>
-
+        <button class="sortby" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"><img src="{% static 'images/Download.svg'%}"></button>
+        {% if accessed_video %}
+        <button class="sortby"><a style="text-decoration:none" href="/dm/superadmindetail_downloader_view/{{id}}"> <img src="{% static 'images/enterview.svg'%}"> </a></button>
+        {% endif %}
         <button id="show"class="sortby"><img src="{% static 'images/list.svg'%}"></button>
         <button id="hide"class="sortby"><img src="{% static 'images/grid.svg'%}"></button>
-
-
-
-        
     </div>
 </div>
     </div>
-<div id="Listview">
+<div class="messege-info">
+  {% include 'tc_DigitalMarketing/messages.html' %}
+</div>
+<input type="checkbox" name="select-all" id="select-all" class="select-all"/><label>Select all</label>
+<form action="" method="post" enctype="multipart/form-data" id="upload-form">
+{% csrf_token %}
+<div id="Listview" class="finding">
   {% if status %}
   <div class="list-panel">
     <table class="table align-middle mb-0 bg-white">
@@ -106,6 +92,7 @@
       {% for i in status %}
       <tbody>
         <tr align="center" class="finding">
+          <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
           <td>
             <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
@@ -126,7 +113,7 @@
             <p class="fw-normal mb-1"> {{i.uploadername}} </p>
           </td>
           <td>
-            <p class="fw-normal mb-1"> {{i.approver}} </p>
+            <p > {{i.approver}} </p>
           </td>
           <td>
             {% if i.status == 'Rejected' %}
@@ -157,7 +144,7 @@
       </tbody>
       {% endfor %}
     </table>
-  </div>
+    </div>
     {% endif %}
 
 
@@ -181,6 +168,7 @@
       {% for i in user_status %}
       <tbody>
         <tr align="center" class="finding">
+          <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
           <td>
             <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
@@ -208,7 +196,19 @@
             <span style="border: 2px solid #ff2a04; padding: 10px 15px; color: #ff2a04; border-radius: 20px;">{{i.status}}</span>
             {% endif %}
             {% if i.status == 'Approved' %}
-            <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
+            <!-- <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span> -->
+            
+            {% if i.downloadaccess != 'Notyet' %}
+            <div class="showhim">
+              <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
+            <!-- <div class="vstatusapprove"></div> -->
+            <div class="showme">{{i.downloader}}</div>
+            </div>
+          {% endif %}
+          {% if i.downloadaccess == 'Notyet' %}
+          <div class="vstatusapprove"><span>{{i.status}}</span></div>
+          {% endif %}
+            
             {% endif %}
             {% if i.status == 'Pending' %}
             <span style="border: 2px solid #ffb004; padding: 10px 15px; color: #ffb004; border-radius: 20px;">{{i.status}}</span>
@@ -233,10 +233,14 @@
     {% endif %}
 </div>
 
+
+
 <!-- <div id="Listview" class="division">
 {% if status %}
 {% for i in status %}
+
 <div class="list-panel">
+  <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
   <div class="tnail">
       <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
         <source src="{{i.videoPath}}" type="video/mp4">
@@ -246,7 +250,7 @@
   </div>
   <div class="dname">
       <span class="minhead">{{i.createddate}}</span>
-      <p class="listinner">{{i.videoname}}</p>
+      <p>{{i.videoname}}</p>
   </div>
   <div class="uploader">
       <span class="minhead">Platform</span>
@@ -260,11 +264,20 @@
       <span class="minhead">Reviewed by</span>
       <p class="listinner"> {{i.approver}}</p>
   </div>
+
   {% if i.status == 'Rejected' %}
   <div class="vstatus"><span>{{i.status}}</span></div>
   {% endif %}
   {% if i.status == 'Approved' %}
+  {% if downloadaccess == 'Notyet' %}
+    <div class="showhim">
+    <div class="vstatusapprove"><span>{{i.status}}</span></div>
+    <div class="showme">{{i.downloader}}</div>
+    </div>
+  {% endif %}
+  {% if downloadaccess == 'Notyet' %}
   <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vstatuspending"><span>{{i.status}}</span></div>
@@ -282,12 +295,14 @@
   {% endif %}
 </div>
 {% endfor %}
-{% endif %} -->
+{% endif %}
 
 
-<!-- {% if user_status %}
-{% for i in user_status %}
+{% if user_status %}
+  {% for i in user_status %}
+
 <div class="list-panel">
+  <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
   <div class="tnail">
       <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
         <source src="{{i.videoPath}}" type="video/mp4">
@@ -297,7 +312,7 @@
   </div>
   <div class="dname">
       <span class="minhead">{{i.createddate}}</span>
-      <p class="listinner">{{i.videoname}}</p>
+      <p>{{i.videoname}}</p>
   </div>
   <div class="uploader">
       <span class="minhead">Platform</span>
@@ -316,20 +331,25 @@
   <div class="vstatus"><span>{{i.status}}</span></div>
   {% endif %}
   {% if i.status == 'Approved' %}
+  {% if i.downloadaccess != 'Notyet' %}
+    <div class="showhim">
+    <div class="vstatusapprove"><span>{{i.status}}</span></div>
+    <div class="showme">{{i.downloader}}</div>
+    </div>
+  {% endif %}
+  {% if i.downloadaccess == 'Notyet' %}
   <div class="vstatusapprove"><span>{{i.status}}</span></div>
+  {% endif %}
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vstatuspending"><span>{{i.status}}</span></div>
   {% endif %}
 
-
-
-  
   {% if i.status == 'Approved' %}
   <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
   {% endif %}
   {% if i.status == 'Rejected' %}
-  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}">View</a></div>
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vview"><a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}">View</a></div>
@@ -372,10 +392,10 @@
                     <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Rejected' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                 </div>
             </div>
@@ -447,10 +467,10 @@
             <div class="col-md-6 alincol    ">
                 <div class="downloadIcon">
                   {% if i.status == 'Rejected' %}
-                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"><img src="{% static 'images/view.svg'%}"> </a>
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                       {% endif %}
                     {% if i.status == 'Pending' %}
                     <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
@@ -517,13 +537,53 @@
 </div>
 
 
+<!-- <form action="" method="post" enctype="multipart/form-data" id="upload-form"> -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Select Downloaders</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for i in user %}
+        <input type="checkbox" name="downloader{{i.userid}}" value="{{i.username}}" checked>
+        <label>{{i.username}}</label>
+        <br><br>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+
+        <!-- <button type="button" class="btn btn-primary">Confirm</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+</form>
 
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+<script>
 
-
+$('#select-all').click(function(event) {   
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;                        
+        });
+    } else {
+        $(':checkbox').each(function() {
+            this.checked = false;                       
+        });
+    }
+}); 
+</script>
 
 
 
