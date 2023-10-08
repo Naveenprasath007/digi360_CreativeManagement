@@ -47,7 +47,7 @@ class TbApprove(models.Model):
     videotitle = models.CharField(db_column='videotitle', max_length=255, blank=True, null=True)  # Field name made lowercase.
     videopath = models.CharField(db_column='videopath', max_length=255, blank=True, null=True)  # Field name made lowercase.
     uploadername = models.CharField(db_column='uploadername', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    # approveddate = models.DateTimeField(default=datetime.now)  # Field name made lowercase.
+    approveddate = models.DateTimeField(default=datetime.now)  # Field name made lowercase.
     downloadaccess = models.CharField(db_column='downloadaccess', max_length=255, blank=True, null=True)
     downloader = models.CharField(db_column='downloader', max_length=255, blank=True, null=True)
 

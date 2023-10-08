@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.db import connection
 import os
 from datetime import datetime
-
+import ast
 #login
 from django.contrib.auth import authenticate,get_user_model,login,logout
 from django.contrib.auth.decorators import login_required
@@ -1307,7 +1307,7 @@ def download_view(request,id,id1):
 
 @login_required(login_url='/')
 def download(request,id):
-    # try:
+    try:
         if request.method == "POST":
             return render(request,'tc_DigitalMarketing/Download.html',{'approvedvid':approvedvid,})
         else:
@@ -1326,9 +1326,9 @@ def download(request,id):
             arr = json.loads(json_records)
             print(arr)
             return render(request,'tc_DigitalMarketing/Download.html',{'approvedvid1':approvedvid,'approvedvid':arr})
-    # except Exception as e:
-    #     error={'error':e}
-    #     return render(request,'tc_DigitalMarketing/error.html',context=error)  
+    except Exception as e:
+        error={'error':e}
+        return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
 
 def download_video(request,id):
@@ -1631,6 +1631,16 @@ def register_view(request):
                 send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
             
             if Role == 'Downloader':
+                #adding download list in status table
+                queryset = TbStatus.objects.all() 
+                for q in queryset:
+                    a=q.downloader 
+                    downloader_list = ast.literal_eval(a)
+                    downloader_list.append(user.username)
+                    print(a)
+                    q.downloader = downloader_list
+                    q.save()
+
                 subject = "Welcome Creative Management!"
                 message = ""
                 from_email = "team.digi360@truecoverage.com"
@@ -1653,7 +1663,9 @@ def register_view(request):
                 user_Role = Role
                 user_email= user.email
                 send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-            
+
+
+
 
             new_user = authenticate(username=user.username, password=password,)
             login(request, new_user)
@@ -2521,7 +2533,6 @@ def daccess(request,id):
                 downloaderstatus.downloader=downloader
                 downloaderstatus.save() 
 
-            import ast
             if downloaderstatus.downloader !=None or downloaderstatus.downloader ==[]:
                 downloader=(downloaderstatus.downloader)
                 downloader_list = ast.literal_eval(downloader)
@@ -2541,6 +2552,10 @@ def daccess(request,id):
             remove_common(a, b)
             # print(a)
             # print(b)
+            approver = TbApprove.objects.get(videoid=id)
+            approver.downloadaccess='download'
+            approver.downloader=b
+            approver.save()
 
 
             if str(down_list) == '[]':
@@ -2548,6 +2563,12 @@ def daccess(request,id):
                 downloaderstatus.downloadaccesslist=a+downloaderaccess_list
                 downloaderstatus.downloadaccess='download'
                 downloaderstatus.save() 
+
+                approver = TbApprove.objects.get(videoid=id)
+                approver.downloadaccess='download'
+                approver.downloader=a+downloaderaccess_list
+                approver.save()
+
 
 
 
@@ -2565,6 +2586,11 @@ def daccess(request,id):
                 downloaderstatus.downloadaccesslist=b1
                 downloaderstatus.save() 
 
+                approver = TbApprove.objects.get(videoid=id)
+                approver.downloadaccess='download'
+                approver.downloader=b1
+                approver.save()
+
             return redirect ('/dm/daccess/'+id)
 
 
@@ -2581,7 +2607,6 @@ def daccess(request,id):
                 downloaderstatus.save() 
                 return redirect ('/dm/daccess/'+id)
 
-            import ast
             if downloaderstatus.downloader != None or str(downloaderstatus.downloader) =='[]':
                 downloader=(downloaderstatus.downloader)
                 downloader_list = ast.literal_eval(downloader)
