@@ -5,6 +5,12 @@
 //     alert('Selected file: ' + name.files.item(0).type);
 //   };
 
+function choosefile() {
+  var element = document.getElementById("accountSection");
+  element.classList.toggle("active");
+}
+
+
 function GetFileSizeNameAndType()
     {
     var fi = document.getElementById('file-upload'); // GET THE FILE INPUT AS VARIABLE.
@@ -124,7 +130,7 @@ function myFunction() {
         input = document.getElementById("search-input");
         filter = input.value.toUpperCase();
         divisions = document.getElementById("Listview");
-        division = divisions.getElementsByClassName("list-panel");
+        division = divisions.getElementsByClassName("finding");
 
         for (i = 0; i < division.length; i++) {
           txtValue = division[i].textContent || division[i].innerText;

@@ -1,0 +1,475 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style>
+    body
+  {
+    scroll-behavior: smooth;
+    
+  }
+  .Imageupload { display:none }
+  .Gifupload {display: none;}
+  #name{
+    width: 15em;
+  }
+  #field2
+  {
+    width: 15em;
+  }
+  select{
+    width: 15em;
+  }
+  </style>
+<!-- <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Upload Video</button> -->
+<div class="border shadow-lg p-3 mt-5" style="max-width: 500px; height: auto; margin-left: auto; margin-right: auto; border-radius: 22px;">
+
+<div class="container">
+  <form method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+
+  <div class="form-outline mb-2">
+      <label class="form-label" for=""></label>
+      <input type="text" id="name" class="form-control" placeholder="creative" required style="width:100%">
+  </div>
+  <br>
+  <div class="form-outline mb-2">
+    <label class="form-label" for=""></label>
+    <input type="text" id="name" class="form-control" placeholder="Creator" required style="width: 100%;">
+</div>
+<br>
+  <label class="form-label" for=""></label>
+  <select class="form-control" id="field2" required>
+    <option value="">--SELECT LOB--</option>
+    <option value="1">ACA</option>
+    <option value="0">MEDICARE</option>
+    <option value="0">MEDICAID</option>
+
+  </select>
+  <br>
+  <label class="form-label" for=""></label><br>
+  <input class='Videoupload' type="radio" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"  name="creative" value="Video" onchange="chooseupload1()" required>
+  <!-- <input class='Videoupload' type="radio" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"  name="creative" value="Video"  required> -->
+  <label >Video</label>
+  <input class="imageupload" type="radio"  name="creative" value="Image" onchange="chooseupload()" >
+  <label >Image</label>
+  <input class="imageupload" type="radio"  name="creative" value="Gif" onchange="chooseuploadgif()">
+  <label >Gif</label>
+  <br>
+  <fieldset class="Imageupload">
+    <label>Select File: </label>
+    <input type="file" name="file_image" placeholder="" id="file" >
+  </fieldset>
+  <fieldset class="Gifupload">
+    <label>Select File: </label>
+    <input type="file" name="file_gif" placeholder="" id="file" >
+  </fieldset>
+  <br>
+  <div class="form-outline mb-2">
+  <label class="form-label" for="">Platform</label><br>
+  <select class="form-control" name="field2" id="field2" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" required>
+    <option>Facebook</option>
+    <option>Youtube</option>
+    <option>Tiktok</option>
+    <option>Native</option>
+  </select>
+  </div>
+
+  
+  <div class="row form-group">
+    <div class="col-lg-12">
+      <br>
+        <button type="submit" class="btn btn-success" style="width:100%">SUBMIT</button>
+    </div>
+  </div>
+
+  </form>
+</div>
+  
+  <!-- <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Upload Video</button> -->
+
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Upload videos</h5>
+        <!-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+
+
+        <style>
+          /* .answer1 { display:none } */
+          .answer2 { display:none }
+          .answer3 { display:none }
+          </style>
+
+
+          
+          <input class="coupon_question1" type="checkbox" name="coupon_question1" value="1" onchange="valueChanged()" checked/> 
+          <label>16:9</label>
+          <input class="coupon_question2" type="checkbox" name="coupon_question2" value="1" onchange="valueChanged1()"/> 
+          <label>9:16</label>
+          <input class="coupon_question3" type="checkbox" name="coupon_question3" value="1" onchange="valueChanged2()"/> 
+          <label>1:1</label>
+
+          <script type="text/javascript">
+              function valueChanged()
+              {
+                  if($('.coupon_question1').is(":checked"))   
+                      $(".answer1").show();
+                  else
+                      $(".answer1").hide();
+              }
+          
+              function valueChanged1()
+            {
+                if($('.coupon_question2').is(":checked"))   
+                    $(".answer2").show();
+                else
+                    $(".answer2").hide();
+            }
+          
+              function valueChanged2()
+            {
+                if($('.coupon_question3').is(":checked"))   
+                    $(".answer3").show();
+                else
+                    $(".answer3").hide();
+            }
+          </script>
+
+
+
+
+          <fieldset class="answer1">
+            <label>Select 16:9 File: </label>
+            <input type="file" name="file1" placeholder="" id="file1" >
+          </fieldset>
+
+          <fieldset class="answer2">
+            <label>Select 9:16 File: </label>
+            <input type="file" name="file2" placeholder="" id="file2" >
+          </fieldset>
+
+          <fieldset class="answer3">
+            <label>Select 1:1 File: </label>
+            <input type="file" name="file3" placeholder="" id="file3" >
+          </fieldset>
+
+          <div class="form-group" style="display:none;" id="progress_div">
+            <div class="progress">
+                    <div class="progress-bar" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <p id="progress_text"></p>
+        </div>
+
+        <button type="submit" class="btn btn-success"onclick="onFormSubmit(event)">upload</button>
+
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">close</span>
+        </button>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  function onFormSubmit(event) {
+    
+      event.preventDefault();
+
+      var formData=new FormData();
+      formData.append("name",document.getElementById("name").value);
+      formData.append("file1",document.getElementById("file1").files[0]);
+      formData.append("file2",document.getElementById("file2").files[0]);
+      formData.append("file3",document.getElementById("file3").files[0]);
+
+
+      console.log(formData);
+
+      var xhr=new XMLHttpRequest();
+      xhr.open("POST","/dm/ajax_file_upload_save",true);
+      xhr.upload.addEventListener("progress",function (ev) {
+         if(ev.lengthComputable){
+               var percentage=(ev.loaded/ev.total*100|0);
+             document.getElementById("progress_div").style["display"]="block";
+             document.getElementById("progress_bar").style["width"]=""+percentage+"%";
+             document.getElementById("progress_bar").innerHTML=""+percentage+"%";
+             document.getElementById("progress_text").innerHTML="Uploaded : "+parseInt(ev.loaded/1000000)+"/"+parseInt(ev.total/1000000)+" MB";
+             console.log("Uploaded : "+ev.loaded);
+             console.log("TOTAL : "+ev.total);
+
+             console.log(percentage)
+         }
+      });
+      xhr.send(formData);
+
+  }
+
+
+  function chooseupload()
+              {
+                  if($('.imageupload').is(':checked'))   
+                      $(".Imageupload").show();
+                  else
+                      $(".Imageupload").hide();
+              }
+  function chooseupload1()
+              {
+                  if($('.Videoupload').is(':checked'))   
+                      $(".Imageupload").hide();
+                  else
+                      $(".Imageupload").show();
+              }
+            chooseuploadgif()
+
+
+</script>
+
+
+<script>
+var style = document.createElement('style');
+style.setAttribute("id","multiselect_dropdown_styles");
+style.innerHTML = `
+.multiselect-dropdown{
+  display: inline-block;
+  padding: 2px 5px 0px 5px;
+  border-radius: 4px;
+  border: solid 1px #ced4da;
+  background-color: white;
+  position: relative;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right .75rem center;
+  background-size: 16px 12px;
+}
+.multiselect-dropdown span.optext, .multiselect-dropdown span.placeholder{
+  margin-right:0.5em; 
+  margin-bottom:2px;
+  padding:1px 0; 
+  border-radius: 4px; 
+  display:inline-block;
+}
+.multiselect-dropdown span.optext{
+  background-color:lightgray;
+  padding:1px 0.75em; 
+}
+.multiselect-dropdown span.optext .optdel {
+  float: right;
+  margin: 0 -6px 1px 5px;
+  font-size: 0.7em;
+  margin-top: 2px;
+  cursor: pointer;
+  color: #666;
+}
+.multiselect-dropdown span.optext .optdel:hover { color: #c66;}
+.multiselect-dropdown span.placeholder{
+  color:#ced4da;
+}
+.multiselect-dropdown-list-wrapper{
+  box-shadow: gray 0 3px 8px;
+  z-index: 100;
+  padding:2px;
+  border-radius: 4px;
+  border: solid 1px #ced4da;
+  display: none;
+  margin: -1px;
+  position: absolute;
+  top:0;
+  left: 0;
+  right: 0;
+  background: white;
+}
+.multiselect-dropdown-list-wrapper .multiselect-dropdown-search{
+  margin-bottom:5px;
+}
+.multiselect-dropdown-list{
+  padding:2px;
+  height: 15rem;
+  overflow-y:auto;
+  overflow-x: hidden;
+}
+.multiselect-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+.multiselect-dropdown-list::-webkit-scrollbar-thumb {
+  background-color: #bec4ca;
+  border-radius:3px;
+}
+
+.multiselect-dropdown-list div{
+  padding: 5px;
+}
+.multiselect-dropdown-list input{
+  height: 1.15em;
+  width: 1.15em;
+  margin-right: 0.35em;  
+}
+.multiselect-dropdown-list div.checked{
+}
+.multiselect-dropdown-list div:hover{
+  background-color: #ced4da;
+}
+.multiselect-dropdown span.maxselected {width:100%;}
+.multiselect-dropdown-all-selector {border-bottom:solid 1px #999;}
+`;
+document.head.appendChild(style);
+
+function MultiselectDropdown(options){
+  var config={
+    search:true,
+    height:'15rem',
+    placeholder:'select',
+    txtSelected:'selected',
+    txtAll:'All',
+    txtRemove: 'Remove',
+    txtSearch:'search',
+    ...options
+  };
+  function newEl(tag,attrs){
+    var e=document.createElement(tag);
+    if(attrs!==undefined) Object.keys(attrs).forEach(k=>{
+      if(k==='class') { Array.isArray(attrs[k]) ? attrs[k].forEach(o=>o!==''?e.classList.add(o):0) : (attrs[k]!==''?e.classList.add(attrs[k]):0)}
+      else if(k==='style'){  
+        Object.keys(attrs[k]).forEach(ks=>{
+          e.style[ks]=attrs[k][ks];
+        });
+       }
+      else if(k==='text'){attrs[k]===''?e.innerHTML='&nbsp;':e.innerText=attrs[k]}
+      else e[k]=attrs[k];
+    });
+    return e;
+  }
+
+  
+  document.querySelectorAll("select[multiple]").forEach((el,k)=>{
+    
+    var div=newEl('div',{class:'multiselect-dropdown',style:{width:config.style?.width??el.clientWidth+'px',padding:config.style?.padding??''}});
+    el.style.display='none';
+    el.parentNode.insertBefore(div,el.nextSibling);
+    var listWrap=newEl('div',{class:'multiselect-dropdown-list-wrapper'});
+    var list=newEl('div',{class:'multiselect-dropdown-list',style:{height:config.height}});
+    var search=newEl('input',{class:['multiselect-dropdown-search'].concat([config.searchInput?.class??'form-control']),style:{width:'100%',display:el.attributes['multiselect-search']?.value==='true'?'block':'none'},placeholder:config.txtSearch});
+    listWrap.appendChild(search);
+    div.appendChild(listWrap);
+    listWrap.appendChild(list);
+
+    el.loadOptions=()=>{
+      list.innerHTML='';
+      
+      if(el.attributes['multiselect-select-all']?.value=='true'){
+        var op=newEl('div',{class:'multiselect-dropdown-all-selector'})
+        var ic=newEl('input',{type:'checkbox'});
+        op.appendChild(ic);
+        op.appendChild(newEl('label',{text:config.txtAll}));
+  
+        op.addEventListener('click',()=>{
+          op.classList.toggle('checked');
+          op.querySelector("input").checked=!op.querySelector("input").checked;
+          
+          var ch=op.querySelector("input").checked;
+          list.querySelectorAll(":scope > div:not(.multiselect-dropdown-all-selector)")
+            .forEach(i=>{if(i.style.display!=='none'){i.querySelector("input").checked=ch; i.optEl.selected=ch}});
+  
+          el.dispatchEvent(new Event('change'));
+        });
+        ic.addEventListener('click',(ev)=>{
+          ic.checked=!ic.checked;
+        });
+        el.addEventListener('change', (ev)=>{
+          let itms=Array.from(list.querySelectorAll(":scope > div:not(.multiselect-dropdown-all-selector)")).filter(e=>e.style.display!=='none')
+          let existsNotSelected=itms.find(i=>!i.querySelector("input").checked);
+          if(ic.checked && existsNotSelected) ic.checked=false;
+          else if(ic.checked==false && existsNotSelected===undefined) ic.checked=true;
+        });
+  
+        list.appendChild(op);
+      }
+
+      Array.from(el.options).map(o=>{
+        var op=newEl('div',{class:o.selected?'checked':'',optEl:o})
+        var ic=newEl('input',{type:'checkbox',checked:o.selected});
+        op.appendChild(ic);
+        op.appendChild(newEl('label',{text:o.text}));
+
+        op.addEventListener('click',()=>{
+          op.classList.toggle('checked');
+          op.querySelector("input").checked=!op.querySelector("input").checked;
+          op.optEl.selected=!!!op.optEl.selected;
+          el.dispatchEvent(new Event('change'));
+        });
+        ic.addEventListener('click',(ev)=>{
+          ic.checked=!ic.checked;
+        });
+        o.listitemEl=op;
+        list.appendChild(op);
+      });
+      div.listEl=listWrap;
+
+      div.refresh=()=>{
+        div.querySelectorAll('span.optext, span.placeholder').forEach(t=>div.removeChild(t));
+        var sels=Array.from(el.selectedOptions);
+        if(sels.length>(el.attributes['multiselect-max-items']?.value??5)){
+          div.appendChild(newEl('span',{class:['optext','maxselected'],text:sels.length+' '+config.txtSelected}));          
+        }
+        else{
+          sels.map(x=>{
+            var c=newEl('span',{class:'optext',text:x.text, srcOption: x});
+            if((el.attributes['multiselect-hide-x']?.value !== 'true'))
+              c.appendChild(newEl('span',{class:'optdel',text:'🗙',title:config.txtRemove, onclick:(ev)=>{c.srcOption.listitemEl.dispatchEvent(new Event('click'));div.refresh();ev.stopPropagation();}}));
+
+            div.appendChild(c);
+          });
+        }
+        if(0==el.selectedOptions.length) div.appendChild(newEl('span',{class:'placeholder',text:el.attributes['placeholder']?.value??config.placeholder}));
+      };
+      div.refresh();
+    }
+    el.loadOptions();
+    
+    search.addEventListener('input',()=>{
+      list.querySelectorAll(":scope div:not(.multiselect-dropdown-all-selector)").forEach(d=>{
+        var txt=d.querySelector("label").innerText.toUpperCase();
+        d.style.display=txt.includes(search.value.toUpperCase())?'block':'none';
+      });
+    });
+
+    div.addEventListener('click',()=>{
+      div.listEl.style.display='block';
+      search.focus();
+      search.select();
+    });
+    
+    document.addEventListener('click', function(event) {
+      if (!div.contains(event.target)) {
+        listWrap.style.display='none';
+        div.refresh();
+      }
+    });    
+  });
+}
+
+window.addEventListener('load',()=>{
+  MultiselectDropdown(window.MultiselectDropdownOptions);
+});
+
+</script>
+
+
+
+
+
+
+
+{% endblock content %}
+

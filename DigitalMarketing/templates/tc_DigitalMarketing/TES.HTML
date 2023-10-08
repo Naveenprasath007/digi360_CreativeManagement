@@ -1,0 +1,61 @@
+<style type="text/css">
+    select {
+        width: 200px;
+        float: left;
+    }
+    .controls {
+        width: 40px;
+        float: left;
+        margin: 10px;
+    }
+    .controls a {
+        background-color: #222222;
+        border-radius: 4px;
+        border: 2px solid #000;
+        color: #ffffff;
+        padding: 2px;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        margin: 5px;
+        width: 20px;
+    }
+    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">
+    </script>
+    <script>
+
+    function moveAll(from, to) {
+        $('#'+from+' option').remove().appendTo('#'+to); 
+    }
+    
+    function moveSelected(from, to) {
+        $('#'+from+' option:selected').remove().appendTo('#'+to); 
+    }
+
+    </script>
+
+<form name="selection" method="post"> 
+    {% csrf_token %} 
+    <select multiple size="10" id="from" name="top[]">
+        {% for i in a_list %}
+        <option value={{i}}>{{i}}</option>
+        {% endfor %}
+    </select>
+    <div class="controls"> 
+        <a href="javascript:moveAll('from', 'to')">&gt;&gt;</a> 
+        <a href="javascript:moveSelected('from', 'to')">&gt;</a> 
+        <a href="javascript:moveSelected('to', 'from')">&lt;</a> 
+        <a href="javascript:moveAll('to', 'from')" href="#">&lt;&lt;</a> </div>
+    <select multiple id="to" size="10" name="topics[]">
+        {% for j in b_list %}
+        <option value={{j}} >{{j}}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-info" type="submit" >Save</button>
+    <form> 
+
+
+
+

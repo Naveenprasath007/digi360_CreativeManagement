@@ -10,7 +10,7 @@ from django.dispatch import receiver
 
 class cVideoId(models.Model):
     VideoID = models.CharField(db_column='videoID', max_length=250) 
-
+    userID = models.CharField(db_column='userID', max_length=250, null=True) 
     def __str__(self):
         return self.VideoID
     
@@ -88,6 +88,7 @@ class TbStatus(models.Model):
     platform = models.CharField(db_column='platform', max_length=2000)  # Field name made lowercase.
     createddate = models.DateTimeField(default=datetime.now)# Field name made lowercase.
     videoPath1 = models.CharField(db_column='videopath1', max_length=2000,blank=True, null=True)  # Field name made lowercase.
+    videoPath2 = models.CharField(db_column='videopath2', max_length=255, blank=True, null=True)
     videoPath = models.CharField(db_column='videopath', max_length=2000,blank=True, null=True)  # Field name made lowercase.
     Imageurl = models.CharField(db_column='imgurl', max_length=255, blank=True, null=True)
     Gifurl = models.CharField(db_column='gifurl', max_length=255, blank=True, null=True)
@@ -95,7 +96,8 @@ class TbStatus(models.Model):
     MainReason = models.CharField(db_column='mainreason', max_length=2000,blank=True, null=True)  # Field name made lowercase.
     downloadaccess = models.CharField(db_column='downloadaccess', max_length=255, blank=True, null=True)
     downloader = models.CharField(db_column='downloader', max_length=255, blank=True, null=True)
-    
+    downloadaccesslist = models.CharField(db_column='downloadaccesslist', max_length=255, blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'tb_status'
@@ -133,12 +135,10 @@ class TbVideo(models.Model):
     creative = models.CharField(db_column='creative', max_length=2000)  # Field name made lowercase.
     platform = models.CharField(db_column='platform', max_length=2000)  # Field name made lowercase.
     videopath1 = models.CharField(db_column='videopath1', max_length=2000,blank=True, null=True)  # Field name made lowercase.
-    videotranscription1 = models.TextField(db_column='videotranscribeone')  # Field name made lowercase.
     creater = models.CharField(db_column='creater', max_length=255, blank=True, null=True)
     Imageurl = models.CharField(db_column='imgurl', max_length=255, blank=True, null=True)
     Gifurl = models.CharField(db_column='gifurl', max_length=255, blank=True, null=True)
-    Imageurl1 = models.CharField(db_column='imgurl1', max_length=255, blank=True, null=True)
-    Gifurl1 = models.CharField(db_column='gifurl1', max_length=255, blank=True, null=True)
+    videopath2 = models.CharField(db_column='videopath2', max_length=255, blank=True, null=True)
 
 
 

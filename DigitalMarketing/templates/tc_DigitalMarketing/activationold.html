@@ -1,0 +1,30 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+
+{% block content %}
+    
+
+    <div class="container-fluid logwrap">
+        <div class="login-card">
+            {% include 'tc_DigitalMarketing/messages.html' %}
+            <div class="login-card-text">
+                <h5><b>Account Activation</b></h5>
+            </div>
+            <div class="login-card-form">
+                <form class="login-form" method="POST">
+                    <div class="col-12">
+                    {% csrf_token %}
+                    {{ form | crispy}}
+                    <div class="login-button">
+                        <button type="submit" >Activate</button>
+                    </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+

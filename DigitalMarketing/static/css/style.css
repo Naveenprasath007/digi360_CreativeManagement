@@ -263,7 +263,7 @@ nav .navbar-nav .av-holder i {
 .upload-page .upload-panel .presets-box .platform-box  {
   width: 39px;
   height: 39px;
-  border-radius: 3px;
+  border-radius: 7px;
 }
 .upload-page .upload-panel .presets-box button.submit {
   width: 100%;
@@ -1655,3 +1655,10 @@ img
 
 
 
+.preset-icon-box input[type="checkbox"] {
+  position: relative;
+  width: 20%;
+  top: -11px;
+  right: -1px;
+  cursor: pointer;
+}

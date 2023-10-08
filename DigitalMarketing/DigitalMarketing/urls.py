@@ -40,7 +40,9 @@ urlpatterns = [
     path("superadmin/<str:id>", views.admin), 
     path("superadmindetail_view/<str:id>", views.superadmindetail_view), 
     path("superadmindetail_downloader_view/<str:id>", views.superadmindetail_downloader_view), 
-    path('Activation',views.activate),
+    path('Activation/<str:id>',views.activate),
+    path("ajax_file_upload_save/<str:id>",views.ajax_file_upload_save),
+    path("daccess/<str:id>",views.daccess),
     
 
      
