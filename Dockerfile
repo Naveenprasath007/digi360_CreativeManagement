@@ -26,7 +26,7 @@ RUN apt-get install git
 
 # here i need to modify**** my code 
 
-# COPY ./DigitalMarketing /app
+COPY ./DigitalMarketing /app
 
 WORKDIR /app
 
