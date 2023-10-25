@@ -58,6 +58,10 @@
   <div class="innersearch" style="height: 100px;">
     <div class="col-md-12">
         <input type="search" id='search-input' placeholder="search here" onkeyup="filterDivisions()"/>
+        <button class="sortby" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"><img src="{% static 'images/Download.svg'%}"></button>
+        {% if accessed_video %}
+        <button class="sortby"><a style="text-decoration:none" href="/dm/superadmindetail_downloader_view/{{id}}"> <img src="{% static 'images/enterview.svg'%}"> </a></button>
+        {% endif %}
         <button id="show"class="sortby"><img src="{% static 'images/list.svg'%}"></button>
         <button id="hide"class="sortby"><img src="{% static 'images/grid.svg'%}"></button>
     </div>
@@ -66,7 +70,7 @@
 <div class="messege-info">
   {% include 'tc_DigitalMarketing/messages.html' %}
 </div>
-<!-- <input type="checkbox" name="select-all" id="select-all" class="select-all"/><label>Select all</label> -->
+<input type="checkbox" name="select-all" id="select-all" class="select-all"/><label>Select all</label>
 <form action="" method="post" enctype="multipart/form-data" id="upload-form">
 {% csrf_token %}
 <div id="Listview" class="finding">
@@ -83,13 +87,12 @@
           <th>Reviewed by</th>
           <th>Status</th>
           <th>Details</th>
-          <th>Download Access</th>
         </tr>
       </thead>
       {% for i in status %}
       <tbody>
         <tr align="center" class="finding">
-          <!-- <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}"> -->
+          <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
           <td>
             <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
@@ -137,10 +140,6 @@
             <!-- <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div> -->
             {% endif %}
           </td>
-          <td>
-            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=500,height=300');">Give access</a>
-          </td>
-
         </tr>
       </tbody>
       {% endfor %}
@@ -164,13 +163,12 @@
           <th>Reviewed by</th>
           <th>Status</th>
           <th>Details</th>
-          <th>Download Access</th>
         </tr>
       </thead>
       {% for i in user_status %}
       <tbody>
         <tr align="center" class="finding">
-          <!-- <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}"> -->
+          <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}">
           <td>
             <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
@@ -202,16 +200,13 @@
             
             {% if i.downloadaccess != 'Notyet' %}
             <div class="showhim">
-              <!-- <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span> -->
+              <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
             <!-- <div class="vstatusapprove"></div> -->
-            <!-- <div class="showme">{{i.downloader}}</div> -->
-            <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
-            <!-- <div class="vstatusapprove"><span>{{i.status}}</span></div> -->
-          </div>
+            <div class="showme">{{i.downloader}}</div>
+            </div>
           {% endif %}
           {% if i.downloadaccess == 'Notyet' %}
-          <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
-          <!-- <div class="vstatusapprove"><span>{{i.status}}</span></div> -->
+          <div class="vstatusapprove"><span>{{i.status}}</span></div>
           {% endif %}
             
             {% endif %}
@@ -221,18 +216,14 @@
           </td>
           <td>
             {% if i.status == 'Pending' %}
-            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="/dm/approverview/{{i.videoid}}/{{id}}">View</a>
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/approverview/{{i.videoid}}/{{id}}">View</a>
             {% endif %}
             {% if i.status == 'Approved' %}
-            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
             {% endif %}
             {% if i.status == 'Rejected' %}
-            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
             {% endif %}
-          </td>
-          <td>
-            <!-- <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');">Give access</a> -->
-            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');">Give access</a>
           </td>
         </tr>
       </tbody>
@@ -401,7 +392,7 @@
                     <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Rejected' %}
                     <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
@@ -476,13 +467,13 @@
             <div class="col-md-6 alincol    ">
                 <div class="downloadIcon">
                   {% if i.status == 'Rejected' %}
-                  <a style="text-decoration:none" href=""><img src="{% static 'images/view.svg'%}"> </a>
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                       {% endif %}
                     {% if i.status == 'Pending' %}
-                    <a style="text-decoration:none" href=""> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                 </div>
             </div>

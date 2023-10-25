@@ -1,0 +1,380 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        {% if userrolename == 'Uploader' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+        {% if userrolename == 'Reviewer' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+
+        {% if userrolename == 'SuperAdmin' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ k }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#"
+                ><i class="bi bi-moon"></i
+              ></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="bi bi-brightness-high"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="bi bi-bell"></i>
+              </a>
+            </li>
+            <!-- <li class="nav-item account-section">
+              <a class="nav-link" href="#">
+                <span>My Account</span>
+                <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="" />
+                  <i class="bi bi-chevron-down"></i>
+                </span>
+              </a>
+            </li> -->
+            <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+              <a class="nav-link" href="#">
+                <span>My Account</span>
+                <span class="av-holder">
+                  <img src="{% static 'images/avatar.png'%}" alt="" />
+                  <i class="bi bi-chevron-down"></i>
+                </span>
+              </a>
+              <div class="dropdown-panel">
+                <ul>
+                    <li>Account</li>
+                    <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+                </ul>
+              </div>
+            </li>
+
+
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- <form action="" method="post" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %} -->
+      
+    <div class="upload-page">
+      <div id="loading">
+        <img id="loading-image" src="{% static 'images/Hourglass.gif'%}" alt="Loading..." />
+      </div>
+
+
+
+      <div class="upload-panel mbottom">
+        <div class="upwrap">
+          {%if video %}
+          <div class="upload-box">
+          <video class="vid" controls>
+            <source src="{{ video }}" type="video/mp4">
+            <source src="{{ video }}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+          </div>
+          {% endif %}
+
+
+          {%if imgurl %}
+          <div class="upload-box">
+            <img width="100%" height="100%" src="{{ imgurl }}" alt="">
+          </div>
+          {% endif %}
+
+          {%if gifurl %}
+          <div class="upload-box">
+            <img width="100%" height="100%" src="{{ gifurl }}" alt="">
+          </div>
+          {% endif %}
+
+          
+
+          {%if videodetails %}
+          <div class="upload-box">
+            <div class="messege-info">
+              {% include 'tc_DigitalMarketing/messages.html' %}
+            </div>
+            <img class="collection" src="{% static 'images/fileupload.svg'%}" />
+            <h5>
+              Drop your videos, images, gif, <span>browse</span> or import from
+            </h5>
+            <div class="file-icon-box">
+              <div class="icon-box">
+                <div class="image-upload">
+                  <label for="file-upload">
+                    <!-- <img src="{% static 'images/folder.svg'%}"/>   onsubmit="onFormSubmit(event)" -->
+                  </label>
+                  <form action="" method="post" enctype="multipart/form-data" id="upload-form"  >
+                    {% csrf_token %}
+                  <input id="file-upload" type="file" name="myfile"class="form-control" style="border-radius:50%; opacity: 0;"  onchange="GetFileSizeNameAndType()"accept="video/*,image/*" required/>
+                  <img src="{% static 'images/folder.svg'%}"style="margin-top: -170%; margin-left: 25%;">
+                </div>
+              </div>
+              <div class="icon-box">
+                
+            <a style="text-decoration: none;color: inherit;" href="https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fdrive.google.com%2Fdrive%2Fu%2F0%2Fmy-drive&followup=https%3A%2F%2Fdrive.google.com%2Fdrive%2Fu%2F0%2Fmy-drive&ifkv=AXo7B7UXbsmaAAg7vdByVW6trOONF42i93IFCWouQYkevPA9nRDKq_CkZtwIknP-PA5rU4TdqdzNcw&osid=1&passive=1209600&service=wise&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S587442387%3A1692263597579516" rel="noopener noreferrer"><img src="{% static 'images/drive.svg'%}" /></a>
+
+              </div>
+            </div>
+            <p>You will free to upload any file format upto 500 mb</p>
+              <div id="divTotalSize"></div>
+
+              <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+              </div>
+              
+              <div id="content" hidden="hidden">
+                <img width="50" height="50" src="{% static 'images/loading.gif'%}" alt="Loading..." />
+                Your video's transcription is currently being processed.
+              </div>
+              
+
+          </div>
+
+          {% endif %}
+          <div class="videotitle">
+            
+            <div class="titlebox">
+              <div class="titlebox-img">
+                <img src="{% static 'images/title-svg.png' %}">
+              </div>
+              <div class="titlebox-content">
+                {% if video or imgurl or gifurl %}
+                <label>Your Video Title</label>
+                <p>{{ Title }}</p>
+                {% endif %}
+                {% if videodetails %}
+                <label>Add your Video Title</label>
+                <input type="VideoTiltle" class="form-control" name="Videotitle" required>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="titlebox">
+              <div class="titlebox-img">
+                <img src="{% static 'images/upload-icon.png' %}">
+              </div>
+              <div class="titlebox-content">
+                <label>Status</label>
+                <p>{{ status }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {%if video or imgurl or gifurl %}
+        <div class="presets-box">
+          <h2>Questions</h2>
+
+          <form action="" method="post"enctype="multipart/form-data">
+            {% csrf_token %}   
+    
+                  {% if qT.q0 %}
+                  <label><h6>{{qT.q0}}</h6></label>
+                  {% endif %}
+                  
+                  {% if qR.k0 %}
+                  <select required aria-label="Select usage" class="form-select"
+                      name="q0" onchange="set_sub_usage_list()" >
+                      <option selected>--Select Your Choice--</option>
+                        {% for usage in qR.k0 %}
+                            <option value="{{ usage }}">{{ usage }}</option>
+                        {% endfor %}
+    
+                  </select>
+                  <br>
+                  {% endif %}
+                  <button class="submit">Submit</button>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if videodetails %}
+        <div class="presets-box">
+          <h2>Presets</h2>
+          <div class="preset-icon-box">
+            <label>Creator</label>
+            <div class="icon-box-align">
+            <input class="form-control input-sm" id="inputsm" type="text" name="Creater" required>
+            </div>
+          </div>
+          <div>
+            <div class="preset-icon-box">
+            <label>Which LOB is this Creative for?</label>
+            </div>
+            <p id="id_select_creative">
+              <label><input type="checkbox" name="LOB" id="myCheck" value="ACA"><span>ACA</span></label>
+              <label><input type="checkbox" name="LOB" id="myCheck" value="MediCare"><span>Medicare</span></label>
+              <label><input type="checkbox" name="LOB" id="myCheck" value="MediCaid"><span>MediCaid</span></label>
+            </p>
+          </div>
+          <div class="preset-icon-box">
+            <div class="icon-box-align">
+              <!-- <input type="hidden" name="Creative" id="selectedImage1" value="" required>
+              <div class="creative-box">
+                <img src="{% static './images/picture.svg'%}" onclick="selectImage1(this, 'image')"style="border-radius: 10px; padding: 10px; background-color: #c9e8f9; width: 100px; height: 50px;"/>
+              </div>
+              <div class="creative-box">
+              <img src="{% static './images/video_ico.svg'%} "onclick="selectImage1(this, 'Video')"style="border-radius: 10px; padding: 10px; background-color: #c9e8f9; width: 100px; height: 50px;"/>
+              </div>
+              <div class="creative-box">
+              <img src="{% static './images/Gif.svg'%}"onclick="selectImage1(this, 'GIF')"style="border-radius: 10px; padding: 10px; background-color: #c9e8f9; width: 100px; height: 50px;" />
+              </div> -->
+
+            </div>
+          </div>
+          <div class="preset-icon-box">
+            <label>Which Platform is this Creative for?</label>
+            <div class="icon-box-align">
+              <div class="platform-box" style="background-color: #3b5998">
+                <input type="checkbox" name="Platform" id="facebook" value="Facebook" />
+                <label for="facebook">
+                <img src="{% static './images/facebook.svg'%}" /></label>
+              </div>
+              <div class="platform-box" style="background-color: #ee3b3b">
+                <input type="checkbox" name="Platform1" id="youtube" value="Youtube"/>
+                <label for="youtube">
+                <img src="{% static './images/youtube.svg'%}" /></label>
+              </div>
+              <div class="platform-box" style="background-color: #c9e8f9">
+                <input type="checkbox" name="Platform2" id="cdn" value="GDN"/>
+                <label for="cdn" >
+                  <img src="{% static './images/cdn.png'%}" style="border-radius: 0px; padding: 0px;" />
+                <!-- <img src="{% static './images/GDN.svg'%}" />--></label> 
+              </div>
+              <div class="platform-box" style="background-color: #d8d5d5">
+                <input type="checkbox" name="Platform3" id="tiktok" value="tiktok"/>
+                <label for="tiktok">
+                  <img src="{% static './images/tiktok.svg'%}"  style="border-radius: 0px; padding: 0px;"/>
+                <!-- <img src="{% static './images/tiktok.svg'%}" />--></label> 
+              </div>
+              <div class="platform-box" style="background-color: #2fab7c">
+                <input type="checkbox" name="Platform4" id="settings" value="Native"/>
+                <label for="settings">
+                <img src="{% static './images/native.svg'%}" /></label>
+              </div>
+            </div>
+          </div>
+          <button class="submit" id="uploadButton" name='Upload' value="Upload" onclick="requiredchecklist()" >Upload</button>
+          <!-- <button class="submit">Submit</button> -->
+        </div>
+        {% endif %}
+
+
+
+      
+      </div>
+    </form>
+
+    {% if video or imgurl or gifurl %}
+    <div class="transcription-panel mbottom">
+      <h2>Transcription</h2>
+      <div class="transcription-box1">
+        <p>{{ text }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if videodetails %}
+      <div class="transcription-panel mbottom">
+        <h2>Transcription</h2>
+        <div class="transcription-box">
+          <p>Transcription will be generated once video uploaded.</p>
+        </div>
+      </div>
+    {% endif %}
+
+
+    {%if videodetails %}
+      <div class="my-videos-panel mbottom">
+        <h2>My Videos</h2>
+        <div class="scroll-panel" style="overflow-x:auto;">
+          {% for i in videodetails1 %}
+          <div class="videos-box">
+            
+            <div class="thumbnail">
+              <video width="100%" height="100%" controls>
+                <source src="{{ i.VideoPath }}" type="video/mp4">
+                <source src="{{ i.VideoPath }}" type="video/ogg">
+              Your browser does not support the video tag.
+              </video>
+            </div>
+            <p class="video-title">{{ i.VideoName }}</p>
+            
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+          <script>
+              const fileInput = document.getElementById('file-upload');
+              const uploadButton = document.getElementById('upload-form');
+              const progressBar = document.getElementById('progressBar');
+      
+              uploadButton.addEventListener("submit", () => {
+                  const file = fileInput.files[0];
+                  if (file) {
+                      const xhr = new XMLHttpRequest();
+                      xhr.open('POST', 'your_upload_endpoint_here', true);
+      
+                      xhr.upload.onprogress = function(event) {
+                          if (event.lengthComputable) {
+                              const percent = (event.loaded / event.total) * 100;
+                              console.log(event.loaded, event.total);
+                              progressBar.style.width = percent + '%';
+                              
+                          }
+                      };
+      
+                      xhr.onreadystatechange = function() {
+                          if (xhr.readyState === XMLHttpRequest.DONE) {
+                              // Upload completed
+                              show()
+                          }
+                      };
+      
+                      xhr.send(file);
+                  }
+              });
+            </script>
+
+            <script>
+                  function show(){
+                    document.getElementById('content').hidden = false;
+                }
+            </script>
+
+{% endblock content %}
+

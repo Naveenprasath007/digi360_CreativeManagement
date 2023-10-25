@@ -107,6 +107,7 @@
       <tbody>
         <tr align="center" class="finding">
           <td>
+<<<<<<< HEAD
             <!-- <div>
               {{i.videoPath}}
             </div>
@@ -179,6 +180,61 @@
   </div>
     {% endif %}
 
+=======
+            <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+              <source src="{{i.videoPath}}" type="video/mp4">
+              <source src="{{i.videoPath}}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+          </td>
+          <td>
+            <p class="fw-normal mb-1">{{i.createddate}}</p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.videoname}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.platform}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.uploadername}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.approver}} </p>
+          </td>
+          <td>
+            {% if i.status == 'Rejected' %}
+            <span style="border: 2px solid #ff2a04; padding: 10px 15px; color: #ff2a04; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Pending' %}
+            <span style="border: 2px solid #ffb004; padding: 10px 15px; color: #ffb004; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if i.status == 'Pending' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/updateview/{{id}}/{{i.videoid}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+            {% if i.status == 'Rejected' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+    {% endif %}
+
+>>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
 
 
