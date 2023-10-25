@@ -27,7 +27,7 @@ services:
   
   db:
     image: postgres:11.7
-    container_name: DB_Postgres
+    container_name: POSTGRES_DB
     init: true
     volumes:
       - postgres_data:/var/lib/postgresql/data/
