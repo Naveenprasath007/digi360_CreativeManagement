@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   django_gunicorn:
+    container_name: gunicorn
     volumes:
       - static_vol:/static
       - media_vol:/media
@@ -15,6 +16,7 @@ services:
       - db
   nginx:
     build: ./nginx
+    container_name: nginx
     volumes:
       - static_vol:/static
       - media_vol:/media
@@ -25,6 +27,7 @@ services:
   
   db:
     image: postgres:11.7
+    container_name: DB_Postgres
     init: true
     volumes:
       - postgres_data:/var/lib/postgresql/data/

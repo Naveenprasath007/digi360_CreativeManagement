@@ -87,13 +87,176 @@
     </div>
 </div>
     </div>
+<div id="Listview">
+  {% if status %}
+  <div class="list-panel">
+    <table class="table align-middle mb-0 bg-white">
+      <thead class="bg-light">
+        <tr align="center">
+          <th>Creative</th>
+          <th>Date&Time</th>
+          <th>Title</th>
+          <th>Platform</th>
+          <th>Uploaded by</th>
+          <th>Reviewed by</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      {% for i in status %}
+      <tbody>
+        <tr align="center" class="finding">
+          <td>
+            <!-- <div>
+              {{i.videoPath}}
+            </div>
+            
+            <div id="light">
+              {{i.videoPath}}
+              <a class="boxclose" id="boxclose" onclick="lightbox_close();"></a>
+              <video id="VisaChipCardVideo" width="600" controls>
+                  <source src="{{i.videoPath}}" type="video/mp4">
+                  <source src="{{i.videoPath}}" type="video/ogg">
+                </video>
+            </div>
+            
+            <div id="fade" onClick="lightbox_close();"></div>
+            
+            <div>
+              <a href="#" onclick="lightbox_open();"><img width="200" height="50" src="{% static 'images/tc.png'%}"></a>
+            </div> -->
 
-<div id="Listview" class="division">
+            <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+              <source src="{{i.videoPath}}" type="video/mp4">
+              <source src="{{i.videoPath}}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+          </td>
+          <td>
+            <p class="fw-normal mb-1">{{i.createddate}}</p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.videoname}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.platform}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.uploadername}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.approver}} </p>
+          </td>
+          <td>
+            {% if i.status == 'Rejected' %}
+            <span style="border: 2px solid #ff2a04; padding: 10px 15px; color: #ff2a04; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Pending' %}
+            <span style="border: 2px solid #ffb004; padding: 10px 15px; color: #ffb004; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if i.status == 'Pending' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/updateview/{{id}}/{{i.videoid}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+            {% if i.status == 'Rejected' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            <!-- <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div> -->
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+    {% endif %}
+
+
+
+
+    {% if user_status %}
+    <div class="list-panel">
+    <table class="table align-middle mb-0 bg-white">
+      <thead class="bg-light">
+        <tr align="center">
+          <th>Creative</th>
+          <th>Date&Time</th>
+          <th>Title</th>
+          <th>Platform</th>
+          <th>Uploaded by</th>
+          <th>Reviewed by</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      {% for i in user_status %}
+      <tbody>
+        <tr align="center" class="finding">
+          <td>
+            <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+              <source src="{{i.videoPath}}" type="video/mp4">
+              <source src="{{i.videoPath}}" type="video/ogg">
+          Your browser does not support the video tag.
+          </video>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.createddate}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.videoname}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.platform}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.uploadername}} </p>
+          </td>
+          <td>
+            <p class="fw-normal mb-1"> {{i.approver}} </p>
+          </td>
+          <td>
+            {% if i.status == 'Rejected' %}
+            <span style="border: 2px solid #ff2a04; padding: 10px 15px; color: #ff2a04; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <span style="border: 2px solid #4bff04; padding: 10px 15px; color: #2e6401; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+            {% if i.status == 'Pending' %}
+            <span style="border: 2px solid #ffb004; padding: 10px 15px; color: #ffb004; border-radius: 20px;">{{i.status}}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if i.status == 'Pending' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/approverview/{{i.videoid}}/{{id}}">View</a>
+            {% endif %}
+            {% if i.status == 'Approved' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            {% endif %}
+            {% if i.status == 'Rejected' %}
+            <a style="border: 2px solid #61FFD4;text-decoration:none; padding: 10px 22px; color: black; border-radius: 20px;"href="/dm/statusview/{{i.videoid}}/{{id}}">View</a>
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+    {% endif %}
+</div>
+
+<!-- <div id="Listview" class="division">
 {% if status %}
 {% for i in status %}
 <div class="list-panel">
   <div class="tnail">
-      <!-- <img src="images/grid-thumbnail.png"> -->
       <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
         <source src="{{i.videoPath}}" type="video/mp4">
         <source src="{{i.videoPath}}" type="video/ogg">
@@ -136,24 +299,15 @@
   {% if i.status == 'Rejected' %}
   <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> View </a></div>
   {% endif %}
-
-
-  <!-- {% if i.status != 'Rejected' %}
-  <div class="vview"><a style="text-decoration:none" href="">---</a></div>
-  {% endif %}
-  {% if i.status == 'Rejected' %}
-  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{id}}/{{i.videoid}}">View</a></div>
-  {% endif %} -->
 </div>
 {% endfor %}
-{% endif %}
+{% endif %} -->
 
 
-{% if user_status %}
+<!-- {% if user_status %}
 {% for i in user_status %}
 <div class="list-panel">
   <div class="tnail">
-      <!-- <img src="images/grid-thumbnail.png"> -->
       <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
         <source src="{{i.videoPath}}" type="video/mp4">
         <source src="{{i.videoPath}}" type="video/ogg">
@@ -194,7 +348,7 @@
   <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
   {% endif %}
   {% if i.status == 'Rejected' %}
-  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}">View</a></div>
+  <div class="vview"><a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}">View</a></div>
   {% endif %}
   {% if i.status == 'Pending' %}
   <div class="vview"><a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}">View</a></div>
@@ -202,7 +356,7 @@
 </div>
 {% endfor %}
 {% endif %}
-</div>
+</div> -->
 
 
 <div id="Gridview" style="display:none;" class="division">
@@ -237,10 +391,10 @@
                     <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Rejected' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                 </div>
             </div>
@@ -312,10 +466,10 @@
             <div class="col-md-6 alincol    ">
                 <div class="downloadIcon">
                   {% if i.status == 'Rejected' %}
-                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"><img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                       {% endif %}
                     {% if i.status == 'Pending' %}
                     <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
@@ -382,7 +536,31 @@
 </div>
 
 
+<script>
+  window.document.onkeydown = function(e) {
+  if (!e) {
+    e = event;
+  }
+  if (e.keyCode == 27) {
+    lightbox_close();
+  }
+}
 
+function lightbox_open() {
+  var lightBoxVideo = document.getElementById("VisaChipCardVideo");
+  window.scrollTo(0, 0);
+  document.getElementById('light').style.display = 'block';
+  document.getElementById('fade').style.display = 'block';
+  lightBoxVideo.play();
+}
+
+function lightbox_close() {
+  var lightBoxVideo = document.getElementById("VisaChipCardVideo");
+  document.getElementById('light').style.display = 'none';
+  document.getElementById('fade').style.display = 'none';
+  lightBoxVideo.pause();
+}
+</script>
 
 
 
