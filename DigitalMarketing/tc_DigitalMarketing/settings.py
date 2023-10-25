@@ -86,7 +86,11 @@ WSGI_APPLICATION = 'tc_DigitalMarketing.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+<<<<<<< HEAD
 # ___________MY DATABASE_____________
+=======
+#___________MY DATABASE_____________
+>>>>>>> 0bcf7456559a2349efbd6901ecb8d2e61f713a31
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
