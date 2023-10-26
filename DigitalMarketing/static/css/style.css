@@ -1671,7 +1671,6 @@ img
   top: -11px;
   right: -1px;
   cursor: pointer;
-<<<<<<< HEAD
 }
 
 
@@ -1736,6 +1735,3 @@ img
 .test:hover ~ .test2 {
   display: none;
 } */
-=======
-}
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a

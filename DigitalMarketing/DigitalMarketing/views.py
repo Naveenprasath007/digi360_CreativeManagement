@@ -126,7 +126,6 @@ def myvideos(request,id):
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
-<<<<<<< HEAD
 
 @csrf_exempt
 def uploadfile(request,id):
@@ -141,217 +140,6 @@ def uploadfile(request,id):
             VID=str(VID)
             print(type)
             return redirect('/dm/createrupload/'+id+'/'+filename+'/'+type+'/'+VID)
-=======
- 
-@login_required(login_url='/')
-def creater_upload(request,id):
-    # try:
-        if request.method == "POST":
-            Vendor=request.POST.get('Vendor')
-            Lob=request.POST.get('LOB')
-            Creative=request.POST.get('creative')
-            Platform=request.POST.getlist('Platform')
-            upload=request.POST.get('Upload')
-            Creator=request.POST.get('Creator')
-            Title=request.POST.get('title')
-            question = request.POST.getlist('question')
-            Qlist=list(filter(None,question))
-
-            if Creative == 'Video':
-                CVID = cVideoId.objects.filter(userID=str(id)).order_by('-id').first()
-                print(CVID)
-                VID=CVID.VideoID
-                VID=str(VID)
-            else:
-                VID = uuid.uuid4()
-                VID=str(VID)
-
-                
-            if upload == "Upload":
-
-                url = url1 = url2 = text ='--'
-                # ID = uuid.uuid4()
-                # str(ID)
-                # print(str(ID))
-                if Creative == 'Image':
-                    myfile = request.FILES['file_image']
-                    fs = FileSystemStorage()
-                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
-                    image_url = fs.url(filename)
-                    Gif_url = '--'
-                elif Creative == 'Gif':
-                    myfile = request.FILES['file_gif']
-                    fs = FileSystemStorage()
-                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
-                    Gif_url = fs.url(filename)
-                    image_url = '--'
-                elif Creative == 'Video':
-                    # CVID = cVideoId.objects.filter(userID=id).order_by('-id').first()
-                    # VID=CVID.VideoID
-                    # vid=str(VID)
-                    print(VID)
-                    video=TbVideo.objects.filter(videoid=VID).values()
-                    print(video)
-                    for x in video:
-                        url=x['videopath']
-                        url1=x['videopath1']
-                        url2=x['videopath2']
-                    print(url)
-                    text=transcribe_video_audio(url)
-                    print(text)
-                    image_url = '--'
-                    Gif_url = '--'
-
-                    tbvideo = TbVideo.objects.get(videoid=VID)
-                    tbvideo.videoname='download'
-                    tbvideo.videotranscription=text
-                    tbvideo.creative=Creative
-                    tbvideo.platform=Platform
-                    tbvideo.lob=Lob
-                    tbvideo.creater=Creator
-                    tbvideo.save()
-
-                print(Creator)
-                print(Creative)
-                print(Platform)
-                print(Lob)
-
-                # if Creative != 'Video':
-                #     video_details2 = TbVideo(videoid=VID,videoname=Title,
-                #                 previousvideoid=0,videotranscription=text,
-                #                 vendor=Vendor,lob=Lob,creative=Creative,
-                #                 platform=Platform,creater=Creator,Gifurl=Gif_url,
-                #                 Imageurl=image_url)
-                    
-                #     video_details2.save()
-                
-                video_details2 = TbVideo(videoid=VID,videoname=Title,
-                previousvideoid=0,videotranscription=text,videopath=url,
-                videopath1=url1,videopath2=url2,
-                vendor=Vendor,lob=Lob,creative=Creative,
-                platform=Platform,creater=Creator,Gifurl=Gif_url,
-                Imageurl=image_url)
-                    
-                video_details2.save()
-
-                video_details3 = Campaignvideo(campaignvideoid=VID,
-                                videoid=TbVideo.objects.get(videoid = VID)
-                                ,campaignid=1,previousvideoid=0)
-                video_details3.save()
-
-                username=Profile.objects.get(userid = id)
-                urid = username.userroleid
-
-                user=TbUser.objects.get(userid=id)
-                UN=user.username
-
-                video_details4 = TbCampaignquestion(campaignquestionid=str(VID)+str(1),
-                campaignvideoid=Campaignvideo.objects.get(campaignvideoid=VID)
-                ,userroleid=TbUserrole.objects.get(userroleid=urid),
-                questionid=TbQuestion.objects.get(questionid='1'))
-                video_details4.save()
-
-                status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=VID,status='Pending',videoname=Title,approver='---',uploadername=UN,
-                                  videoPath=url,videoPath1=url1,videoPath2=url2,platform=Platform,Imageurl=image_url,Gifurl=Gif_url,creative=Creative)
-                status.save()
-
-                videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=url,VideoName=Title,creative=Creative)
-                videoDetails.save()
-
-                data=TbQuestion.objects.all()
-
-                dataQ = TbCampaignquestion.objects.filter(campaignvideoid=VID)
-                listOfDataQ=[]
-                for i in dataQ:
-                    output=i.questionid
-                    listOfDataQ.append(output)
-                lenOfList=len(listOfDataQ)
-
-                listOfQuestion=[]
-                for i in listOfDataQ:
-                    output=i.questiontext
-                    listOfQuestion.append(output)
-                questionsText = {}
-                for i in range(0,lenOfList):
-                    QT=listOfQuestion[i]
-                    questionsText["q"+str(i)] = QT
-
-                listOfQuestionResponse=[]
-                for i in listOfDataQ:
-                    output=i.questionresponse.split("|")
-                    listOfQuestionResponse.append(output)
-
-                QuestionResponse = {}
-                for i in range(0,lenOfList):
-                    lQR=listOfQuestionResponse[i]
-                    QuestionResponse["k"+str(i)] = lQR
-
-
-                print(data)
-                a=id
-                userrolename=TbUserrole.objects.get(userroleid = urid)
-                userrolename=userrolename.userrolename
-                print(userrolename)
-                finalsubmit='yes'
-                print(url)
-                print(url1)
-                print(url2)
-
-
-
-            else:
-                # VID = cVideoId.objects.all().order_by('-id').first()
-                # VID=str(VID)
-                # video=TbVideo.objects.get(videoid = VID)
-                # Title=video.videoname
-                # imageurl=video.Imageurl
-                # gifurl=video.Gifurl
-
-                username=Profile.objects.get(userid = id)
-                urid = username.userroleid
-
-                user=TbUser.objects.get(userid=id)
-                UN=user.username
-                userrolename=TbUserrole.objects.get(userroleid = urid)
-                userrolename=userrolename.userrolename
-                print(userrolename)
-
-                # status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=VID,status='Pending',videoname=Title,approver='---',uploadername=UN,platform=Platform,Imageurl=imageurl,Gifurl=gifurl,creative=Creative)
-                # status.save()
-
-                cQresponse=TbCampaignquestion.objects.filter(campaignvideoid=VID)
-                print(cQresponse)
-                lenOfList=len(cQresponse)
-                listOfcQresponse=[]
-                for i in cQresponse:
-                    output=i.campaignquestionid
-                    listOfcQresponse.append(output)
-                print(listOfcQresponse)
-                # import itertools
-
-                # for (a, b) in itertools.zip_longest(listOfcQresponse,Qlist):
-                #         video_details5 = Campaignquestionresponse(campaignquestionid=TbCampaignquestion.objects.get(campaignquestionid = a),
-                #                                 userid=TbUser.objects.get(userid = str(id)),response= b)
-                #         video_details5.save()  
-                
-                # videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=Title,creative=Creative)
-                # videoDetails.save()
-                if userrolename=='Uploader':
-                    messages.success(request, 'submitted succesfully')
-                    return redirect('/dm/uploaderdashboard/'+id)
-                elif userrolename=='Reviewer':
-                    messages.success(request, 'submitted succesfully')
-                    return redirect('/dm/approver/'+id)
-                else:
-                    messages.success(request, 'submitted succesfully')
-                    return redirect('/dm/superadmin/'+id)
-                
-            return render(request,'tc_DigitalMarketing/upload-pagenew.html',{"k":id,'userrolename':userrolename,'id':id,                                                                                    'qT':questionsText,
-                                                                                    'qR':QuestionResponse,'text':text,
-                                                                                    "data":data,'dataQ':dataQ,
-                                                                             'creative':Creative,'finalsubmit':finalsubmit,
-                                                                             'url':url,'url1':url1,'url2':url2,'imgurl':image_url,'gifurl':Gif_url})
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
         else:
             a=id
@@ -362,7 +150,6 @@ def creater_upload(request,id):
             userrolename=userrolename.userrolename
             print(userrolename)
             getdetails="yes"
-<<<<<<< HEAD
             uploadfile='yes'
             uploadform='yes'
 
@@ -768,292 +555,6 @@ def creater_upload(request,id,fname,type,vid):
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
   
-=======
-
-
-            return render(request,'tc_DigitalMarketing/upload-pagenew.html',{'k':a,'userrolename':userrolename,
-                                                                             'id':id,'getdetails':getdetails})
-    # except Exception as e:
-    #     error={'error':e}
-    #     return render(request,'tc_DigitalMarketing/error.html',context=error)  
-# def creater_upload(request,id):
-#     try:
-#         if request.method == "POST":
-#             question = request.POST.get('question')
-#             q1 = request.POST.get('q1')
-#             q2 = request.POST.get('q2')
-#             q3 = request.POST.get('q3')
-#             q4 = request.POST.get('q4')
-#             q5 = request.POST.get('q5')
-#             q6 = request.POST.get('q6')
-#             Vendor=request.POST.get('Vendor')
-#             Lob=request.POST.get('LOB')
-#             Creative=request.POST.get('Creative')
-#             Platform0=request.POST.get('Platform')
-#             Platform1=request.POST.get('Platform1')
-#             Platform2=request.POST.get('Platform2')
-#             Platform3=request.POST.get('Platform3')
-#             Platform4=request.POST.get('Platform4')
-#             Platform=[Platform0,Platform1,Platform2,Platform3,Platform4]
-#             Platform=list(filter(None,Platform))
-
-#             Platform = ','.join(Platform)
-#             print(Platform)
-
-#             upload=request.POST.get('Upload')
-#             Creater=request.POST.get('Creater')
-#             Qlist=[q0,q1,q2,q3,q4,q5,q6]
-#             Qlist=list(filter(None,Qlist))
-
-
-#             if upload == 'Upload':
-#                     image_url=''
-#                     Gif_url=''
-#                     url=''
-#                     url1=''
-#                     Title1=request.POST.get('Videotitle').capitalize()
-#                     myfile = request.FILES['myfile']
-#                     fs = FileSystemStorage()
-#                     filename = fs.save(myfile.name.replace(" ", ""), myfile)
-#                     uploaded_file_url = fs.url(filename)
-#                     print(uploaded_file_url)
-
-#                     if Creative == 'image':
-#                          image_url=uploaded_file_url
-#                          text='--'
-
-
-#                     if Creative == 'Video':
-#                         url=uploaded_file_url
-#                         url1=url[1:]
-#                         text=transcribe_video_audio(url)
-#                         #text=' Are you an American over 25 and earning less than $50,000? Well you might have already qualified for this $5,200 healthcare assistance program available in the US. Just CLICK the link below and see how much you might get back.'
-                    
-#                     if Creative == 'GIF':
-#                         Gif_url=uploaded_file_url
-#                         # text=transcribe(url1)
-#                         text='--'
-
-#                     data=TbQuestion.objects.all()
-
-#                     # Generate a new UUID
-#                     new_id = uuid.uuid4()
-#                     str(new_id)
-#                     print(str(new_id))
-
-#                     video_id = cVideoId(VideoID=new_id)
-#                     video_id.save()
-
-#                     T=Title1
-#                     video_details2 = TbVideo(videoid=new_id,videoname=T,videopath=url1,
-#                                             previousvideoid=0,videotranscription=text,
-#                                             vendor=Vendor,lob=Lob,creative=Creative,
-#                                             platform=Platform,videopath1='--',
-#                                             videotranscription1='--',creater=Creater,
-#                                             Gifurl=Gif_url,Imageurl=image_url,Imageurl1='--',Gifurl1='--'
-#                                             )
-#                     video_details2.save()
-
-#                     video_details3 = Campaignvideo(campaignvideoid=new_id,
-#                                                 videoid=TbVideo.objects.get(videoid = new_id)
-#                                                 ,campaignid=1,previousvideoid=0)
-#                     video_details3.save()
-                    
-#                     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(1),
-#                             campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                             ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                             questionid=TbQuestion.objects.get(questionid='1'))
-#                     video_details4.save()
-
-
-#                     #config question based on platform
-#                     # if Platform == 'Facebook':    
-#                     #     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(1),
-#                     #                                 campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #                                 ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #                                 questionid=TbQuestion.objects.get(questionid='1'))
-#                     #     video_details4.save()
-
-#                     #     # video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(2),
-#                     #     #                             campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #     #                             ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #     #                             questionid=TbQuestion.objects.get(questionid='2'))
-#                     #     # video_details4.save()
-
-#                     #     # video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(3),
-#                     #     #                             campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #     #                             ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #     #                             questionid=TbQuestion.objects.get(questionid='3'))
-#                     #     # video_details4.save()
-
-#                     #     # video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(4),
-#                     #     #                             campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #     #                             ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #     #                             questionid=TbQuestion.objects.get(questionid='4'))
-#                     #     # video_details4.save()
-                    
-#                     # if Platform == 'Youtube':    
-
-#                     #     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(3),
-#                     #                                 campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #                                 ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #                                 questionid=TbQuestion.objects.get(questionid='1'))
-#                     #     video_details4.save()
-
-#                     #     # video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(4),
-#                     #     #                             campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #     #                             ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #     #                             questionid=TbQuestion.objects.get(questionid='6'))
-#                     #     # video_details4.save()
-                    
-#                     # if Platform == 'GDN':    
-
-#                     #     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(3),
-#                     #                                 campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #                                 ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #                                 questionid=TbQuestion.objects.get(questionid='1'))
-#                     #     video_details4.save()
-
-#                     # if Platform == 'TikTok':    
-
-#                     #     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(3),
-#                     #                                 campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #                                 ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #                                 questionid=TbQuestion.objects.get(questionid='1'))
-#                     #     video_details4.save()
-                    
-#                     # if Platform == 'Native':    
-
-#                     #     video_details4 = TbCampaignquestion(campaignquestionid=str(new_id)+str(3),
-#                     #                                 campaignvideoid=Campaignvideo.objects.get(campaignvideoid=new_id)
-#                     #                                 ,userroleid=TbUserrole.objects.get(userroleid='U1'),
-#                     #                                 questionid=TbQuestion.objects.get(questionid='1'))
-#                     #     video_details4.save()
-
-#                     dataQ = TbCampaignquestion.objects.filter(campaignvideoid=new_id)
-#                     listOfDataQ=[]
-#                     for i in dataQ:
-#                         output=i.questionid
-#                         listOfDataQ.append(output)
-#                     lenOfList=len(listOfDataQ)
-
-#                     listOfQuestion=[]
-#                     for i in listOfDataQ:
-#                         output=i.questiontext
-#                         listOfQuestion.append(output)
-#                     questionsText = {}
-#                     for i in range(0,lenOfList):
-#                         QT=listOfQuestion[i]
-#                         questionsText["q"+str(i)] = QT
-
-#                     listOfQuestionResponse=[]
-#                     for i in listOfDataQ:
-#                         output=i.questionresponse.split("|")
-#                         listOfQuestionResponse.append(output)
-
-#                     QuestionResponse = {}
-#                     for i in range(0,lenOfList):
-#                         lQR=listOfQuestionResponse[i]
-#                         QuestionResponse["k"+str(i)] = lQR
-#                     status='Uploaded'
-
-#                     username=Profile.objects.get(userid = id)
-#                     userroleid = username.userroleid
-#                     print(userroleid)
-#                     userrolename=TbUserrole.objects.get(userroleid = userroleid)
-#                     userrolename=userrolename.userrolename
-#                     print(userrolename)
-
-
-#                     return render(request,'tc_DigitalMarketing/upload-pagenew.html',{"k":id,"video":url,"text":text,
-#                                                                                     'qT':questionsText,
-#                                                                                     'qR':QuestionResponse,
-#                                                                                     "data":data,'dataQ':dataQ,
-#                                                                                     'status':status,'Title':Title1,
-#                                                                                     'imgurl':image_url,'gifurl':Gif_url,
-#                                                                                     'userrolename':userrolename,
-#                                                                                     })
-            
-
-#             CVID = cVideoId.objects.all().order_by('-id').first()
-#             CVID=str(CVID)
-
-#             video=TbVideo.objects.get(videoid = CVID)
-#             vP='/'+video.videopath
-#             vN=video.videoname
-#             pN=video.platform
-#             vP1='/'+video.videopath1
-#             img='/'+video.Imageurl
-#             gifurl=video.Gifurl
-#             Cre=video.creative
-
-#             user=TbUser.objects.get(userid=id)
-#             UN=user.username
-
-#             status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=CVID,status='Pending',videoname=vN,approver='---',uploadername=UN,platform=pN,videoPath=vP,videoPath1=vP1,Imageurl=img,Gifurl=gifurl,creative=Cre)
-#             status.save()
-
-#             cQresponse=TbCampaignquestion.objects.filter(campaignvideoid=CVID)
-#             print(cQresponse)
-#             lenOfList=len(cQresponse)
-#             listOfcQresponse=[]
-#             for i in cQresponse:
-#                 output=i.campaignquestionid
-#                 listOfcQresponse.append(output)
-#             print(listOfcQresponse)
-#             import itertools
-
-#             for (a, b) in itertools.zip_longest(listOfcQresponse,Qlist):
-#                     video_details5 = Campaignquestionresponse(campaignquestionid=TbCampaignquestion.objects.get(campaignquestionid = a),
-#                                             userid=TbUser.objects.get(userid = str(id)),response= b)
-#                     video_details5.save()  
-            
-#             videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=vN,creative=Cre)
-#             videoDetails.save()
-        
-            
-#             if q0=='No':
-#                 messages.success(request, 'Upload other Placements Creative')
-#                 a=CVID
-#                 return redirect('/dm/uploadagain/'+str(a)+str('/')+id)
-            
-#             username=Profile.objects.get(userid = id)
-#             userroleid = username.userroleid
-#             userrolename=TbUserrole.objects.get(userroleid = userroleid)
-#             userrolename=userrolename.userrolename 
-
-#             if userrolename=='Uploader':
-#                 messages.success(request, 'submitted succesfully')
-#                 return redirect('/dm/uploaderdashboard/'+id)
-#             elif userrolename=='Reviewer':
-#                 messages.success(request, 'submitted succesfully')
-#                 return redirect('/dm/approver/'+id)
-#             else:
-#                 messages.success(request, 'submitted succesfully')
-#                 return redirect('/dm/superadmin/'+id)
-
-#         else:
-#             a=id
-#             status='Waiting'
-#             videodetails1=video_Details.objects.filter(userid=id,creative='Video')
-#             videodetails="video_Details.objects.filter(userid=id)"
-#             username=Profile.objects.get(userid = id)
-#             userroleid = username.userroleid
-#             print(userroleid)
-#             userrolename=TbUserrole.objects.get(userroleid = userroleid)
-#             userrolename=userrolename.userrolename
-#             print(userrolename)
-
-
-#             return render(request,'tc_DigitalMarketing/upload-pagenew.html',{'k':a,'status':status,
-#                                                                         'videodetails':videodetails,
-#                                                                         'videodetails1':videodetails1,
-#                                                                         'userrolename':userrolename})
-#     except Exception as e:
-#         error={'error':e}
-#         return render(request,'tc_DigitalMarketing/error.html',context=error)  
-    
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
     
 def transcribe_video_audio(video_path):
@@ -2014,13 +1515,8 @@ def register_view(request):
                 to_email = user.email
                 smtp_server = "email-smtp.ap-south-1.amazonaws.com"
                 smtp_port = 587  # Typically 587 for TLS
-<<<<<<< HEAD
                 smtp_username = os.getenv('SMTP_Username')
                 smtp_password = os.getenv('SMTP_Password')
-=======
-                smtp_username = ""
-                smtp_password = ""
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
                 user_name = user.username
                 send_email_creator(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
                 
@@ -2044,13 +1540,8 @@ def register_view(request):
                 to_email = user.email
                 smtp_server = "email-smtp.ap-south-1.amazonaws.com"
                 smtp_port = 587  # Typically 587 for TLS
-<<<<<<< HEAD
                 smtp_username = os.getenv('SMTP_Username')
                 smtp_password = os.getenv('SMTP_Password')
-=======
-                smtp_username = ""
-                smtp_password = ""
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
                 user_name = user.username
                 send_email_approver(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
 
@@ -2071,7 +1562,6 @@ def register_view(request):
                 queryset = TbStatus.objects.all() 
                 for q in queryset:
                     a=q.downloader 
-<<<<<<< HEAD
                     print(a)
                     if a != None:
                         downloader_list = ast.literal_eval(a)
@@ -2079,13 +1569,6 @@ def register_view(request):
                         print(a)
                         q.downloader = downloader_list
                         q.save()
-=======
-                    downloader_list = ast.literal_eval(a)
-                    downloader_list.append(user.username)
-                    print(a)
-                    q.downloader = downloader_list
-                    q.save()
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
                 subject = "Welcome Creative Management!"
                 message = ""
@@ -2093,13 +1576,8 @@ def register_view(request):
                 to_email = user.email
                 smtp_server = "email-smtp.ap-south-1.amazonaws.com"
                 smtp_port = 587  # Typically 587 for TLS
-<<<<<<< HEAD
                 smtp_username = os.getenv('SMTP_Username')
                 smtp_password = os.getenv('SMTP_Password')
-=======
-                smtp_username = ""
-                smtp_password = ""
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
                 user_name = user.username
                 send_email_downloader(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
 
@@ -2640,11 +2118,7 @@ def update_view(request,id,id1):
             Vendor=video.vendor
             print(vP)
             print(vP1)
-<<<<<<< HEAD
             print(Creative)
-=======
-            # print(vP2)
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
 
 
@@ -2853,7 +2327,6 @@ def ajax_file_upload_save(request,id):
             #     video_details2.save()
         except:
             print('some value is missing')
-<<<<<<< HEAD
         
     a=id
     username=Profile.objects.get(userid = id)
@@ -2871,8 +2344,6 @@ def ajax_file_upload_save(request,id):
     return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'userrolename':userrolename,
                                                                         'id':id,'getdetails':getdetails,
                                                                         'url':url,'creative':creative})
-=======
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a
 
 
     return HttpResponse("Uploaded")
@@ -3099,7 +2570,6 @@ def daccess(request,id):
             return render (request,'tc_DigitalMarketing/daccess.html',{"a_list":downloader_list,"b_list":downloaderaccess_list })
 
 
-<<<<<<< HEAD
 
 
 
@@ -3110,5 +2580,3 @@ def daccess(request,id):
 
 
 
-=======
->>>>>>> ac503c54cb55a16098a169c85d197c26f17ffd3a

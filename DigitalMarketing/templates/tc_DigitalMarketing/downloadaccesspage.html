@@ -401,7 +401,7 @@
                     <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Rejected' %}
                     <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
@@ -476,13 +476,13 @@
             <div class="col-md-6 alincol    ">
                 <div class="downloadIcon">
                   {% if i.status == 'Rejected' %}
-                  <a style="text-decoration:none" href=""><img src="{% static 'images/view.svg'%}"> </a>
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                       {% endif %}
                     {% if i.status == 'Pending' %}
-                    <a style="text-decoration:none" href=""> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                 </div>
             </div>
