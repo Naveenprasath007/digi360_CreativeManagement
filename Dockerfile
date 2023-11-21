@@ -22,7 +22,7 @@ RUN pip install -r requirements.txt
 
 #new command 
 
-RUN apt-get install git
+RUN apt-get install -y git
 
 # here i need to modify**** my code 
 

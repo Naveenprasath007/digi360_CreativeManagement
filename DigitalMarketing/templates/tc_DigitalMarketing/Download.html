@@ -2,121 +2,139 @@
 {% load static %}
 
 {% block content %}
-
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand d-inline-flex align-items-center" href="/dm/UserIndexpage">
-        <!-- <img src="{% static 'images/logo_icon.png' %}" alt="" class="img-fluid"> -->
+    <div class="container-fluid">
+      <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
+        <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
         <h2>true<span>coverage</span></h2>
       </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#">
-              <i class="bi bi-brightness-high"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-              <i class="bi bi-bell"></i>
-          </a>
-        </li>
-        <!-- <li class="nav-item account-section">
-          <a class="nav-link" href="#">
+        {% if userrolename == 'Uploader' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+        {% if userrolename == 'Reviewer' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/approver/{{ id }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+  
+        {% if userrolename == 'SuperAdmin' %}
+        <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
+          <!-- <img src="{% static 'images/logo_icon.png'%}" alt="" class="img-fluid" /> -->
+          <h2>true<span>coverage</span></h2>
+        </a>
+        {% endif %}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#">
+                <i class="bi bi-brightness-high"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-bell"></i>
+            </a>
+          </li>
+          <!-- <li class="nav-item account-section">
+            <a class="nav-link" href="#">
+                <span>My Account</span>
+                <span class="av-holder">
+                    <img src="{% static 'images/avatar.png'%}" alt="">
+                    <i class="bi bi-chevron-down"></i>
+                </span> 
+            </a>
+          </li> -->
+          <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
+            <a class="nav-link" href="#">
               <span>My Account</span>
               <span class="av-holder">
-                  <img src="{% static 'images/avatar.png'%}" alt="">
-                  <i class="bi bi-chevron-down"></i>
-              </span> 
-          </a>
-        </li> -->
-        <li class="nav-item account-section" id="accountSection" onclick="myFunction()">
-          <a class="nav-link" href="#">
-            <span>My Account</span>
-            <span class="av-holder">
-              <img src="{% static 'images/avatar.png'%}" alt="" />
-              <i class="bi bi-chevron-down"></i>
-            </span>
-          </a>
-          <div class="dropdown-panel">
-            <ul>
-                <li>Account</li>
+                <img src={{userdetails.profile_pic}} alt=""/>
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </a>
+            <div class="dropdown-panel">
+              <ul>
                 <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
-            </ul>
-          </div>
-        </li>
-      </ul>
+                </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
+  <div class="container-fluid" >
+    <div class="innersearch" style="height: 100px;">
+      <div class="col-md-12">
+          <input type="search" id='search-input' placeholder="search here" onkeyup="filterDivisions()"/>        
+      </div>
   </div>
-</nav> 
+      </div>
 
+<style>
+  select {
+    text-align: center;
+    text-align-last: center;
+    -moz-text-align-last: center;
+}
+</style>
 
-<!-- <nav class="navbar navbar-expand-sm hd">    
-  <a href="/dm/UserIndexpage"class="navbar-brand" >
-  <img src="{% static 'images/tc.png' %}"height="60",width="20" alt="Speridian">
-  </a>
-  <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu">
-      <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarMenu">
-   <ul class="navbar-nav ms-auto">
-     <li class="nav-item" >
-          <a  href="/dm/UserIndexpage"class="nav-link">
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="30" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-              <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-          </svg>
-           </a>
-      </li>
-
-   </ul>
-  </div> 
-</nav> -->
-
-<div>
-  <div class="container">
-    {% include 'tc_DigitalMarketing/messages.html' %}
-    <table class="table table-striped text-center">
-      <thead>
-        <tr>
-          <th scope="col">Video</th>
-          <th scope="col">Approved By</th>
-          <th scope="col">VideoName</th>
-          <th scope="col">Download</th>
-        </tr>
-      </thead>
-      <tbody>
+{% include 'tc_DigitalMarketing/messages.html' %}
+<div id="Listview">
+    <div class="list-panel">
+      <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+          <tr align="center">
+            <th>Video</th>
+            <th>Approved By</th>
+            <th>VideoName</th>
+            <th>Download</th>
+          </tr>
+        </thead>
         {% for i in approvedvid %}
-        <tr>
-          <!-- <th scope="row">1</th> -->
-          <td>        
-            <video width="100%" height="100" controls>
-              <source src="{{ i.videopath }}" type="video/mp4">
-              <source src="{{ i.videopath }}" type="video/ogg">
-          Your browser does not support the video tag.
-          </video>
-          </td>
-          <td>{{i.uploadername}}</td>
-          <td>{{i.videotitle }}</td>
-          
-          <td>
-            <a href="/dm/Downloadvideo/{{ i.videoid }}"class="nav-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-          </svg></a></td>
-        </tr>
+        {% if i.username != '' %}
+        <tbody>
+          <tr align="center" class="finding">
+            <td>
+              <p class="fw-normal mb-1">           
+                <video width="10" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+                  <source src="{{i.videopath}}" type="video/mp4">
+                  <source src="{{i.videopath}}" type="video/ogg">
+              Your browser does not support the video tag.
+              </video>
+              </p>
+            </td>
+            <td>
+              <p class="fw-normal mb-1">{{i.uploadername}}</p>
+            </td>
+            <td>
+              <p class="fw-normal mb-1">{{i.videotitle }}</p>
+            </td>
+            <td>
+              <a href="/dm/Downloadvideo/{{ i.videoid }}"class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+              </svg></a>
+            </td>
+            </form>
+          </tr>
+        </tbody>
+        {% endif %}
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
+      </table>
+    </div>
+      </div>
 
 {% endblock content %}
+
+

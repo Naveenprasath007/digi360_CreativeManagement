@@ -2,6 +2,23 @@
 {% load static %}
 
 {% block content %}
+<style>
+  [data-initials]:before {
+  background: #099bdd;
+  color: white;
+  opacity: 1; 
+  content: attr(data-initials); 
+  display: inline-block; 
+  font-weight: bold; 
+  border-radius: 50%; 
+  vertical-align: middle; 
+  margin-right: 0.5em; 
+  width: 50px; 
+  height: 50px; 
+  line-height: 50px; 
+  text-align: center; 
+  }
+  </style>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand d-inline-flex align-items-center" href="/dm/superadmin/{{ id }}">
@@ -12,14 +29,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" href="#">
               <i class="bi bi-brightness-high"></i>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link" href="#">
               <i class="bi bi-bell"></i>
@@ -38,7 +55,7 @@
           <a class="nav-link" href="#">
             <span>My Account</span>
             <span class="av-holder">
-              <img src="{% static 'images/avatar.png'%}" alt="" />
+              <span data-initials="{{userdetails.username.0|title}}"></span>
               <i class="bi bi-chevron-down"></i>
             </span>
           </a>
@@ -91,7 +108,7 @@
         <tr align="center" class="finding">
           <!-- <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}"> -->
           <td>
-            <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+            <video width="30" height="50" poster="{% static 'images/tc.png'%}" preload="none" controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
               <source src="{{i.videoPath}}" type="video/ogg">
           Your browser does not support the video tag.
@@ -103,8 +120,33 @@
           <td>
             <p class="fw-normal mb-1"> {{i.videoname}} </p>
           </td>
-          <td>
+          <!-- <td>
             <p class="fw-normal mb-1"> {{i.platform}} </p>
+          </td> -->
+          <td style="position: relative; text-align: center;">
+          
+            {% if 'Youtube' in i.platform %}
+            <img src="{% static 'images/youtubeicon.svg' %}">
+            {% endif %}
+    
+            {% if 'Facebook' in i.platform %}
+            <img src="{% static 'images/facebookicon.svg' %}">
+            {% endif %}
+            
+            {% if 'GDN' in i.platform %}
+            <img src="{% static 'images/google.svg' %}" >
+            {% endif %}
+
+            {% if 'tiktok' in i.platform %}
+            <img src="{% static 'images/tik-tokicon.svg' %}" >
+            {% endif %} 
+            
+            {% if 'Native' in i.platform %}
+            <img src="{% static 'images/gear.svg' %}" >
+            {% endif %}
+          </td>
+          <td style="display:none;">
+            <p class="fw-normal mb-1"> {{i.platform}} </p> 
           </td>
           <td>
             <p class="fw-normal mb-1"> {{i.uploadername}} </p>
@@ -172,7 +214,7 @@
         <tr align="center" class="finding">
           <!-- <input type="checkbox" name="selectoption{{i.videoid}}" value="{{i.videoid}}"> -->
           <td>
-            <video width="30" height="50" poster="{% static 'images/tc.png'%}"  controls="">
+            <video width="30" height="50" poster="{% static 'images/tc.png'%}" preload="none" controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
               <source src="{{i.videoPath}}" type="video/ogg">
           Your browser does not support the video tag.
@@ -184,9 +226,35 @@
           <td>
             <p class="fw-normal mb-1"> {{i.videoname}} </p>
           </td>
-          <td>
+          <!-- <td>
             <p class="fw-normal mb-1"> {{i.platform}} </p>
+          </td> -->
+          <td style="position: relative; text-align: center;">
+          
+            {% if 'Youtube' in i.platform %}
+            <img src="{% static 'images/youtubeicon.svg' %}">
+            {% endif %}
+    
+            {% if 'Facebook' in i.platform %}
+            <img src="{% static 'images/facebookicon.svg' %}">
+            {% endif %}
+            
+            {% if 'GDN' in i.platform %}
+            <img src="{% static 'images/google.svg' %}" >
+            {% endif %}
+
+            {% if 'tiktok' in i.platform %}
+            <img src="{% static 'images/tik-tokicon.svg' %}" >
+            {% endif %} 
+            
+            {% if 'Native' in i.platform %}
+            <img src="{% static 'images/gear.svg' %}" >
+            {% endif %}
           </td>
+          <td style="display:none;">
+            <p class="fw-normal mb-1"> {{i.platform}} </p> 
+          </td>
+
           <td>
             <p class="fw-normal mb-1"> {{i.uploadername}} </p>
           </td>
@@ -378,7 +446,7 @@
       <div class="gridbox">
         <div class="thumbnail-bg">
             <!-- <img src="{% static './images/grid-thumbnail.png'%}"> -->
-            <video width="100%" height="350"  controls="">
+            <video width="100%" height="350" preload="none" controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
               <source src="{{i.videoPath}}" type="video/ogg">
           Your browser does not support the video tag.
@@ -401,7 +469,7 @@
                     <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Rejected' %}
                     <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
@@ -463,7 +531,7 @@
       <div class="gridbox">
         <div class="thumbnail-bg">
             <!-- <img src="{% static './images/grid-thumbnail.png'%}"> -->
-            <video width="100%" height="350"   controls="">
+            <video width="100%" height="350" preload="none" controls="">
               <source src="{{i.videoPath}}" type="video/mp4">
               <source src="{{i.videoPath}}" type="video/ogg">
           Your browser does not support the video tag.
@@ -476,13 +544,13 @@
             <div class="col-md-6 alincol    ">
                 <div class="downloadIcon">
                   {% if i.status == 'Rejected' %}
-                  <a style="text-decoration:none" href=""><img src="{% static 'images/view.svg'%}"> </a>
+                  <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"><img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                     {% if i.status == 'Approved' %}
-                    <a style="text-decoration:none; padding: 10px 15px; color: black; border-radius: 20px;"href="javascript: void(0)" onclick="window.open('/dm/daccess/{{i.videoid}}','_blank','width=560,height=500');"><img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}"> <img src="{% static 'images/view.svg'%}"> </a>
                       {% endif %}
                     {% if i.status == 'Pending' %}
-                    <a style="text-decoration:none" href=""> <img src="{% static 'images/view.svg'%}"> </a>
+                    <a style="text-decoration:none" href="/dm/approverview/{{i.videoid}}/{{id}}"> <img src="{% static 'images/view.svg'%}"> </a>
                     {% endif %}
                 </div>
             </div>

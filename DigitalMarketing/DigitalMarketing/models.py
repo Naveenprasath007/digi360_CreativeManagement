@@ -46,6 +46,7 @@ class TbApprove(models.Model):
     videoid = models.CharField(db_column='videoid', max_length=250,primary_key=True)  # Field name made lowercase.
     videotitle = models.CharField(db_column='videotitle', max_length=255, blank=True, null=True)  # Field name made lowercase.
     videopath = models.CharField(db_column='videopath', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    videopath1 = models.CharField(db_column='videopath1', max_length=255, blank=True, null=True)  # Field name made lowercase.
     uploadername = models.CharField(db_column='uploadername', max_length=255, blank=True, null=True)  # Field name made lowercase.
     approveddate = models.DateTimeField(default=datetime.now)  # Field name made lowercase.
     downloadaccess = models.CharField(db_column='downloadaccess', max_length=255, blank=True, null=True)
@@ -174,7 +175,7 @@ class Profile(models.Model):
     userroleid = models.CharField(db_column='UserRoleId', blank=True,max_length=255)  # Field name made lowercase.
     vendor=models.CharField(db_column='Vendor', max_length=255, blank=True, null=True)
     email = models.CharField(db_column='email', blank=True,max_length=255)
-
+    profile_pic = models.ImageField(default = "\media\Profile\Default.jpg",null=True, blank=True)
 
     
 

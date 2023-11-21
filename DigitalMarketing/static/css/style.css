@@ -130,7 +130,7 @@ nav .navbar-nav .av-holder i {
 }
 .upload-page .upload-panel .upload-box {
   width: 100%;
-  min-height: 400px;
+  min-height: 450px;
   background-color: #ebeefc;
   flex-direction: column;
   border-radius: 8px;
@@ -274,6 +274,16 @@ nav .navbar-nav .av-holder i {
   height: 50px;
   font-size: 17px;
 }
+.upload-page .upload-panel .presets-box button.submitdisable {
+  width: 100%;
+  border-radius: 12px;
+  background-color: #E87C86;
+  border: none;
+  color: #ffffff;
+  height: 50px;
+  font-size: 17px;
+}
+
 .upload-page .transcription-panel {
   width: 100%;
 }
@@ -1662,3 +1672,66 @@ img
   right: -1px;
   cursor: pointer;
 }
+
+
+/* box player */
+
+/* #fade {
+  display: none;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 1001;
+  -moz-opacity: 0.8;
+  opacity: .80;
+  filter: alpha(opacity=80);
+}
+
+#light {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 300px;
+  max-height: 360px;
+  margin-left: -300px;
+  margin-top: -180px;
+  border: 2px solid #FFF;
+  background: #FFF;
+  z-index: 1002;
+  overflow: visible;
+}
+
+#boxclose {
+  float: right;
+  cursor: pointer;
+  color: #fff;
+  border: 1px solid #AEAEAE;
+  border-radius: 3px;
+  background: #222222;
+  font-size: 31px;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 0px;
+  padding: 11px 3px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 1002;
+  opacity: 0.9;
+}
+
+.boxclose:before {
+  content: "×";
+}
+
+#fade:hover ~ #boxclose {
+  display:none;
+}
+
+.test:hover ~ .test2 {
+  display: none;
+} */
