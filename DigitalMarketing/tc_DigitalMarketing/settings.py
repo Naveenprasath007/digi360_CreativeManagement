@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +35,7 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['http://18.189.26.152:8000/','https://digi360.truecoverage.com']
+CSRF_TRUSTED_ORIGINS = ['http://18.219.45.124:8000/','https://digi360.truecoverage.com']
 
 
 
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     'DigitalMarketing',
     'crispy_forms',
     'crispy_bootstrap5',
+    'studioapp',
 ]
 
 
@@ -82,36 +85,46 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tc_DigitalMarketing.wsgi.application'
 
+# Smtp
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'email-smtp.ap-south-1.amazonaws.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('SMTP_Username')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_Password')
+DEFAULT_FROM_EMAIL = 'support.digi360@truecoverage.com'
+
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # ___________MY DATABASE_____________
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'Creativemanagement', 
-#         'USER': 'postgres',
-#         'PASSWORD': 'root',
-#         'HOST': '127.0.0.1', 
-#         'PORT': '5432',
-#         'DISABLE_SERVER_SIDE_CURSORS': True,
-#     }
-# }
-
-# server db config
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Creativemanagement', 
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': 'root',
-        'HOST': 'db', 
+        'HOST': '127.0.0.1', 
         'PORT': '5432',
         'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
+
+# server db config
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'Creativemanagement', 
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'HOST': 'db', 
+#         'PORT': '5432',
+#         'DISABLE_SERVER_SIDE_CURSORS': True,
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -203,4 +216,5 @@ AUTO_LOGOUT = {
     'IDLE_TIME': timedelta(minutes=0.2),
     'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
 }
+
 

@@ -17,6 +17,7 @@
                     <div class="col-12">
                     {% csrf_token %}
                     {{ form | crispy}}
+                    <a href="{% url "password_reset" %}" class="text-primary ms-2"> Forgotten your password? </a>
                     <div class="login-button">
                         <button type="submit" >Login</button>
                     </div>

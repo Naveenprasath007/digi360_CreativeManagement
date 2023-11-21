@@ -61,13 +61,3 @@ class UserRegisterForm(forms.ModelForm):
 
         return super(UserRegisterForm, self).clean(*args,**kwargs)
         
-
-  
-class ActivationForm(forms.Form):
-    ROLE_CHOICES= [
-    ('U1', 'Creator'),
-    ('R1', 'Approver'),
-    ('D1', 'Downloader'),
-    ]
-    email = forms.CharField()
-    Role=forms.CharField(label='Select Role', widget=forms.Select(choices=ROLE_CHOICES)) 

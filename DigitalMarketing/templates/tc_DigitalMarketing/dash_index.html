@@ -2,7 +2,23 @@
 {% load static %}
 
 {% block content %}
-
+<style>
+    [data-initials]:before {
+    background: #099bdd;
+    color: white;
+    opacity: 1; 
+    content: attr(data-initials); 
+    display: inline-block; 
+    font-weight: bold; 
+    border-radius: 50%; 
+    vertical-align: middle; 
+    margin-right: 0.5em; 
+    width: 50px; 
+    height: 50px; 
+    line-height: 50px; 
+    text-align: center; 
+    }
+    </style>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand d-inline-flex align-items-center" href="/dm/uploaderdashboard/{{ id }}">
@@ -14,14 +30,14 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="#"><i class="bi bi-moon"></i></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="#">
                     <i class="bi bi-brightness-high"></i>
                 </a>
-              </li>
+              </li> -->
               <li class="nav-item">
                 <a class="nav-link" href="#">
                     <i class="bi bi-bell"></i>
@@ -41,13 +57,14 @@
                 <a class="nav-link" href="#">
                   <span>My Account</span>
                   <span class="av-holder">
-                    <img src="{% static 'images/avatar.png'%}" alt="" />
+                    <!-- <img src={{userdetails.profile_pic}} alt=""/> -->
+                    <span data-initials="{{userdetails.username.0|title}}"></span>
                     <i class="bi bi-chevron-down"></i>
                   </span>
                 </a>
                 <div class="dropdown-panel">
                   <ul>
-                      <li>Account</li>
+                    <a style="text-decoration: none;color: inherit;" href="/dm/account/{{ id }}" rel="noopener noreferrer"><li >Account</li> </a>
                       <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
                   </ul>
                 </div>
@@ -184,28 +201,15 @@
                                 <div class="my-heads">
                                     <h4>Reviewers <a class="show" href="#">Show All</a></h4>
                                  </div>
-                                 <div class="av-list d-flex justify-content-between">
-                                        <a href="#">
-                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
+                                 <div class="av-list d-flex">
+                                        {% for i in admin_approver %}
+                                        <!-- <a href="/dm/account/{{i.userid}}">
+                                            <img src={{i.profile_pic}} alt="" style="border-radius: 50%;"> 
+                                        </a> -->
+                                        <a href="/dm/account/{{i.userid}}">
+                                            <div data-initials="{{i.username.0|title}}"></div>
                                         </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
-                                        </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
-                                        </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
-                                        </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
-                                        </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_5.png'%}" alt=""> 
-                                        </a>
-                                        <a href="#">
-                                            <img src="{% static 'images/av_1.png'%}" alt=""> 
-                                        </a>
+                                        {% endfor %}
                                  </div>
                             </div>
                         </div>
@@ -228,14 +232,14 @@
                                     </div>
                                 </div>
                            </div>
-                           <div class="white-box tasks-holder">
+                           <div class="white-box tasks-holder" style="overflow-y: scroll; height: 280px;">
                                 <h4>Recent</h4>
                                 <table class="table table-stripped">
-                                    <tbody>
+                                    <tbody style="overflow-y: scroll; height: 100px;">
                                     {% for i in recent %}
                                     <tr>
                                     <div class="alert-lists mt-2">
-                                            <td>
+                                            <td style="word-break: break-all;  overflow-y: auto;">
                                                 <div class="info-list success">
                                                 <i class="bi bi-play-circle"></i>
                                                 {{i.videoname}}
@@ -244,11 +248,20 @@
         
                                             <td>
                                                 <div class="info-list success">
-                                                    {% if i.status != 'Rejected' %}
+                                                    <!-- {% if i.status != 'Rejected' %}
                                                     ---
                                                     {% endif %}
                                                     {% if i.status == 'Rejected' %}
                                                     <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View  </a>
+                                                    {% endif %} -->
+                                                    {% if i.status == 'Pending' %}
+                                                    <a style="text-decoration:none" href="/dm/updateview/{{id}}/{{i.videoid}}"> View </a>
+                                                    {% endif %}
+                                                    {% if i.status == 'Approved' %}
+                                                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View </a>
+                                                    {% endif %}
+                                                    {% if i.status == 'Rejected' %}
+                                                    <a style="text-decoration:none" href="/dm/statusview/{{i.videoid}}/{{id}}"> View </a>
                                                     {% endif %}
                                                 </div>
                                             </td>
@@ -400,7 +413,7 @@
                                             Waiting for Review
                                             {% endif %}
                                             {% if i.approver != '---' %}
-                                            <img src="{% static 'images/av_5.png'%}" alt="">
+                                            <!-- <img src="{% static 'images/av_5.png'%}" alt=""> -->
                                             {{i.approver}} 
                                             {% endif %}
                                         </span>

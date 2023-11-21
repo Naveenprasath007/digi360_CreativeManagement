@@ -2,6 +2,23 @@
 {% load static %}
 
 {% block content %}
+<style>
+  [data-initials]:before {
+  background: #099bdd;
+  color: white;
+  opacity: 1; 
+  content: attr(data-initials); 
+  display: inline-block; 
+  font-weight: bold; 
+  border-radius: 50%; 
+  vertical-align: middle; 
+  margin-right: 0.5em; 
+  width: 50px; 
+  height: 50px; 
+  line-height: 50px; 
+  text-align: center; 
+  }
+  </style>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         {% if userrolename == 'Uploader' %}
@@ -37,7 +54,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" aria-current="page" href="#"
                 ><i class="bi bi-moon"></i
               ></a>
@@ -46,7 +63,7 @@
               <a class="nav-link active" href="#">
                 <i class="bi bi-brightness-high"></i>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <i class="bi bi-bell"></i>
@@ -57,14 +74,15 @@
               <a class="nav-link" href="#">
                 <span>My Account</span>
                 <span class="av-holder">
-                  <img src="{% static 'images/avatar.png'%}" alt="" />
+                  <!-- <img src={{userdetails.profile_pic}} alt=""/> -->
+                  <span data-initials="{{userdetails.username.0|title}}"></span>
                   <i class="bi bi-chevron-down"></i>
                 </span>
               </a>
               <div class="dropdown-panel">
                 <ul>
-                    <li>Account</li>
-                    <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
+                  <a style="text-decoration: none;color: inherit;" href="/dm/account/{{ id }}" rel="noopener noreferrer"><li >Account</li> </a>
+                  <a style="text-decoration: none;color: inherit;" href="{% url 'logout'%}" rel="noopener noreferrer"><li>Logout</li></a>
                 </ul>
               </div>
             </li>

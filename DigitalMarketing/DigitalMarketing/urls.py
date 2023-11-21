@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from DigitalMarketing import views
+from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
@@ -23,10 +24,8 @@ urlpatterns = [
     path("uploaderdashboard/<str:id>", views.uploaderdashboard),
     path("filterpage/<str:id>/<str:id1>/<str:id2>", views.filterpage),
     path("myvideos/<str:id>", views.myvideos),
-    path("UserIndexpage", views.user_indexpage),
     path("approver/<str:id>", views.approver),
     path("approverview/<str:id>/<str:uid>", views.approver_view),
-    # path("status/<str:id1>", views.status),
     path("statusview/<str:id1>/<str:uid>", views.status_view),
     path("Download/<str:id>", views.download),
     path("Downloadvideo/<str:id>", views.download_video),
@@ -40,18 +39,24 @@ urlpatterns = [
     path("superadmindetail_view/<str:id>", views.superadmindetail_view), 
     path("superadmindetail_downloader_view/<str:id>", views.superadmindetail_downloader_view), 
     path('Activation/<str:id>',views.activate),
-    path("ajax_file_upload_save/<str:id>",views.ajax_file_upload_save),
     path("daccess/<str:id>",views.daccess),
     
     
     path("uploadfile/<str:id>",views.uploadfile), 
-    path("createrupload/<str:id>/<str:fname>/<str:type>/<str:vid>", views.creater_upload),    
+    path("createrupload/<str:id>/<str:fname>/<str:type>/<str:vid>", views.creater_upload),   
+    path("account/<str:id>", views.account),  
 
      
 
     # Login
     path('login/', views.login_view, name="login"),
     path('register/', views.register_view, name="register"),
-    path('logout/', views.logout_view,  name="logout") 
+    path('logout/', views.logout_view,  name="logout") ,
+
+    #password reset
+    path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
+    path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
+    path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
 ]
 

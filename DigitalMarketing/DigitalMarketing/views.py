@@ -4,143 +4,60 @@ from .forms import *
 from .models import TbVideo,Campaignvideo,TbCampaignquestion,Campaignquestionresponse,TbQuestion,TbUserrole,cVideoId,TbStatus,TbUser,TbApprove,video_Details,TbapproverQuestion,Profile
 import pandas as pd
 import json
-#git testing
 import whisper
-
 import uuid
 from django.contrib import messages
 from django.db import connection
 import os
 from datetime import datetime
 import ast
-#login
+from django.template.defaulttags import register
 from django.contrib.auth import authenticate,get_user_model,login,logout
 from django.contrib.auth.decorators import login_required
-
-
+import pathlib
 from django.conf import settings
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
-
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from django.template.loader import render_to_string
+from datetime import date
 
-from dotenv import load_dotenv
-load_dotenv()
+
+today = date.today()
+today=today.strftime("%b_%d_%Y")
+
+
+
 
 @login_required(login_url='/')
-def uploaderdashboard(request,id):
-    try:
-        if request.method == "POST":
-            return render(request,'tc_DigitalMarketing/dash_index.html',{})
-        userName=connection.cursor()
-        userName.execute("select UserName from tb_User where UserID='{val}'".format(val=id))
-        userName=userName.fetchall()
-        UN=userName[0][0]
-        status=TbStatus.objects.filter(userid=id).order_by('-createddate').values()
-        recent=TbStatus.objects.filter(userid=id,status="Rejected").order_by('-createddate').values()[:3]
-        q = status.values()
-        df = pd.DataFrame.from_records(q)
-        if len(df) == 0:
-            val=id
-            return redirect('/dm/uploadfile/'+str(val))
-        filter1 =df["status"].isin(['Pending'])
-        Pending = df[filter1]
-        Pending =len(Pending)
-        filter2 =df["status"].isin(['Rejected'])
-        Rejected = df[filter2]
-        Rejected =len(Rejected)
-        filter3 =df["status"].isin(['Approved'])
-        Approved = df[filter3]
-        Approved =len(Approved)
-        filter4 =df["creative"].isin(['image','GIF'])
-        upload_img_gif = df[filter4]
-        upload_img_gif_count =len(upload_img_gif)
-
-        #  = pd.to_datetime(df['createddate'])
-        df['createddate']=df['createddate'].astype(str)
-        print(df['createddate'])
-        df['createddate']=df['createddate'].str.slice(0, -10)
-        video_count = df.groupby('createddate')['videoname'].count().reset_index()
-        DateValue=video_count['createddate'].values.tolist()
-        videoC=video_count['videoname'].values.tolist()
-
-        print(DateValue)
-
-        file_type_counts = df['creative'].value_counts().reset_index()
-        file_type_counts.columns = ['File_Type', 'Count']
-        File_Type=file_type_counts['File_Type'].values.tolist()
-        File_TypeC=file_type_counts['Count'].values.tolist()
-        return render(request,'tc_DigitalMarketing/dash_index.html',{'id':id,'status':status,'Approved':Approved,'Rejected':Rejected,'Pending':Pending,'UserName':UN,
-                                                                     'DateValue':DateValue,"videoC":videoC,'upload_img_gif_count':upload_img_gif_count,'File_Type':File_Type,
-                                                                     'File_TypeC':File_TypeC,'recent':recent,
-                                                                     })
-    except Exception as e:
-        error={'error':e}
-        return render(request,'tc_DigitalMarketing/error.html',context=error)  
-@login_required(login_url='/')
-def filterpage(request,id,id1,id2):
-    try:
-        if request.method == "POST":
-             return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,})
-        
-        user_status=""
-        status=""
-        videodetails=""
-        if id2 == 'User':
-            status=TbStatus.objects.filter(userid=id,status=id1).order_by('-createddate').values()
-
-        elif id2 == 'Apporver':
-            userName=connection.cursor()
-            userName.execute("select UserName from tb_User where UserID='{val}';".format(val=id))
-            userName=userName.fetchall()
-            UN=userName[0][0]
-            user_status=TbStatus.objects.filter(approver=UN,status=id1).order_by('-createddate').values()
-        
-        elif id1 == 'Pending': 
-            user_status=TbStatus.objects.filter(status=id1).order_by('-createddate').values()
-
-        username=Profile.objects.get(userid = id)
-        userroleid = username.userroleid
-        print(userroleid)
-        userrolename=TbUserrole.objects.get(userroleid = userroleid)
-        userrolename=userrolename.userrolename
-        print(userrolename)
-
-        return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,
-                                                                     'user_status':user_status
-                                                                     ,'userrolename':userrolename})
-    except Exception as e:
-        error={'error':e}
-        return render(request,'tc_DigitalMarketing/error.html',context=error)  
-@login_required(login_url='/')
-def myvideos(request,id):
-    try:
-        if request.method == "POST":
-             return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id})
-        videodetails=video_Details.objects.filter(userid=id)
-        return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id,'videodetails':videodetails})
-    except Exception as e:
-        error={'error':e}
-        return render(request,'tc_DigitalMarketing/error.html',context=error)  
-
-@csrf_exempt
 def uploadfile(request,id):
-            
         if request.method == "POST":
+            folder='media/'+str(today)+'/' 
             type=request.POST.get('creative')
             myfile = request.FILES['fileToUpload']
-            fs = FileSystemStorage()
-            filename = fs.save(myfile.name.replace(" ", ""), myfile)
-            url = fs.url(filename)
+            fs = FileSystemStorage(location=folder)
+
+            file_ext = fs.url(myfile)
+
+            allowed_file_types = {
+            'Video': ('.mp4', '.ogg', '.mov'),  
+            'Image': ('.jpg', '.jpeg', '.png'), 
+            'Gif': ('.gif',),
+            }
+            file_extension = pathlib.Path(file_ext).suffix.lower()
+            if file_extension not in allowed_file_types.get(type, ()):
+                messages.warning(request, 'Invalid file type for the selected creative type')
+                return redirect('/dm/uploadfile/'+ id)
+
+            file = fs.save(myfile.name.replace(" ", ""), myfile)
+            url = fs.url(file)
+            filename=file
             VID = uuid.uuid4()
             VID=str(VID)
-            print(type)
-            return redirect('/dm/createrupload/'+id+'/'+filename+'/'+type+'/'+VID)
-
+            return redirect('/dm/createrupload/'+id+'/'+str(filename)+'/'+type+'/'+VID)
         else:
             a=id
             username=Profile.objects.get(userid = id)
@@ -152,11 +69,10 @@ def uploadfile(request,id):
             getdetails="yes"
             uploadfile='yes'
             uploadform='yes'
-
-
+            userdetails=Profile.objects.get(userid = id)
             return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'userrolename':userrolename,
                                                                              'id':id,'Uploadfile':uploadfile,
-                                                                             'uploadform':uploadform})
+                                                                             'uploadform':uploadform,'userdetails':userdetails})
 
 
 
@@ -173,6 +89,7 @@ def creater_upload(request,id,fname,type,vid):
             Title=request.POST.get('title')
             question = request.POST.getlist('question')
             Qlist=list(filter(None,question))
+            folder='/media/'+str(today)+'/' 
 
             print(vid)
             fname=str(fname)
@@ -181,8 +98,7 @@ def creater_upload(request,id,fname,type,vid):
 
             if upload == "Upload":
                     if type == 'Image':
-                        fs = FileSystemStorage()
-                        image_url = fs.url(fname)
+                        image_url = folder+fname
                         Gif_url = '--'
                         video_url = '--'
 
@@ -243,8 +159,7 @@ def creater_upload(request,id,fname,type,vid):
                             return redirect('/dm/superadmin/'+id)
 
                     elif type == 'Gif':
-                        fs = FileSystemStorage()
-                        Gif_url = fs.url(fname)
+                        Gif_url = folder+fname
                         image_url = '--'
                         video_url = '--'
 
@@ -305,21 +220,10 @@ def creater_upload(request,id,fname,type,vid):
                             return redirect('/dm/superadmin/'+id)
 
 
-                    elif type == 'Video':
-                        fs = FileSystemStorage()
-                        video_url = fs.url(fname)
+                    elif type == 'Video':                        
+                        video_url =folder+fname
                         image_url = '--'
                         Gif_url = '--'
-                        # tbvideo = TbVideo.objects.get(videoid=VID)
-                        # tbvideo.videoname='download'
-                        # tbvideo.videotranscription=text
-                        # tbvideo.creative=Creative
-                        # tbvideo.platform=Platform
-                        # tbvideo.lob=Lob
-                        # tbvideo.creater=Creator
-                        # tbvideo.save()
-
-
 
                     # if Creative != 'Video':
                         video_details2 = TbVideo(videoid=VID,videoname=Title,
@@ -403,10 +307,9 @@ def creater_upload(request,id,fname,type,vid):
 
             elif upload =='transcribe':
                     try:
-                        fs = FileSystemStorage()
-                        video_path = fs.url(fname)
                         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                        file_path = BASE_DIR+video_path
+                        folder='/media/'+str(today)+'/' 
+                        file_path=BASE_DIR+folder+fname
                         print(file_path)
 
                         model = whisper.load_model("tiny")
@@ -425,33 +328,37 @@ def creater_upload(request,id,fname,type,vid):
 
                     except Exception as e:
                         text="The transcription of this video is not supported."
+                        username=Profile.objects.get(userid = id)
+                        urid = username.userroleid
+                        user=TbUser.objects.get(userid=id)
+                        UN=user.username
+                        userrolename=TbUserrole.objects.get(userroleid = urid)
+                        userrolename=userrolename.userrolename
+                        print(userrolename)
+                        finalsubmit='yes'
                     print(text)
                     return render(request,'tc_DigitalMarketing/upload-page.html',{"k":id,'userrolename':userrolename,'id':id,
                                                                                 'finalsubmit':finalsubmit,'fname':fname,'text':text})
 
 
-                    # except Exception as e:
-                    #     return "The transcription of this video is not supported."
-
-
-
             else:
+                folder='media/'+str(today)+'/' 
                 text=request.POST.get('text')
                 switch=request.POST.get('switch')
                 ascpect1=request.POST.get('ascpect1')
                 ascpect2=request.POST.get('ascpect2')
                 if ascpect1:
-                    video_url = request.FILES['file2']
-                    fs = FileSystemStorage()
-                    filename = fs.save(video_url.name.replace(" ", ""), video_url)
-                    video_url1 = fs.url(filename)
+                    myfile = request.FILES['file2']
+                    fs = FileSystemStorage(location=folder) #defaults to   MEDIA_ROOT  
+                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
+                    video_url1="/"+folder+str(filename)
                 else:
                     video_url1='--'
                 if ascpect2:
-                    video_url = request.FILES['file3']
-                    fs = FileSystemStorage()
-                    filename = fs.save(video_url.name.replace(" ", ""), video_url)
-                    video_url2 = fs.url(filename)
+                    myfile = request.FILES['file3']
+                    fs = FileSystemStorage(location=folder) #defaults to   MEDIA_ROOT  
+                    filename = fs.save(myfile.name.replace(" ", ""), myfile)
+                    video_url2="/"+folder+str(filename)
                 else:
                     video_url2='--'
 
@@ -462,14 +369,6 @@ def creater_upload(request,id,fname,type,vid):
                 else: 
                     ans='no'
                 
-                # VID = cVideoId.objects.all().order_by('-id').first()
-                # VID=str(VID)
-                # video=TbVideo.objects.get(videoid = VID)
-                # Title=video.videoname
-                # imageurl=video.Imageurl
-                # gifurl=video.Gifurl
-
-
                 tbvideo = TbVideo.objects.get(videoid=VID)
                 tbvideo.videotranscription=text
                 tbvideo.videopath1=video_url1
@@ -479,13 +378,7 @@ def creater_upload(request,id,fname,type,vid):
                 status = TbStatus.objects.get(videoid=VID)
                 status.videoPath1=video_url1
                 status.videoPath2=video_url2
-                status.save()
-
-
-
-                # video_details5 = Campaignquestionresponse(campaignquestionid=TbCampaignquestion.objects.get(campaignquestionid = a),
-                #                         userid=TbUser.objects.get(userid = str(id)),response= ans)
-                # video_details5.save()  
+                status.save() 
 
                 username=Profile.objects.get(userid = id)
                 urid = username.userroleid
@@ -496,27 +389,6 @@ def creater_upload(request,id,fname,type,vid):
                 userrolename=userrolename.userrolename
                 print(userrolename)
 
-                # status = TbStatus(userid=TbUser.objects.get(userid=id),videoid=VID,status='Pending',videoname=Title,approver='---',uploadername=UN,platform=Platform,Imageurl=imageurl,Gifurl=gifurl,creative=Creative)
-                # status.save()
-
-                # cQresponse=TbCampaignquestion.objects.filter(campaignvideoid=VID)
-                # print(cQresponse)
-                # lenOfList=len(cQresponse)
-                # listOfcQresponse=[]
-                # for i in cQresponse:
-                #     output=i.campaignquestionid
-                #     listOfcQresponse.append(output)
-                # print(listOfcQresponse)
-                # import itertools
-
-                # for (a, b) in itertools.zip_longest(listOfcQresponse,Qlist):
-                #         video_details5 = Campaignquestionresponse(campaignquestionid=TbCampaignquestion.objects.get(campaignquestionid = a),
-                #                                 userid=TbUser.objects.get(userid = str(id)),response= b)
-                #         video_details5.save()  
-
-
-                # videoDetails = video_Details(userid=TbUser.objects.get(userid=id),VideoPath=vP,VideoName=Title,creative=Creative)
-                # videoDetails.save()
 
                 if userrolename=='Uploader':
                     messages.success(request, 'submitted succesfully')
@@ -528,13 +400,8 @@ def creater_upload(request,id,fname,type,vid):
                     messages.success(request, 'submitted succesfully')
                     return redirect('/dm/superadmin/'+id)
                 
-            # return render(request,'tc_DigitalMarketing/upload-pagenew.html',{"k":id,'userrolename':userrolename,'id':id,                                                                                    'qT':questionsText,
-            #                                                                  'qR':QuestionResponse,'text':text,
-            #                                                                  "data":data,'dataQ':dataQ,
-            #                                                                  'creative':Creative,'finalsubmit':finalsubmit,
-            #                                                                  'url':url,'url1':url1,'url2':url2,'imgurl':image_url,'gifurl':Gif_url})
-
         else:
+            folder='/media/'+str(today)+'/' 
             a=id
             username=Profile.objects.get(userid = id)
             userroleid = username.userroleid
@@ -542,33 +409,21 @@ def creater_upload(request,id,fname,type,vid):
             userrolename=userrolename.userrolename
             submitform="yes"
             uploadform="yes"
-            fs = FileSystemStorage()
-            url = fs.url(fname)
+            url=folder+fname
+            print(url)
+            userdetails=Profile.objects.get(userid = id)
 
 
             return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'userrolename':userrolename,
                                                                                 'id':id,'submitform':submitform,
                                                                                 'creative':type,'url':url
-                                                                                ,'uploadform':uploadform})
+                                                                                ,'uploadform':uploadform,"userdetails":userdetails})
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
-  
-
-    
+      
 def transcribe_video_audio(video_path):
-    # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # file_path = BASE_DIR+video_path
-    # model = whisper.load_model("tiny")
-    # audio_dir = os.path.dirname(file_path)
-    # print(audio_dir)
-    # audio_path = os.path.join(audio_dir, "audio.wav")
-    # command = f'ffmpeg -i "{file_path}" -vn -acodec pcm_s16le -ar 16000 -ac 1 "{audio_path}"'
-    # os.system(command)
-    # result = model.transcribe(audio_path)
-    # os.remove(audio_path)
-    # return result["text"]
     try:
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         file_path = BASE_DIR+video_path
@@ -584,39 +439,6 @@ def unique_numbers(numbers):
     # this will take only unique numbers from the tuple
     return tuple(set(numbers))
 
-# THIS is no needed Rechecking is pending
-def user_indexpage(request):
-    try:
-        if request.method == 'POST':
-            userName = request.POST.get('username')
-            Password = request.POST.get('pass')
-            data = TbUser.objects.filter(username=userName,password=Password).values()
-            for i in data:
-                print(i)
-                a=i
-            if data:
-                value=a.get('userroleid_id')
-                print(value)
-                if value == "U1":
-                    val=a.get('userid')
-                    
-                    return redirect('/dm/uploaderdashboard/'+str(val)) 
-                if value == "R1":
-                    val=a.get('userid')
-                    
-                    return redirect('/dm/approver/'+str(val))
-                
-                if value == "S1":
-                    val=a.get('userid')
-                    
-                    return redirect('/dm/approver/'+str(val))
-            messages.error(request, 'Invalid! userName or password')
-            return redirect('/dm/UserIndexpage')    
-        else:
-            return render(request, 'tc_DigitalMarketing/UserindexPage.html')
-    except Exception as e:
-        error={'error':e}
-        return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
 @login_required(login_url='/')
 def approver(request,id):
@@ -656,7 +478,7 @@ def approver(request,id):
 
 
                     df['createddate']=df['createddate'].astype(str)
-                    df['createddate']=df['createddate'].str.slice(0, -10)
+                    df['createddate']=df['createddate'].str.slice(0, -15)
                     video_count = df.groupby('createddate')['videoname'].count().reset_index()
                     DateValue=video_count['createddate'].values.tolist()
                     videoC=video_count['videoname'].values.tolist()
@@ -667,13 +489,11 @@ def approver(request,id):
                     file_type_counts.columns = ['File_Type', 'Count']
                     File_Type=file_type_counts['File_Type'].values.tolist()
                     File_TypeC=file_type_counts['Count'].values.tolist()
+                    creators = Profile.objects.filter(userroleid='U1')
                     return render(request,'tc_DigitalMarketing/approver_index.html',{'status':status,'id':id,'status':status,'id':id,'Approved':Approved,'Rejected':Rejected,
                                                                                 'Pending':Pending,'UserName':UN,'DateValue':DateValue,"videoC":videoC,
-                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent})
-                    # return redirect('/dm/createrupload/'+str(val))
-                # filter1 =df["status"].isin(['Pending'])
-                # Pending = df[filter1]
-                # Pending =len(Pending)
+                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,'creators':creators})
+
                 filter2 =df["status"].isin(['Rejected'])
                 Rejected = df[filter2]
                 Rejected =len(Rejected)
@@ -695,7 +515,7 @@ def approver(request,id):
 
 
                 df['createddate']=df['createddate'].astype(str)
-                df['createddate']=df['createddate'].str.slice(0, -10)
+                df['createddate']=df['createddate'].str.slice(0, -15)
                 video_count = df.groupby('createddate')['videoname'].count().reset_index()
                 DateValue=video_count['createddate'].values.tolist()
                 videoC=video_count['videoname'].values.tolist()
@@ -708,12 +528,13 @@ def approver(request,id):
                 File_TypeC=file_type_counts['Count'].values.tolist()
                 print(File_Type)
                 print(File_TypeC)
+                creators = Profile.objects.filter(userroleid='U1')
 
                 # return render(request,'tc_DigitalMarketing/approver.html',{'status':status,'id':id})
                 return render(request,'tc_DigitalMarketing/approver_index.html',{'status':status,'id':id,'Approved':Approved,'Rejected':Rejected,
                                                                                 'Pending':Pending,'UserName':UN,'DateValue':DateValue,"videoC":videoC,
                                                                                 'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,
-                                                                                'upload_img_gif_count':upload_img_gif_count})
+                                                                                'upload_img_gif_count':upload_img_gif_count,'creators':creators})
             except:
                 return redirect('/dm/createrupload/'+str(val))
 
@@ -759,7 +580,8 @@ def admin(request,id):
 
 
                     df['createddate']=df['createddate'].astype(str)
-                    df['createddate']=df['createddate'].str.slice(0, -10)
+                    df['createddate']=df['createddate'].str.slice(0, -15)
+                    print(df['createddate'])
                     video_count = df.groupby('createddate')['videoname'].count().reset_index()
                     DateValue=video_count['createddate'].values.tolist()
                     videoC=video_count['videoname'].values.tolist()
@@ -768,9 +590,13 @@ def admin(request,id):
                     file_type_counts.columns = ['File_Type', 'Count']
                     File_Type=file_type_counts['File_Type'].values.tolist()
                     File_TypeC=file_type_counts['Count'].values.tolist()
+                    
+                    userdetails=Profile.objects.get(userid = id)
+                    creators = Profile.objects.filter(userroleid='U1')
+
                     return render(request,'tc_DigitalMarketing/admin_index.html',{'status':status,'id':id,'status':status,'id':id,'Approved':Approved,'Rejected':Rejected,
                                                                                 'Pending':Pending,'UserName':UN,'DateValue':DateValue,"videoC":videoC,
-                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent})
+                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,'userdetails':userdetails,'creators':creators})
                     # return redirect('/dm/createrupload/'+str(val))
                 # filter1 =df["status"].isin(['Pending'])
                 # Pending = df[filter1]
@@ -795,7 +621,7 @@ def admin(request,id):
 
 
                 df['createddate']=df['createddate'].astype(str)
-                df['createddate']=df['createddate'].str.slice(0, -10)
+                df['createddate']=df['createddate'].str.slice(0, -15)
                 print(df['createddate'])
                 video_count = df.groupby('createddate')['videoname'].count().reset_index()
                 DateValue=video_count['createddate'].values.tolist()
@@ -806,11 +632,15 @@ def admin(request,id):
                 file_type_counts.columns = ['File_Type', 'Count']
                 File_Type=file_type_counts['File_Type'].values.tolist()
                 File_TypeC=file_type_counts['Count'].values.tolist()
+                
+                userdetails=Profile.objects.get(userid = id)
+                creators = Profile.objects.filter(userroleid='U1')
 
                 # return render(request,'tc_DigitalMarketing/approver.html',{'status':status,'id':id})
                 return render(request,'tc_DigitalMarketing/admin_index.html',{'status':status,'id':id,'Approved':Approved,'Rejected':Rejected,
                                                                                 'Pending':Pending,'UserName':UN,'DateValue':DateValue,"videoC":videoC,
-                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent})
+                                                                                'File_Type':File_Type,'File_TypeC':File_TypeC,'recent':recent,'userdetails':userdetails,
+                                                                                'creators':creators})
             except:
                 return redirect('/dm/Activation/'+str(id))
 
@@ -821,7 +651,7 @@ def admin(request,id):
 
 @login_required(login_url='/')
 def approver_view(request,id,uid):
-    # try:
+    try:
         if request.method == "POST":
                 #rechecking is pending
                 q0 = request.POST.get('q0')
@@ -880,7 +710,7 @@ def approver_view(request,id,uid):
                     UN=userName[0][0]
                     
                     approve = TbApprove(userid=TbUser.objects.get(userid=uid),
-                                        videoid=id,videotitle=vN,videopath=vP,uploadername=UN)
+                                        videoid=id,videotitle=vN,videopath=vP,videopath1=vP1,uploadername=UN)
                     approve.save()
 
                     Question = TbapproverQuestion.objects.all()
@@ -1101,6 +931,7 @@ def approver_view(request,id,uid):
             userrolename=TbUserrole.objects.get(userroleid = userroleid)
             userrolename=userrolename.userrolename
             print(userrolename)
+            userdetails=Profile.objects.get(userid = uid)
 
             return render(request,'tc_DigitalMarketing/approverviewnew.html',{'qT':questionsText,
                                                                               'qR':QuestionResponse,
@@ -1119,10 +950,10 @@ def approver_view(request,id,uid):
                                                                               'Questions':Question,
                                                                               'imgUrl':imgUrl,
                                                                               'gifUrl':gifUrl,
-                                                                              'userrolename':userrolename})
-    # except Exception as e:
-    #     error={'error':e}
-    #     return render(request,'tc_DigitalMarketing/error.html',context=error)  
+                                                                              'userrolename':userrolename,"userdetails":userdetails})
+    except Exception as e:
+        error={'error':e}
+        return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
 
 
@@ -1137,12 +968,6 @@ def status_view(request,id1,uid):
             status=connection.cursor()
             status.execute("select reason,UploaderName FROM tb_Status WHERE VideoID='{value1}';".format(value1=id1))
             response=status.fetchall()
-
-            # cursor1=connection.cursor()
-            # cursor1.execute("select VideoPath,VideoName from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id1))
-            # VideoDeatails=cursor1.fetchall()
-            # vP='/'+VideoDeatails[0][0]
-            # vName=VideoDeatails[0][1]
 
             video=TbVideo.objects.get(videoid = id1)
             vP=video.videopath
@@ -1169,6 +994,7 @@ def status_view(request,id1,uid):
             print(userroleid)
             userrolename=TbUserrole.objects.get(userroleid = userroleid)
             userrolename=userrolename.userrolename
+            userdetails=Profile.objects.get(userid = uid)
             return render(request,'tc_DigitalMarketing/statusview.html',{'approverres':res[0],
                                                                         'approvercmd':res[1],
                                                                         'reason':res[2],
@@ -1186,12 +1012,120 @@ def status_view(request,id1,uid):
                                                                         'uploadername':response[0][1],
                                                                         'imgUrl':imgUrl,
                                                                         "gifUrl":gifUrl,
-
+                                                                        'userdetails':userdetails,
                                                                         'userrolename':userrolename,
                                                                         })
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
+
+
+@login_required(login_url='/')
+def uploaderdashboard(request,id):
+    try:
+        if request.method == "POST":
+            return render(request,'tc_DigitalMarketing/dash_index.html',{})
+        userName=connection.cursor()
+        userName.execute("select UserName from tb_User where UserID='{val}'".format(val=id))
+        userName=userName.fetchall()
+        UN=userName[0][0]
+        status=TbStatus.objects.filter(userid=id).order_by('-createddate').values()
+        recent=TbStatus.objects.filter(userid=id).order_by('-createddate').values()[:3]
+        q = status.values()
+        df = pd.DataFrame.from_records(q)
+        if len(df) == 0:
+            val=id
+            return redirect('/dm/uploadfile/'+str(val))
+        filter1 =df["status"].isin(['Pending'])
+        Pending = df[filter1]
+        Pending =len(Pending)
+        filter2 =df["status"].isin(['Rejected'])
+        Rejected = df[filter2]
+        Rejected =len(Rejected)
+        filter3 =df["status"].isin(['Approved'])
+        Approved = df[filter3]
+        Approved =len(Approved)
+        filter4 =df["creative"].isin(['image','GIF'])
+        upload_img_gif = df[filter4]
+        upload_img_gif_count =len(upload_img_gif)
+
+        #  = pd.to_datetime(df['createddate'])
+        df['createddate']=df['createddate'].astype(str)
+        # print(df['createddate'])
+        df['createddate']=df['createddate'].str.slice(0, -15)
+        print(df['createddate'])
+        video_count = df.groupby('createddate')['videoname'].count().reset_index()
+        DateValue=video_count['createddate'].values.tolist()
+        videoC=video_count['videoname'].values.tolist()
+
+        print(video_count)
+
+        file_type_counts = df['creative'].value_counts().reset_index()
+        file_type_counts.columns = ['File_Type', 'Count']
+        File_Type=file_type_counts['File_Type'].values.tolist()
+        File_TypeC=file_type_counts['Count'].values.tolist()
+        userdetails=Profile.objects.get(userid = id)
+        admin_approver = Profile.objects.filter(userroleid='S1') | Profile.objects.filter(userroleid='R1') 
+        
+        return render(request,'tc_DigitalMarketing/dash_index.html',{'id':id,'status':status,'Approved':Approved,'Rejected':Rejected,'Pending':Pending,'UserName':UN,
+                                                                     'DateValue':DateValue,"videoC":videoC,'upload_img_gif_count':upload_img_gif_count,'File_Type':File_Type,
+                                                                     'File_TypeC':File_TypeC,'recent':recent,'admin_approver':admin_approver,'userdetails':userdetails
+                                                                     })
+    except Exception as e:
+        error={'error':e}
+        return render(request,'tc_DigitalMarketing/error.html',context=error)  
+    
+@login_required(login_url='/')
+def filterpage(request,id,id1,id2):
+    try:
+        if request.method == "POST":
+             return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,})
+        
+        user_status=""
+        status=""
+        videodetails=""
+        if id2 == 'User':
+            status=TbStatus.objects.filter(userid=id,status=id1).order_by('-createddate').values()
+
+        elif id2 == 'Apporver':
+            userName=connection.cursor()
+            userName.execute("select UserName from tb_User where UserID='{val}';".format(val=id))
+            userName=userName.fetchall()
+            UN=userName[0][0]
+            user_status=TbStatus.objects.filter(approver=UN,status=id1).order_by('-createddate').values()
+        
+        elif id1 == 'Pending': 
+            user_status=TbStatus.objects.filter(status=id1).order_by('-createddate').values()
+
+        username=Profile.objects.get(userid = id)
+        userroleid = username.userroleid
+        print(userroleid)
+        userrolename=TbUserrole.objects.get(userroleid = userroleid)
+        userrolename=userrolename.userrolename
+        print(userrolename)
+        userdetails=Profile.objects.get(userid = id)
+        return render(request,'tc_DigitalMarketing/filterpage.html',{'id':id,'status':status,
+                                                                     'user_status':user_status
+                                                                     ,'userrolename':userrolename,
+                                                                     'userdetails':userdetails})
+    except Exception as e:
+        error={'error':e}
+        return render(request,'tc_DigitalMarketing/error.html',context=error)  
+    
+@login_required(login_url='/')
+def myvideos(request,id):
+    try:
+        if request.method == "POST":
+             return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id})
+        videodetails=video_Details.objects.filter(userid=id)
+        userdetails=Profile.objects.get(userid = id)
+        return render(request,'tc_DigitalMarketing/myvideos.html',{'id':id,'videodetails':videodetails,
+                                                                   'userdetails':userdetails})
+    except Exception as e:
+        error={'error':e}
+        return render(request,'tc_DigitalMarketing/error.html',context=error)  
+
+
 
 @login_required(login_url='/')
 def download_view(request,id,id1):
@@ -1259,10 +1193,8 @@ def download(request,id):
 
 
 def download_video(request,id):
-        cursor1=connection.cursor()
-        cursor1.execute("select VideoPath,VideoTranscription,VideoName from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id))
-        VideoDeatails=cursor1.fetchall()
-        vP='/'+VideoDeatails[0][0]
+        video=TbVideo.objects.get(videoid = id)
+        vP=video.videopath
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         file_path = BASE_DIR+vP
         with open(file_path,'rb')as fh:
@@ -1305,31 +1237,7 @@ def delete_video(request,id,id1):
         messages.error(request, 'Video Details Deleted succesfully')
         return redirect('/dm/createrupload/'+str(id1))
 
-# def upload_again(request,id,id1):
-#     if request.method == "POST":
-#         myfile = request.FILES['myfile']
-#         fs = FileSystemStorage()
-#         filename = fs.save(myfile.name, myfile)
-#         uploaded_file_url = fs.url(filename)
-#         print(uploaded_file_url)
-#         url=uploaded_file_url
-#         url1=url[1:]
-
-#         text='--'
-
-#         record = TbVideo.objects.get(videoid=id)
-#         record.videopath1 = uploaded_file_url
-#         record.videotranscription1 = text
-#         record.save()
-#         videoDetails = video_Details(userid=TbUser.objects.get(userid=id1),VideoPath=uploaded_file_url)
-#         videoDetails.save()
-#         messages.success(request, 'submitted succesfully')
-#         return render(request,'tc_DigitalMarketing/uploadagain.html',{"video":url,'text':text,'id':id1})
-#     else:
-#         status='Waiting'
-#         videodetails=video_Details.objects.filter(userid=id1)
-#         return render(request,'tc_DigitalMarketing/uploadagainnew.html',{'videodetails':videodetails,'status':status})
-    
+   
 
 @login_required(login_url='/')
 def upload_again(request,id,id1):
@@ -1419,35 +1327,33 @@ def upload_again(request,id,id1):
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
-    
+
+def account(request,id):
+    if request.method == "POST":
+        folder='media/Profile/' 
+        picture = request.FILES['profilepic']
+        fs = FileSystemStorage(location=folder)
+        filename = fs.save(picture.name.replace(" ", ""), picture)
+        uploaded_file_url = '/'+folder+filename
+        print(uploaded_file_url)
+        profile=Profile.objects.get(userid = id)   
+        profile.profile_pic=uploaded_file_url
+        profile.save()
+
+
+    profile=Profile.objects.get(userid = id)   
+    return render(request,'tc_DigitalMarketing/account.html',{'context':profile})  
 
 def login_view(request):
     try:
-        next = request.GET.get('next')
-        print(next)
+        # next = request.GET.get('next')
+        # print(next)
         form = UserLoginForm(request.POST or None)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             login(request, user)
-            if next:
-            #customized redirect i need to check this
-            #     return redirect(next)
-                if user.profile.userroleid == "U1":
-                        
-                        return redirect('/dm/uploaderdashboard/'+str(user.profile.userid)) 
-                if user.profile.userroleid == "R1":
-
-                        return redirect('/dm/approver/'+str(user.profile.userid))   
-                        
-                if user.profile.userroleid == "S1":
-
-                        return redirect('/dm/superadmin/'+str(user.profile.userid))  
-                
-                if user.profile.userroleid == "D1": 
-                
-                        return redirect('/dm/superadmin/'+str(user.profile.userid)) 
             if user.profile.userroleid == "U1":
                 
                 return redirect('/dm/uploaderdashboard/'+str(user.profile.userid)) 
@@ -1484,6 +1390,7 @@ def register_view(request):
             user.set_password(password)
             Role = form.cleaned_data.get('Role')
             Name = form.cleaned_data.get('Name')
+            
             user.save()
 
             if Role == 'Creator':
@@ -1509,54 +1416,45 @@ def register_view(request):
             tbuser.save()
     
             if Role == 'Creator':
-                subject = "Welcome Creative Management!"
-                message = ""
-                from_email = "support.digi360@truecoverage.com"
-                to_email = user.email
-                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
-                smtp_port = 587  # Typically 587 for TLS
-                smtp_username = os.getenv('SMTP_Username')
-                smtp_password = os.getenv('SMTP_Password')
-                user_name = user.username
-                send_email_creator(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
-                
-                subject = "New to our plateform!"
-                to_email = 'naveen.kumaran@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+                email_from = settings.DEFAULT_FROM_EMAIL
+                recipient = [user.email,]
+                html = render_to_string('email\creator.html', {
+                    'user_name': user.username,
+                    'user_email': user.email,
+                })
+                send_mail('Welcome to Creative Management!', 'This is the message', email_from, recipient, html_message=html)
+                print("messsage sent")
 
-                subject = "New to our plateform!"
-                to_email = 'pranav.vijay@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-
+                # mail send to admin 
+                recipient = ['sainath.guddemmagari@speridian.com','pranav.vijay@truecoverage.com','naveen.kumaran@truecoverage.com',]
+                html = render_to_string('email\default.html', {
+                    'user_name': user.username,
+                    'user_email': user.email,
+                    'user_Role' : Role,
+                })
+                send_mail('New to our plateform!', 'This is the message', email_from, recipient, html_message=html)
+                print("default messsage sent")
 
             if Role == 'Approver':
-                subject = "Welcome Creative Management!"
-                message = ""
-                from_email = "support.digi360@truecoverage.com"
-                to_email = user.email
-                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
-                smtp_port = 587  # Typically 587 for TLS
-                smtp_username = os.getenv('SMTP_Username')
-                smtp_password = os.getenv('SMTP_Password')
-                user_name = user.username
-                send_email_approver(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
+                email_from = settings.DEFAULT_FROM_EMAIL
+                recipient = [user.email,]
+                html = render_to_string('email\approver.html', {
+                    'user_name': user.username,
+                    'user_email': user.email,
+                })
+                send_mail('Welcome to Creative Management!', 'This is the message', email_from, recipient, html_message=html)
+                print("messsage sent")
 
-                subject = "New to our plateform!"
-                to_email = 'naveen.kumaran@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
+                # mail sendto admin 
+                recipient = ['sainath.guddemmagari@speridian.com','pranav.vijay@truecoverage.com','naveen.kumaran@truecoverage.com',]
+                html = render_to_string('email\default.html', {
+                    'user_name': user.username,
+                    'user_email': user.email,
+                    'user_Role' : Role,
+                })
+                send_mail('New to our plateform!', 'This is the message', email_from, recipient, html_message=html)
+                print("default messsage sent")
 
-                subject = "New to our plateform!"
-                to_email = 'naveen.kumaran@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-            
             if Role == 'Downloader':
                 #adding download list in status table
                 queryset = TbStatus.objects.all() 
@@ -1570,31 +1468,23 @@ def register_view(request):
                         q.downloader = downloader_list
                         q.save()
 
-                subject = "Welcome Creative Management!"
-                message = ""
-                from_email = "support.digi360@truecoverage.com"
-                to_email = user.email
-                smtp_server = "email-smtp.ap-south-1.amazonaws.com"
-                smtp_port = 587  # Typically 587 for TLS
-                smtp_username = os.getenv('SMTP_Username')
-                smtp_password = os.getenv('SMTP_Password')
-                user_name = user.username
-                send_email_downloader(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name)
+                email_from = settings.DEFAULT_FROM_EMAIL
+                recipient = [user.email,]
+                html = render_to_string('email\downloader.html', {
+                    'user_name': user.username,
+                    'email': user.email,
+                })
+                send_mail('Welcome to Creative Management!', 'This is the message', email_from, recipient, html_message=html)
+                print("messsage sent")
 
-                subject = "New to our plateform!"
-                to_email = 'naveen.kumaran@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-
-                subject = "New to our plateform!"
-                to_email = 'pranav.vijay@truecoverage.com'
-                user_Role = Role
-                user_email= user.email
-                send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-
-
-
+                recipient = ['sainath.guddemmagari@speridian.com','pranav.vijay@truecoverage.com','naveen.kumaran@truecoverage.com',]
+                html = render_to_string('email\default.html', {
+                    'user_name': user.username,
+                    'user_email': user.email,
+                    'user_Role' : Role,
+                })
+                send_mail('New to our plateform!', 'This is the message', email_from, recipient, html_message=html)
+                print("default messsage sent")
 
             new_user = authenticate(username=user.username, password=password,)
             login(request, new_user)
@@ -1612,53 +1502,6 @@ def register_view(request):
     except Exception as e:
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
-
-# def activate(request):
-#     try:
-#         if request.method == "POST":
-#             form = ActivationForm(request.POST or None)
-#             if form.is_valid():
-#                 email= form.cleaned_data.get('email')
-#                 Role = form.cleaned_data.get('Role')
-#                 print(email)
-#                 print(Role)                
-#                 profile=Profile.objects.get(email=email)
-#                 profile.userroleid=Role
-#                 profile.save()
-
-#                 subject = "Digi360 account is activated!"
-#                 message = ""
-#                 from_email = "team.digi360@truecoverage.com"
-#                 to_email = email
-#                 smtp_server = "email-smtp.ap-south-1.amazonaws.com"
-#                 smtp_port = 587  # Typically 587 for TLS
-#                 smtp_username = ""
-#                 smtp_password = ""
-#                 user_name = ''
-#                 user_Role = Role
-#                 user_email= email
-
-#                 send_email_activation(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email)
-
-#             context = {
-#                     'form': form,
-#                 }
-#             messages.success(request, 'Account Activated Successfully')
-#             return render(request, "tc_DigitalMarketing/activation.html",context)
-#         else:
-#             form = ActivationForm(request.POST or None)
-#             context = {
-#                     'form': form,
-#                 }
-#             return render(request, "tc_DigitalMarketing/activation.html",context)
-
-#     except Exception as e:
-#         form = ActivationForm(request.POST or None)
-#         context = {
-#                 'form': form,
-#             }
-#         messages.success(request, 'Your Details is not found')
-#         return render(request, "tc_DigitalMarketing/activation.html",context)
 
 
 def activate(request,id):
@@ -1680,6 +1523,12 @@ def activate(request,id):
                 profilesave.userroleid=Role
                 profilesave.save()
 
+                email_from = settings.DEFAULT_FROM_EMAIL
+                recipient = [email,]
+                html = render_to_string('email/activation.html')
+                send_mail('Your Account Activated!', 'This is the message', email_from, recipient, html_message=html)
+                print("messsage sent")
+
             messages.success(request, 'Profile Updated Successfully')
             return redirect ("/dm/Activation/"+id)
         
@@ -1687,7 +1536,8 @@ def activate(request,id):
             # return render(request, "tc_DigitalMarketing/activation.html",{"profile":profile})
         else:
             profile=Profile.objects.all()
-            return render(request, "tc_DigitalMarketing/activation.html",{"profile":profile,'id':id})
+            userdetails=Profile.objects.get(userid = id)
+            return render(request, "tc_DigitalMarketing/activation.html",{"profile":profile,'id':id,"userdetails":userdetails})
 
     # except Exception as e:
     #     form = ActivationForm(request.POST or None)
@@ -1696,141 +1546,6 @@ def activate(request,id):
     #         }
     #     messages.success(request, 'Your Details is not found')
     #     return render(request, "tc_DigitalMarketing/activation.html",context)
-
-
-
-def send_email_creator(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
-   
-    html_message = render_to_string('email/creator.html', {'user_name': user_name})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
-
-def send_email_approver(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
-   
-    html_message = render_to_string('email/approver.html', {'user_name': user_name})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
-
-def send_email_downloader(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name):
-   
-    html_message = render_to_string('email/downloader.html', {'user_name': user_name})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
-
-def send_email_default(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
-
-    html_message = render_to_string('email/default.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
-
-def send_email_default1(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
-
-    html_message = render_to_string('email/default.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email,})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
-
-def send_email_activation(subject, message, from_email, to_email, smtp_server, smtp_port, smtp_username, smtp_password,user_name,user_Role,user_email):
-
-    html_message = render_to_string('email/activation.html', {'user_name': user_name,'user_Role':user_Role,'user_email':user_email})
-
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    
-    part1 = MIMEText(html_message, 'html')
-    msg.attach(part1)
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
-        server.login(smtp_username, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
 
 
 def logout_view(request):
@@ -2098,12 +1813,6 @@ def update_view(request,id,id1):
             return render(request,'tc_DigitalMarketing/createrupload.html')
         else:
             status=TbStatus.objects.filter(videoid=id1)
-
-            # cursor1=connection.cursor()
-            # cursor1.execute("select VideoPath,VideoName from CampaignVideo cv inner join tb_Video v on v.VideoID=cv.VideoID AND cv.CampaignVideoID='{val}'".format(val=id1))
-            # VideoDeatails=cursor1.fetchall()
-            # vP='/'+VideoDeatails[0][0]
-            # vName=VideoDeatails[0][1]
             video=TbVideo.objects.get(videoid = id1)
             vP=video.videopath
             vT=video.videotranscription
@@ -2119,10 +1828,7 @@ def update_view(request,id,id1):
             print(vP)
             print(vP1)
             print(Creative)
-
-
-
-
+            userdetails=Profile.objects.get(userid = id)
             return render(request,'tc_DigitalMarketing/update.html',{
                                                                         'id':id,
                                                                         'url':vP,
@@ -2135,7 +1841,8 @@ def update_view(request,id,id1):
                                                                         'Creative':Creative,
                                                                         'Platform':Platform,
                                                                         'imgUrl':imgUrl,
-                                                                        "gifUrl":gifUrl,                                                                     
+                                                                        "gifUrl":gifUrl, 
+                                                                        'userdetails':userdetails,                                                                    
                                                                      })
     except Exception as e:
         error={'error':e}
@@ -2256,192 +1963,9 @@ def superadmindetail_downloader_view(request,id):
         error={'error':e}
         return render(request,'tc_DigitalMarketing/error.html',context=error)  
 
-from django.template.defaulttags import register
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)     
-
-@csrf_exempt
-def ajax_file_upload_save(request,id):
-    print(request.POST)
-    print(request.FILES)
-    fs=FileSystemStorage()
-
-
-
-    try:
-        # if request.FILES['file1']:
-        if request.FILES['file1']:
-            file1=request.FILES['file1']
-            file_1_path=fs.save(file1.name.replace(" ", ""),file1)
-            uploaded_file_url = fs.url(file_1_path)
-            print(uploaded_file_url)
-
-        if request.FILES['file2']:
-            file2=request.FILES['file2']
-            file_2_path=fs.save(file2.name.replace(" ", ""),file2)
-            uploaded_file_url1 = fs.url(file_2_path)
-            print(uploaded_file_url1)
-
-        if request.FILES['file3']:
-            file3=request.FILES['file3']
-            file_3_path=fs.save(file3.name.replace(" ", ""),file3)
-            uploaded_file_url2 = fs.url(file_3_path)
-            print(uploaded_file_url2)
-
-        new_id = uuid.uuid4()
-        str(new_id)
-        print(str(new_id))
-
-        video_id = cVideoId(VideoID=new_id,userID = id)
-        video_id.save()
-
-        video_details2 = TbVideo(videoid=new_id,videopath=uploaded_file_url,
-        previousvideoid=0,videopath1=uploaded_file_url1,videopath2=uploaded_file_url2,
-        )
-        video_details2.save()
-    except:
-
-        new_id = uuid.uuid4()
-        str(new_id)
-        print(str(new_id))
-
-        video_id = cVideoId(VideoID=new_id,userID = id)
-        video_id.save()
-        
-        try:
-            if request.FILES['file1']:
-                video_details2 = TbVideo(videoid=new_id,videopath=uploaded_file_url,
-                previousvideoid=0,videopath1='--',videopath2='--',
-                )
-                video_details2.save()
-            if request.FILES['file2']:
-                video_details2 = TbVideo(videoid=new_id,videopath=uploaded_file_url,
-                previousvideoid=0,videopath1=uploaded_file_url1,videopath2='--',
-                )
-                video_details2.save()
-            # if request.FILES['file3']:
-            #     video_details2 = TbVideo(videoid=new_id,videopath=uploaded_file_url,
-            #     previousvideoid=0,videopath1=uploaded_file_url1,videopath2=uploaded_file_url2,
-            #     )
-            #     video_details2.save()
-        except:
-            print('some value is missing')
-        
-    a=id
-    username=Profile.objects.get(userid = id)
-    userroleid = username.userroleid
-    print(userroleid)
-    userrolename=TbUserrole.objects.get(userroleid = userroleid)
-    userrolename=userrolename.userrolename
-    print(userrolename)
-    getdetails="yes"
-
-    url=uploaded_file_url
-    creative='Video'
-
-
-    return render(request,'tc_DigitalMarketing/upload-page.html',{'k':a,'userrolename':userrolename,
-                                                                        'id':id,'getdetails':getdetails,
-                                                                        'url':url,'creative':creative})
-
-
-    return HttpResponse("Uploaded")
-
-# def daccess(request):
-#     if request.method == "POST":
-            
-#             id="c8294fff-4ae9-41be-b914-6569105e83e6"
-#             status= TbStatus.objects.get(videoid=id)
-#             downloader_list=(status.downloader)
-#             downloader_rm_list=(status.downloadaccessremove)
-#             import ast
-#             downloader_list = ast.literal_eval(downloader_list)
-#             downloader_rm_list = ast.literal_eval(downloader_rm_list)
-
-#             downloaders_add = request.POST.getlist('topics[]')
-#             downloaders_remove = request.POST.getlist('top[]')
-#             print(downloaders_add)
-#             print()
-#             status.downloader=downloaders_remove
-#             status.downloadaccessremove=downloaders_add
-#             status.save()
-
-#             return render (request,'tc_DigitalMarketing/daccess.html',{"a_list":downloader_list ,"b_list":downloader_rm_list})
-
-
-#             return redirect('/dm/daccess')
-
-
-
-
-# # waiting for review
-#             # user=TbUser.objects.filter(userroleid='D1')
-#             # downloader=[]
-#             # for i in user:
-#             #     downloader.append(i.username)
-
-#             # id="d9e56a8d-1c64-4ed1-aaec-e63a2382ffe7"
-#             # status= TbStatus.objects.get(videoid=id)
-#             # b=(status.downloader)
-#             # import ast
-#             # res = ast.literal_eval(b)
-#             # testb = res
-#             # type(testb)
-#             # b = res
-#             # print(b)
-#             # a=downloader
-#             # remove_common(a, b)
-#             # # for value in user:
-#             # #     b=request.POST.get('downloader'+str(value.userid))
-#             # #     listofdownloader.append(b)
-#             # # print(listofdownloader)
-
-#             # downloaders_add = request.POST.getlist('topics[]')
-#             # downloaders_remove = request.POST.getlist('top[]')
-#             # # remove_common1(downloaders_add,downloaders_remove)
-
-
-#             # remove=common_member(downloaders_remove,b)
-#             # print(remove)
-#             # list3 = a + remove
-#             # print(list3)
-
-
-#             # print("downloader_add:",downloaders_add)
-#             # print("downloader_remove:",downloaders_remove)
-#             # id="d9e56a8d-1c64-4ed1-aaec-e63a2382ffe7"
-#             # status= TbStatus.objects.get(videoid=id)
-#             # status.downloadaccess='download'
-#             # status.downloader=list3
-#             # status.downloadaccessremove=remove
-#             # status.save()
-#             # return render (request,'tc_DigitalMarketing/daccess.html',{"a_list":downloader_rm_list ,"b_list":downloader_list})
-
-#     else:
-#         downloaders=TbUser.objects.filter(userroleid='D1')
-#         print(downloaders)
-#         downloader=[]
-#         for i in downloaders:
-#             downloader.append(i.username)
-#         id="c8294fff-4ae9-41be-b914-6569105e83e6"
-#         status= TbStatus.objects.get(videoid=id)
-#         print(downloader)
-#         if status.downloader ==None or status.downloader =='[]':
-#             print(downloader)
-#             status.downloader=downloader
-#             status.downloadaccessremove='[]'
-#             status.save() #[A1,A2,A3]
-
-#         downloader_list=(status.downloader)
-#         downloader_rm_list=(status.downloadaccessremove)
-#         import ast
-#         downloader_list = ast.literal_eval(downloader_list)
-#         downloader_rm_list = ast.literal_eval(downloader_rm_list)
-        
-#         return render (request,'tc_DigitalMarketing/daccess.html',{"a_list":downloader_list ,"b_list":downloader_rm_list})
-
-    # return render (request,'tc_DigitalMarketing/daccess.html',{'user':user,"a_list": list3,"b_list": testb,})
 
 def remove_common(a, b):
  
@@ -2568,15 +2092,5 @@ def daccess(request,id):
                 downloaderaccess_list=[]
 
             return render (request,'tc_DigitalMarketing/daccess.html',{"a_list":downloader_list,"b_list":downloaderaccess_list })
-
-
-
-
-
-
-
-
-
-
 
 

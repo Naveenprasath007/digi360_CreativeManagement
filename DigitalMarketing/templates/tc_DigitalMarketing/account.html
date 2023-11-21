@@ -1,0 +1,99 @@
+{% extends 'tc_DigitalMarketing/createrUploadbase.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .gradient-custom {
+/* fallback for old browsers */
+.card_one{
+    border: 1px solid #0947ce;
+    box-shadow: 0px 3px 3px -3px #0958ce;
+}
+background: #6593f6;
+
+/* Chrome 10-25, Safari 5.1-6 */
+background: -webkit-linear-gradient(to right bottom, rgb(101, 152, 246), rgb(133, 175, 253));
+
+/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: linear-gradient(to right bottom, rgb(26, 123, 214), rgb(29, 62, 247))
+
+}
+</style>
+    
+<section class="vh-100" style="background-color: #f4f5f7;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-lg-6 mb-4 mb-lg-0">
+          <div class="card mb-3" style="border-radius: .5rem; border-color: #5989f0;">
+            <div class="row g-0">
+              <div class="col-md-4 gradient-custom text-center text-white"
+                style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                <img src="{{context.profile_pic}}"
+                  alt="Avatar" class="img-fluid my-5" style="width: 70%; height: 30%; border-radius: 50%;" />
+                <h5>{{context.user}}</h5>
+                {% if context.userroleid == 'U1'%}
+                <p>Uploader</p>
+                {% endif %}
+                {% if context.userroleid == 'R1'%}
+                <p>Reviewer</p>
+                {% endif %}
+                {% if context.userroleid == 'D1'%}
+                <p>Downloader</p>
+                {% endif %}
+                {% if context.userroleid == 'S1'%}
+                <p>Superadmin</p>
+                {% endif %}
+
+
+                <i class="far fa-edit mb-5"></i>
+              </div>
+              <div class="col-md-8">
+                <div class="card-body p-4">
+                  <h6>Information</h6>
+                  <hr class="mt-0 mb-4">
+                  <div class="row pt-1">
+                    <div class="col-6 mb-3">
+                      <h6>Email</h6>
+                      <p class="text-muted">{{context.email}}</p>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <h6>Vendor</h6>
+                      <p class="text-muted">{{ context.vendor }}</p>
+                    </div>
+                  </div>
+                  <hr class="mt-0 mb-4">
+                  <div class="row pt-1">
+                    <div class="col-12 mb-12">
+                      <!-- <h6>Upload Profile Image</h6> -->
+                      <form method='post' enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                          <input class="form-control form-control-sm" id="formFileSm" name="profilepic" type="file" required>
+                        </div>
+                        <div style="margin-left: 2%;">
+                          <p class="text-muted">*Upload Image size should be 340X340 </p>
+                        </div>
+                       
+                        <button class="btn btn-primary btn-sm float-end" type="submit">  
+                          Submit  
+                        </button>
+
+                      </form>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-start">
+                    <a href="#!"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
+                    <a href="#!"><i class="fab fa-twitter fa-lg me-3"></i></a>
+                    <a href="#!"><i class="fab fa-instagram fa-lg"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}

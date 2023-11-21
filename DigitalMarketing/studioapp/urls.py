@@ -1,4 +1,4 @@
-"""tc_DigitalMarketing URL Configuration
+"""template URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -15,19 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include
-
-from django.conf import settings
-from django.conf.urls.static import static
-from DigitalMarketing import views
+from studioapp import views
+from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.login_view, name="login"),
-    path('dm/',include('DigitalMarketing.urls')),  
-    path('ss/',include('studioapp.urls')),  
+        path("script", views.generate),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) 
