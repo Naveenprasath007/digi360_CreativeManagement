@@ -100,31 +100,31 @@ DEFAULT_FROM_EMAIL = 'support.digi360@truecoverage.com'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # ___________MY DATABASE_____________
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Creativemanagement', 
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
-        'DISABLE_SERVER_SIDE_CURSORS': True,
-    }
-}
-
-# server db config
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 #         'NAME': 'Creativemanagement', 
-#         'USER': 'root',
+#         'USER': 'postgres',
 #         'PASSWORD': 'root',
-#         'HOST': 'db', 
+#         'HOST': '127.0.0.1', 
 #         'PORT': '5432',
 #         'DISABLE_SERVER_SIDE_CURSORS': True,
 #     }
 # }
+
+# server db config
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'Creativemanagement', 
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'db', 
+        'PORT': '5432',
+        'DISABLE_SERVER_SIDE_CURSORS': True,
+    }
+}
 
 # DATABASES = {
 #     'default': {
