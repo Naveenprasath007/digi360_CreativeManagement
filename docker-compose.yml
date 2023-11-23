@@ -4,6 +4,7 @@ services:
   django_gunicorn:
     container_name: gunicorn
     volumes:
+      - /home/ubuntu/digi360_CreativeManagement/DigitalMarketing/:/app
       - static_vol:/static
       - media_vol:/media
     env_file:

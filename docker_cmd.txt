@@ -5,6 +5,9 @@ docker
 (For build) docker-compose build --no-cache
 (this work) docker-compose up  -d
 
+
+
+
 #####remove docker container
 
 docker rm -vf $(docker ps -aq)
@@ -44,4 +47,3 @@ docker exec -i -t <container_id> bash
 rm -r -f <file Name>
 
 nano <file Name>
-
